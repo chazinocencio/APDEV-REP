@@ -1,6 +1,14 @@
 :root{
-    --var: red;
     --font-family: 'Cormorant Garamond', serif;
+    --ls-green: #166837;
+    --ls-white: #fdfefd;
+    --ls-black: #000000;
+    --ls-gold: #cd9934;
+    --ls-red: #cd201f;
+    --ls-azure: #0e77ac;
+    --midgrey-green: #8ab39b;
+    --darkgrey-green: #4c8c66;
+    --lightgrey-green: #c6dace;
 }
 
 
@@ -15,6 +23,5 @@ box-sizing: inherit;
 
 body{
     margin: 0;
-    background-color: var(--var);
     font-family: var(--font-family);
 }
