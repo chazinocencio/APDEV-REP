@@ -1,5 +1,6 @@
 :root{
     --var: red;
+    --font-family: 'Cormorant Garamond', serif;
 }
 
 
@@ -15,4 +16,5 @@ box-sizing: inherit;
 body{
     margin: 0;
     background-color: var(--var);
+    font-family: var(--font-family);
 }
