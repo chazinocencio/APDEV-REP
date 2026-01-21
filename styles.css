@@ -1,5 +1,5 @@
 :root{
-    --font-family: 'Cormorant Garamond', serif;
+    --font-family: "Atkinson Hyperlegible", sans-serif;
     --ls-green: #166837;
     --ls-white: #fdfefd;
     --ls-black: #000000;
@@ -9,6 +9,7 @@
     --midgrey-green: #8ab39b;
     --darkgrey-green: #4c8c66;
     --lightgrey-green: #c6dace;
+    --cloudfair-bg: #222222;
 }
 
 
