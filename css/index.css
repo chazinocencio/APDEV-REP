@@ -1,0 +1,107 @@
+body{
+    height: 100vh;
+    background-image: url('../assets/images/indexbg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper{
+    width: 70%;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.option{
+    width: 40%;
+    height: 80%;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 20px var(--ls-black);  
+    transition: all 0.3s ease-in-out;  
+}
+
+.option:hover{
+    width: 50%;
+    height: 90%;
+    box-shadow: 0 0 30px var(--ls-white);
+}
+
+.label{
+    background-color: var(--ls-white);
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 10px solid var(--ls-green);
+    color: var(--ls-green);
+}
+.hov{
+    display: flex;
+    align-items: end;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+}
+
+.hov:hover{
+    opacity: 1;
+}
+
+.label h1{
+    font-size: 60px;
+}
+
+.label a{
+    padding: 10px 65px;
+    margin-bottom: 50px;
+    text-decoration: none;
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+    font-size: 20px;
+    border-radius: 10px;
+    border: 5px solid var(--ls-green);
+    transition: all 0.3s ease-in-out;
+}
+
+.label a:hover{
+    cursor: pointer;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+}
+
+.student{
+    background-image: url('../assets/images/student.png');
+    filter: grayscale(100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.student:hover{
+    filter: grayscale(0%);
+}
+.technician{
+    background-image: url('../assets/images/technician.png');
+    filter: grayscale(100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.technician:hover{
+    filter: grayscale(0%);
+}
