@@ -119,3 +119,20 @@ body{
     color: var(--ls-red);
     height: 50px;
 }
+
+.rememberme{
+    width: 95%;
+    display: flex;
+    align-items: center;
+    color: var(--ls-green);
+}
+
+.rememberme input{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.rememberme:hover input{
+    cursor: pointer;
+}

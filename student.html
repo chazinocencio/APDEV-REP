@@ -4,12 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/interface.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <title>Student</title>
 </head>
 <body>
-    <p>I am a Student</p>
+    <div class="cointainer">
+        <div class="header">
+            <img src="assets/images/headerlogo.png" alt="Logo">
+
+            <div class="options">
+                <div class="search">
+                        <input type="text" placeholder="Search" name= "searchbar">
+                    <div class="searchlogo">
+                        <img src="assets/images/searchlogo.png" alt="searchlogo">
+                    </div>
+                </div>
+
+                <div class="settings" onclick="settingsmenu()">
+                    <img src="assets/images/settingsym.png" alt="settingsym">
+                </div>
+            </div>
+        </div>
+
+        <div class="interface">
+            <div class="menu">
+
+                <div class="user">
+                    <img src="assets/images/diffusersym.png" alt="profile-picture">
+                    <div class="username">
+                        <h3 id = "username-fullname">Inocencio, Mickael Chazwick C. </h3>
+                    </div>
+                </div>
+
+                <div class="profile" onclick= "profilemenu()">
+                    <div class="contain">
+                        <img src="assets/images/profilesym.png" alt="profilesym">
+                        <div class="aref">
+                            <p>Profile</p>
+                        </div>
+                            <p> > </p>
+                    </div>
+               </div>
+               <div class="reserve" onclick= "reservemenu()">
+                    <div class="contain">
+                        <img src="assets/images/reservesym.png" alt="reservesym">
+                        <div class="aref">
+                            <p>Reserve</p>
+                        </div>
+                            <p> > </p>
+                    </div>
+               </div>
+               <div class="logout" onclick= "logoutmenu()"> 
+                        <img src="assets/images/logoutsym.png" alt="logoutsym">
+                        <p>Logout</p>
+               </div>
+            </div>
+
+            <div class="content">
+
+            </div>
+        </div>
+    </div>
 </body>
 </html>
