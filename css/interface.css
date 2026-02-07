@@ -85,13 +85,14 @@ body{
     height: calc(100vh - 120px);
     padding: 25px;
     display: flex;
+    gap: 25px
 }
 .menu{
-    border: 2px solid var(--lightgrey-green);
     background-color: var(--ls-white);
     height: fit-content;
     width: 25%;
     border-bottom: 0;
+    box-shadow: 0 0 5px var(--lightgrey-green);
 }
 
 .menu img{
@@ -137,7 +138,7 @@ body{
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 50px;
+    height: 30%;
     transition: all 0.3s ease-in-out;
 }
 
@@ -157,7 +158,7 @@ body{
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 50px;
+    height: 50%;
     transition: all 0.3s ease-in-out;
 }
 
@@ -177,12 +178,11 @@ body{
     justify-content: center;
     width: 100%;
     height: 50px;
-    border-top: 2px solid var(--lightgrey-green);
-    border-bottom: 2px solid var(--lightgrey-green);
     color: var(--lightgrey-green);
     gap: 7px;
     transition: all 0.3s ease-in-out;
     font-weight: 600;
+    box-shadow: 0 0 5px var(--lightgrey-green);
 }
 
 .logout:hover{
@@ -200,3 +200,93 @@ body{
     height: 100%;
 }
 
+.revops{
+    width: 100%;
+    height: 50%;
+}
+
+.ops{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    transition: all 0.3s ease-in-out;
+}
+
+.ops:hover{
+    cursor: pointer;
+    color: var(--ls-azure);
+    background-color: var(--hover-bg);
+}
+
+.contheader{
+    width: 100%;
+    height: 15%;
+    box-shadow: 0 0 5px var(--lightgrey-green);
+    display: flex;
+    align-items: center;
+}
+
+.contheader h1 {
+    margin-left: 25px;
+    color: var(--ls-green);
+}
+
+.contheader h1 span {
+    color: var(--darkgrey-green)
+}
+
+.contprofile{
+    box-shadow: 0 0 5px var(--lightgrey-green);
+    position: absolute;
+    margin-left: 367px;
+    width: 1022px;
+    height: 608px;
+    padding: 20px;
+    background-color: white;
+    display:flex;
+    gap: 20px;
+    display: none;
+}
+
+.contprofile h1 {
+    
+    color: var(--ls-green);
+}
+
+.contprofile img {
+    height: 150px;
+    width: auto;
+    border-radius: 50%;
+}
+
+.prof-desc{
+    display:grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 20px;
+
+}
+
+.prof-desc dl{
+    color: var(--ls-green);
+    display: flex;
+    margin: 0;
+}
+
+.prof-desc dt{
+    margin-right: 5px;
+    font-weight:700;
+    line-height:2.2;
+
+}
+
+.prof-desc dd{
+    color: var(--ls-black);
+    flex:1;
+    font-weight:500;
+    line-height:2.2;
+    letter-spacing:.04em;
+    margin-left:0;
+
+}
