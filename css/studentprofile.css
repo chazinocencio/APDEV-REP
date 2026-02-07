@@ -1,0 +1,215 @@
+.hidden {
+    display: none !important;
+}
+
+.studentprofile{
+    height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+}
+
+.leftdetails{
+    position: relative;
+    padding-top: 20px;
+    display: flex;
+    width: 30%;
+    height: 100%;
+    align-items: center;
+    flex-direction: column;
+    color: var(--ls-green);
+    border-right: 2px solid var(--midgrey-green);
+    margin: 0;
+}
+
+.leftdetails img{
+    margin: 0;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    filter: brightness(1);
+    transition: filter 0.3s ease-in-out;
+}
+
+.backbutt{
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.backbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.editbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: 150px;
+    height: 40px;
+    border-radius: 5px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
+}
+
+.editbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+#cancel{
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+    border: 1px solid var(--ls-green);
+}
+
+#cancel:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+    color: var(--ls-white);
+}
+
+.butt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-radius: 5px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.butt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.butt h3{
+    margin: 0;
+}
+
+.butt img{
+    height: 70%;
+    width: auto;
+    border-radius: 0;
+}
+
+.rightdetails{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    align-items: center;
+}
+
+.contain{
+    display: block;
+    color: var(--ls-green);
+    width: 100%;
+    height: auto;
+    padding-left: 50px
+}
+
+.box{
+    padding: 20px;
+    width: 90%;
+    height: auto;
+    background-color: var(--hover-bg);
+    border-radius: 10px;
+    margin-bottom: 50px;
+    border: 1px solid var(--midgrey-green);
+}
+
+.box h3{
+    font-weight: 400;
+}
+
+.prof-desc{
+    display:grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 20px;
+}
+
+.prof-desc dl{
+    font-size: large;
+    color: var(--ls-black);
+    display: flex;
+    margin: 0;
+}
+
+.prof-desc dt{
+    margin-right: 5px;
+    font-weight:700;
+    line-height: 2.2;
+
+}
+
+.prof-desc dd{
+    color: var(--ls-black);
+    flex:1;
+    font-weight:500;
+    line-height: 2.2;
+    letter-spacing:.02em;
+    margin-left:0;
+
+}
+
+.pictureedit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    transform: translate(-50%, -15%); 
+    z-index: 100;
+    margin-top: 0; 
+    background-color: var(--ls-white);
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.pictureedit img{
+    filter: brightness(0);
+    height: 40px;
+    width: 40px;
+    border-radius: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.pictureedit:hover img{
+    cursor: pointer;
+    filter: brightness(1);
+    transition: all 0.3s ease-in-out;
+}
+
+.pictureedit:hover{
+    cursor: pointer;
+    background-color: var(--ls-green);
+}

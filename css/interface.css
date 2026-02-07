@@ -247,46 +247,6 @@ body{
     background-color: white;
     display:flex;
     gap: 20px;
-    display: none;
+    display: block;
 }
 
-.contprofile h1 {
-    
-    color: var(--ls-green);
-}
-
-.contprofile img {
-    height: 150px;
-    width: auto;
-    border-radius: 50%;
-}
-
-.prof-desc{
-    display:grid;
-    grid-template-columns: max-content 1fr;
-    column-gap: 20px;
-
-}
-
-.prof-desc dl{
-    color: var(--ls-green);
-    display: flex;
-    margin: 0;
-}
-
-.prof-desc dt{
-    margin-right: 5px;
-    font-weight:700;
-    line-height:2.2;
-
-}
-
-.prof-desc dd{
-    color: var(--ls-black);
-    flex:1;
-    font-weight:500;
-    line-height:2.2;
-    letter-spacing:.04em;
-    margin-left:0;
-
-}
