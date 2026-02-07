@@ -1,2 +1,3 @@
-const usernamelogin = document.getElementById('studentusername')
+var username = document.getElementById('studentusername')
+var password = document.getElementById('studentpassword')
 
