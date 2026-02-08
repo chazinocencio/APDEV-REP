@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/login.css">
+    <script src="js/login.js" type="text/javascript"></script>
     <title>Student Login</title>
 </head>
 <body>
@@ -14,34 +15,34 @@
         <div class="card">
             <h1>Student Sign In</h1>
             <div class="log">
-                <div class="logcard">
+                <form class="logcard" action="student.html" onsubmit="return checkForm()">
                     <label for="username">Username / Email</label>
                     <div class="inpt">
                         <div class="symbl">
                             <img src="assets/images/userlogo.png" alt="userlogo">
                         </div>
-                        <input type="text" placeholder="Username" name="username">
+                        <input type="text" placeholder="Username / Email" name="username" id="username">
                     </div>
 
-                    <label for="password">Password / OTP</label>
+                    <label for="password">Password</label>
                     <div class="inpt">
                         <div class="symbl">
                             <img src="assets/images/passlogo.png" alt="passlogo">
                         </div>
-                        <input type="password" placeholder="Password" name="password" id="studentusername">
+                        <input type="password" placeholder="Password" name="password" id="password">
                     </div>
-                </div>
 
                 <div class="rememberme">
                     <input type="checkbox" id="rememberme" name="rememberme">
                     <label for="rememberme"> Remember Me</label>
                 </div>
                 
-                <div class="errormess">
+                <div class="errormess" id="errormess">
                     <p>Invalid username or password. Please try again.</p>
                 </div>
 
-                <a href="student.html">Sign In</a>
+                <input type="submit" class= "submitbtn" value="Sign In">
+                </form>
             </div>
         </div>
     </div>
