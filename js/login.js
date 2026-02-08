@@ -1,6 +1,6 @@
 function checkForm(){
-    var username = document.getElementById('studentusername');
-    var password = document.getElementById('studentpassword');
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
     var errormess = document.getElementById('errormess');
 
     var all_fields = true;
