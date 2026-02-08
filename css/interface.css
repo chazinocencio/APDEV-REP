@@ -2,6 +2,11 @@ body{
     background-color: var(--interface-bg);
 }
 
+.hidden {
+    display: none !important;
+}
+
+
 .header{
     padding: 20px;
     padding-right: 0px;
@@ -16,69 +21,6 @@ body{
     height: 80px;
     width: auto;
     margin-left: 20px;
-}
-
-.options{
-    display: flex;
-    justify-content: right;
-    width: 50%;
-    gap: 50px;
-}
-.search{    
-    padding: 5px;
-    background-color: var(--interface-bg);
-    width: 35%;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 2px solid var(--lightgrey-green);
-    border-radius: 5px;
-}
-
-.search input{
-    width: 100%;
-    height: 100%;
-    border: 0px;
-    background-color: var(--interface-bg);
-    border-radius: 5px;
-}
-
-.searchlogo{
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 10%;
-    border-radius: 5px; 
-}
-
-.searchlogo img{
-    margin: 2px;
-    height: 20px;
-}
-
-.settings{
-    background-color: var(--ls-green);
-    width: 50px;
-    height: 50px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease-in-out;
-}
-
-.settings img{
-    margin-left: 3px;
-    height: 30px;
-    width: auto;
-}
-
-.settings:hover{
-    cursor: pointer;
-    background-color: var(--darkgrey-green);
 }
 
 .interface{
@@ -172,6 +114,25 @@ body{
     filter: invert(36%) sepia(84%) saturate(945%) hue-rotate(167deg) brightness(91%) contrast(93%);
 }
 
+.searchbutt{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.searchbutt:hover{
+    cursor: pointer;
+    color: var(--ls-azure);
+    background-color: var(--hover-bg);
+}
+
+.searchbutt:hover img{
+    filter: invert(36%) sepia(84%) saturate(945%) hue-rotate(167deg) brightness(91%) contrast(93%);
+}
+
 .logout{
     display: flex;
     align-items: center;
@@ -244,9 +205,35 @@ body{
     width: 1022px;
     height: 608px;
     padding: 20px;
-    background-color: white;
+    background-color: var(--ls-white);
     display:flex;
     gap: 20px;
     display: block;
+}
+
+.searchmenu{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.searchmenu:hover{
+    cursor: pointer;
+    color: var(--ls-azure);
+    background-color: var(--hover-bg);
+}
+
+.searchmenu:hover img{
+    filter: invert(36%) sepia(84%) saturate(945%) hue-rotate(167deg) brightness(91%) contrast(93%);
+}
+
+.searchoption{
+    display: flex;
+    align-items: center;
+    height: 50%;
+    width: 100%;
 }
 
