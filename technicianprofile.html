@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/interface.css">
+    <link rel="stylesheet" href="css/technicianprofile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Technician Profile</title>
+</head>
+<body>
+    <div class="cointainer">
+        <div class="header">
+            <img src="assets/images/headerlogo.png" alt="Logo">
+            <div class="backbutt" id="back">
+                <h3>Back</h3>
+            </div>
+        </div>
+
+        <div class="technicianprofile">
+                <div class="leftdetails">
+
+                    <div class="pictureedit hidden" id="pictureedit">
+                        <img src="assets/images/editprofilesym.png" alt="editprofilesym">
+                    </div>
+
+                    <img src="assets/images/diffusersym.png" alt="profile-picture" id="profilepic">
+                    <h1 id="profileusername">@<span>Username</span></h1>
+
+                    <div class="butt" id="edit">
+                        <img src="assets/images/editprofilesym.png" alt="editprofilesym">
+                        <h3>Edit Profile</h3>
+                    </div>
+
+                    <div class="editbutt hidden" id="save">
+                        <h3>Save</h3>
+                    </div>
+
+                    <div class="editbutt cancel hidden" id="cancel">
+                        <h3>Cancel</h3>
+                    </div>
+                    
+                </div>
+
+                <div class="rightdetails" id="card">
+                    <div class="contain">
+                        <h1 id="profileusername">username</h1>
+                    </div>
+
+                    <div class="box">
+                        <div class="prof-info">
+                            <div class="prof-desc">
+                                <dl>
+                                <dt>Employee ID: </dt>
+                                <dd id="prof-id">TECH-12412910</dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>Department: </dt>
+                                    <dd id="campus">IT Support</dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>Role: </dt>
+                                    <dd id="prof-program">Lab Technician - Computer Labs</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contain">
+                                <h1>Bio</h1>
+                    </div>
+
+                    <div class="box">
+                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                    </div>
+                </div>
+
+                <div class="rightdetails hidden editinfo" id="info">
+                    <div class="contain">
+                        <h1 id="profileusername">username</h1>
+                    </div>
+
+                    <div class="box">
+                        <input type="text" placeholder="Username" name="editusername" id="editusername" class="editusername">
+                    </div>
+
+                    <div class="errormess hidden">
+                        <h3>This username is already taken.</h3>
+                        <h3>Username may only contain alphanumeric characters, periods, or underscores.</h3>
+                    </div>
+
+                    <div class="contain">
+                            <h1>Bio</h1>
+                    </div>
+
+                    <div class="box">
+                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                    </div>
+                </div>
+
+                <div class="editphotocard hidden" id="editphotocard">
+                    <div class="label">
+                        <h3>Update Photo</h3>
+                    </div>
+                    
+                    <div class="dragdrop">
+                        <div class="instructions">
+                            <img src="assets/images/photoeditsym.png" alt="photoeditsym">
+                            <h3>Drag and drop your image here or click here to browse files.</h3>
+                        </div>
+                    </div>
+
+                    <div class="editbutt" id="photosave">
+                            <h3>Save</h3>    
+                    </div>
+
+                    <div class="editbutt cancel" id="photocancel">
+                        <h3>Cancel</h3>
+                    </div>
+
+                </div>
+        </div>
+    </div>
+
+    <script src="js/technicianprofile.js"></script>
+</body>
+</html>

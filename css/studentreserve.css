@@ -86,3 +86,36 @@
     height: 100%;
     border-radius: 10px;
 }
+
+.revbutt{
+    margin-left: 650px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.revbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.revbutt h3{
+    margin: 0;
+}
+
+.revbutt img{
+    margin: 0;
+    height: 40%;
+    width: auto;
+    border-radius: 0;
+}
