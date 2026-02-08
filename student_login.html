@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/login.css">
+    <script src="js/studentlogin.js" type="text/javascript"></script>
     <title>Student Login</title>
 </head>
 <body>
@@ -20,10 +21,10 @@
                         <div class="symbl">
                             <img src="assets/images/userlogo.png" alt="userlogo">
                         </div>
-                        <input type="text" placeholder="Username" name="username" id="studentusername">
+                        <input type="text" placeholder="Username / Email" name="username" id="studentusername">
                     </div>
 
-                    <label for="password">Password / OTP</label>
+                    <label for="password">Password</label>
                     <div class="inpt">
                         <div class="symbl">
                             <img src="assets/images/passlogo.png" alt="passlogo">
@@ -36,11 +37,11 @@
                     <label for="rememberme"> Remember Me</label>
                 </div>
                 
-                <div class="errormess">
+                <div class="errormess" id="errormess">
                     <p>Invalid username or password. Please try again.</p>
                 </div>
 
-                <input type="submit" class= "submitbtn" href="student.html" value="Sign In">
+                <input type="submit" class= "submitbtn" value="Sign In">
                 </form>
             </div>
         </div>
