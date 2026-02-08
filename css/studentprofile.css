@@ -75,13 +75,13 @@
     background-color: var(--darkgrey-green);
 }
 
-#cancel{
+.cancel{
     background-color: var(--ls-white);
     color: var(--ls-green);
     border: 1px solid var(--ls-green);
 }
 
-#cancel:hover{
+.cancel:hover{
     cursor: pointer;
     background-color: var(--darkgrey-green);
     color: var(--ls-white);
@@ -212,4 +212,83 @@
 .pictureedit:hover{
     cursor: pointer;
     background-color: var(--ls-green);
+}
+
+.errormess{
+    margin-left: 100px;
+    width: 100%;
+    line-height: 10px;
+}
+
+.errormess h3{
+    color: var(--ls-red);
+    font-weight: 400;
+}
+
+.editusername{
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: large;
+}
+
+.editphotocard{
+    margin-top: -5%;
+    margin-left: 20%;
+    padding: 20px;
+    width: 60%;
+    background-color: var(--ls-white);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    align-items: center;
+    border: 2px solid var(--midgrey-green);
+    border-radius: 20px;
+}
+
+.label{
+    width: 100%;
+}
+
+.dragdrop{
+    display: flex;
+    width: 100%;
+    height: 70%;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.dragdrop:hover{
+    cursor: pointer;
+    filter: brightness(0.9);
+}
+
+.instructions{
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--ls-white);
+    width: 90%;
+    border: 5px dashed var(--midgrey-green);
+    border-radius: 10px;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.instructions img{
+    width: 70px;
+    height: auto;
+}
+
+.instructions h3{
+    margin: 0;
+    text-align: center;
+    font-weight: 400;
+    width: 50%;
+    height: auto;
 }

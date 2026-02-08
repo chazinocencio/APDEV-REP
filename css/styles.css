@@ -6,12 +6,16 @@
     --ls-gold: #cd9934;
     --ls-red: #cd201f;
     --ls-azure: #0e77ac;
+    --ls-grey: #a4a8b3;
     --midgrey-green: #8ab39b;
     --darkgrey-green: #4c8c66;
     --lightgrey-green: #c6dace;
     --cloudfair-bg: #222222;
     --interface-bg: #fafbfd;
     --hover-bg: #e9edf2;
+    --dark-green: #545454;
+    --room-cell: #e8efe9;
+    --room-unavailable: #5a5a5a;
 }
 
 

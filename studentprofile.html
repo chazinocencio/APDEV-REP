@@ -39,7 +39,7 @@
                         <h3>Save</h3>
                     </div>
 
-                    <div class="editbutt hidden" id="cancel">
+                    <div class="editbutt cancel hidden" id="cancel">
                         <h3>Cancel</h3>
                     </div>
                     
@@ -86,19 +86,47 @@
                     </div>
 
                     <div class="box">
+                        <input type="text" placeholder="Username" name="editusername" id="editusername" class="editusername">
+                    </div>
+
+                    <div class="errormess hidden">
+                        <h3>This username is already taken.</h3>
+                        <h3>Username may only contain alphanumeric characters, periods, or underscores.</h3>
                     </div>
 
                     <div class="contain">
-                                <h1>Bio</h1>
+                            <h1>Bio</h1>
                     </div>
 
                     <div class="box">
                         <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
                     </div>
                 </div>
+
+                <div class="editphotocard hidden" id="editphotocard">
+                    <div class="label">
+                        <h3>Update Photo</h3>
+                    </div>
+                    
+                    <div class="dragdrop">
+                        <div class="instructions">
+                            <img src="assets/images/photoeditsym.png" alt="photoeditsym">
+                            <h3>Drag and drop your image here or click here to browse files.</h3>
+                        </div>
+                    </div>
+
+                    <div class="editbutt" id="photosave">
+                            <h3>Save</h3>    
+                    </div>
+
+                    <div class="editbutt cancel" id="photocancel">
+                        <h3>Cancel</h3>
+                    </div>
+
+                </div>
         </div>
     </div>
 
-    <script src="js/profile.js"></script>
+    <script src="js/studentprofile.js"></script>
 </body>
 </html>
