@@ -5,9 +5,14 @@ const g303 = document.getElementById('G303')
 const g304 = document.getElementById('G304')
 const g305 = document.getElementById('G305')
 const g306 = document.getElementById('G306')
+const reservations = document.getElementById('reservations')
 
 studentprofile.addEventListener('click', function(){
     window.location.href = "../student.html";
+})
+
+reservations.addEventListener('click', function(){
+    window.location.href = "../myreservations.html";
 })
 
 g301.addEventListener('click', function(){

@@ -101,6 +101,7 @@
     align-items: center;
     gap: 10px;
     transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
 }
 
 .butt:hover{
@@ -117,6 +118,82 @@
     width: auto;
     border-radius: 0;
 }
+
+
+.changepassbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-white);
+    width: auto;
+    height: 40px;
+    border: 1px solid var(--ls-green);
+    border-radius: 5px;
+    color: var(--ls-green);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
+}
+
+.changepassbutt:hover{
+    cursor: pointer;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+}
+
+.changepassbutt h3{
+    margin: 0;
+}
+
+.changepassbutt img{
+    height: 70%;
+    width: auto;
+    border-radius: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.changepassbutt:hover img{
+    filter: invert(1);
+}
+
+
+.deactbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-white);
+    width: auto;
+    height: 40px;
+    border: 1px solid var(--ls-red);
+    border-radius: 5px;
+    color: var(--ls-red);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.deactbutt:hover{
+    cursor: pointer;
+    filter: brightness(0.8);
+}
+
+.deactbutt h3{
+    margin: 0;
+}
+
+.deactbutt img{
+    height: 70%;
+    width: auto;
+    border-radius: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+
 
 .rightdetails{
     display: flex;
@@ -291,4 +368,84 @@
     font-weight: 400;
     width: 50%;
     height: auto;
+}
+
+
+.inpt{
+    padding: 20px;
+    padding-left: 80px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.editpass{
+    margin-left: 35%;
+    color: var(--ls-green);
+    padding: 20px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    background-color: var(--ls-white);
+    border-radius: 20px;
+    border: 2px solid var(--lightgrey-green);
+}
+
+.editpass p{
+    margin: 0%;
+    margin-bottom: 10px;
+    width: auto;
+    display: flex;
+    color: var(--ls-red);
+    align-items: center;
+}
+.editpass h1, h3{
+    margin: 0;
+}
+
+
+.searchdeets{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.searchdeets h3{
+    width: 50%;
+    margin: 0;
+}
+
+
+.canbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    background-color: var(--ls-white);
+    width: auto;
+    height: 40px;
+    border: 1px solid var(--ls-green);
+    border-radius: 5px;
+    color: var(--ls-green);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.canbutt:hover{
+    cursor: pointer;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+}
+
+.canbutt h3{
+    margin: 0;
+}
+.butts{
+
+    display: flex;
+    gap:20%;
 }

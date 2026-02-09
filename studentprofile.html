@@ -35,6 +35,16 @@
                         <h3>Edit Profile</h3>
                     </div>
 
+                    <div class="changepassbutt" id="changepass">
+                        <img src="assets/images/changepasssym.png" alt="changepasssym">
+                        <h3>Change Password</h3>
+                    </div>
+
+                    <div class="deactbutt" id="deact">
+                        <img src="assets/images/deactivatesym.png" alt="deact">
+                        <h3>Deactivate</h3>
+                    </div>
+
                     <div class="editbutt hidden" id="save">
                         <h3>Save</h3>
                     </div>
@@ -124,6 +134,53 @@
                     </div>
 
                 </div>
+
+                <div class="editpass hidden" id="editpass">
+                        <h1>Change Password</h1>
+
+                        <div class="inpt">
+
+                            <div class="passdeet">
+                                <h3>Old Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="Old Password" name="oldpass" id="oldpass" class="editusername">
+                                </div>
+                            </div>
+
+                            <div class="passdeets">
+                                <h3>New Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="New Password" name="newpass" id="newpass" class="editusername">
+                                </div>
+                            </div>
+                        
+                            <div class="passdeets">
+                                <h3>Confirm New Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="Confirm Password" name="conpass" id="conpass" class="editusername">
+                                </div>
+                            </div>
+                
+                        </div>
+
+                        <p class="errormess hidden">Please fill out all fields.</p>
+                        <p class="errormess hidden">Password does not match.</p>
+                        <p class="errormess hidden">Old password is incorrect.</p>
+
+                        <div class="confirm">
+                            <div class="butts">
+                                <div class="butt" id="savepass">
+                                    <h3>Save</h3>
+                                </div>
+                                <div class="canbutt" id="cancelpass">
+                                    <h3>Cancel</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
         </div>
     </div>
 
