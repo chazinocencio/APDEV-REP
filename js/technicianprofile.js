@@ -9,15 +9,48 @@ const editinfo = document.getElementById('info')
 const editphotocard = document.getElementById('editphotocard')
 const photosave = document.getElementById('photosave')
 const photocancel = document.getElementById('photocancel')
+const changepass = document.getElementById("changepass")
+const deactbutt = document.getElementById("deactbutt")
+const editpass = document.getElementById("editpass")
+const savepass = document.getElementById("savepass")
+const cancelpass = document.getElementById("cancelpass")
+const deact = document.getElementById("deact")
+const confirmdeact = document.getElementById("confirmdeact")
+const canceldeact = document.getElementById("canceldeact")
 
 technicianprofile.addEventListener('click', function(){
-    window.location.href = "technician.html";
+   window.location.href = "technician.html";
+}) 
+
+cancelpass.addEventListener('click', function(){
+   editpass.classList.add('hidden');
+}) 
+
+savepass.addEventListener('click', function(){
+   editpass.classList.add('hidden');
+}) 
+
+canceldeact.addEventListener('click', function(){
+   deact.classList.add('hidden');
+}) 
+
+confirmdeact.addEventListener('click', function(){
+   deact.classList.add('hidden');
+}) 
+
+changepass.addEventListener('click', function(){
+    editpass.classList.remove('hidden');
 })
 
+deactbutt.addEventListener('click', function(){
+    deact.classList.remove('hidden');
+})
 edit.addEventListener('click', () => { 
     profilepic.style.filter = "brightness(0.75)";
     edit.classList.add('hidden');
     card.classList.add('hidden');
+    changepass.classList.add('hidden');
+    deactbutt.classList.add('hidden');
     editinfo.classList.remove('hidden');
     pictureedit.classList.remove('hidden');
     save.classList.remove('hidden');
@@ -32,6 +65,8 @@ save.addEventListener('click', event =>{
     pictureedit.classList.add('hidden');
     save.classList.add('hidden');
     cancel.classList.add('hidden');
+    changepass.classList.remove('hidden');
+    deactbutt.classList.remove('hidden');
     
 })
 
@@ -43,6 +78,8 @@ cancel.addEventListener('click', event =>{
     pictureedit.classList.add('hidden');
     save.classList.add('hidden');
     cancel.classList.add('hidden');
+    changepass.classList.remove('hidden');
+    deactbutt.classList.remove('hidden');
 })
 
 pictureedit.addEventListener('click', event =>{
