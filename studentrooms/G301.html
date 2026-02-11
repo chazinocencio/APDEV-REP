@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/interface.css">
-    <link rel="stylesheet" href="../css/studentprofile.css">
     <link rel="stylesheet" href="../css/studentreserve.css">
     <link rel="stylesheet" href="../css/studentrooms/g301.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,6 +25,7 @@
                 <span class="anonymous-label">Anonymous</span>
             </div>
 
+ 
             <div class="backbutt" id="back">
                 <h3>Back</h3>
             </div>
@@ -33,12 +33,19 @@
 
         <div class="g301">
            <div class="topcont">
+
+            <div class="butt hidden" id="rev">
+                <h3>Reserve</h3>
+            </div>
+
             <div class="label">
                 <h1>ROOM G301</h1>
             </div>
+
             <div class="roombutt" id="seatmap">
                 <h3>Seat Map</h3>
             </div>
+
            </div>
 
            <div class="date">
@@ -589,6 +596,10 @@
                 </div>
            </div>
 <!-- -------------------------------------------------------------------------------------------------------- -->
+           <div class="seat-info-card hidden" id="seat-info-card">
+                <img src="../assets/images/student.png" alt="User avatar" class="seat-info-avatar">
+                <h2 class="seat-info-username">@ch4zw1ck</h2>
+           </div>
 
            <div class="seatmap hidden" id="map">
                 <div class="crossback">
@@ -604,6 +615,7 @@
                 </div>
 
            </div>
+
 
         </div>
     </div>

@@ -1,0 +1,121 @@
+.studentreserve{
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--ls-green);
+}
+
+
+.roomgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; 
+    padding: 20px;
+    width: 90%;
+    height: 80%
+}
+
+.roomcard {
+    background-color: var(--ls-white); 
+    border: 1px solid var(--midgrey-green);
+    border-radius: 10px;
+    width: 100%;
+    height: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease-in-out;
+}
+
+.roomcard:hover{
+    cursor: pointer;
+    filter: brightness(0.9);
+}
+
+.roomheader{
+    display: flex;         
+    align-items: center;   
+    gap: 60px;             
+    margin-bottom: 15px;   
+}
+
+.roomheader img {
+    width: 50%;          
+    height: 90%;
+    object-fit: cover;     
+    border-radius: 8px;    
+}
+
+.roomlabel{
+    height: 100%;
+}
+
+.roomlabel h3 {
+    margin: 0;
+    color: var(--ls-green); 
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.vacancyinfo {
+    display: flex;                
+    justify-content: space-between; 
+    align-items: center;          
+    margin-top: 10px;             
+    margin-bottom: 5px;           
+    color: var(--ls-green);       
+    font-size: 14px;              
+}
+
+.vacancyinfo span {
+    font-weight: 500;        
+}
+
+.progressbar{
+    padding: 0%;
+    background-color: var(--ls-grey);
+    width: 100%;
+    height: 10px;
+    border-radius: 10px;
+}
+
+.progressfill{
+    background-color: var(--ls-gold);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.revbutt{
+    margin-left: 650px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.revbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.revbutt h3{
+    margin: 0;
+}
+
+.revbutt img{
+    margin: 0;
+    height: 40%;
+    width: auto;
+    border-radius: 0;
+}

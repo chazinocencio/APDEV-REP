@@ -31,12 +31,70 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    document.querySelector(".date-grid-wrap").addEventListener("click", function (e) {
-        var cell = e.target.closest(".date-grid-cell");
-        if (cell && !cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
-            cell.classList.toggle("chosen");
+    var gridWrap = document.querySelector(".date-grid-wrap");
+    if (gridWrap) {
+        gridWrap.addEventListener("click", function (e) {
+            var cell = e.target.closest(".date-grid-cell");
+            if (cell && !cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
+                cell.classList.toggle("chosen");
+                var reserveButton = document.getElementById("rev");
+                if (reserveButton) {
+                    var anyChosen = gridWrap.querySelector(".date-grid-cell.chosen");
+                    if (anyChosen) {
+                        reserveButton.classList.remove("hidden");
+                    } else {
+                        reserveButton.classList.add("hidden");
+                    }
+                }
+            }
+        });
+
+        var seatInfoCard = document.getElementById("seat-info-card");
+        if (seatInfoCard) {
+            var pinnedCell = null;
+
+            function isInfoCell(cell) {
+                return cell && cell.classList.contains("selected");
+            }
+
+            function showSeatInfo(cell) {
+                seatInfoCard.classList.remove("hidden");
+            }
+
+            function hideSeatInfo() {
+                seatInfoCard.classList.add("hidden");
+            }
+
+            gridWrap.addEventListener("mouseover", function (e) {
+                var cell = e.target.closest(".date-grid-cell");
+                if (!isInfoCell(cell)) return;
+                if (!pinnedCell) {
+                    showSeatInfo(cell);
+                }
+            });
+
+            gridWrap.addEventListener("mouseout", function (e) {
+                var cell = e.target.closest(".date-grid-cell");
+                if (!isInfoCell(cell)) return;
+                if (!pinnedCell) {
+                    hideSeatInfo();
+                }
+            });
+
+            gridWrap.addEventListener("click", function (e) {
+                var cell = e.target.closest(".date-grid-cell");
+                if (!isInfoCell(cell)) return;
+
+                if (pinnedCell === cell) {
+                    pinnedCell = null;
+                    hideSeatInfo();
+                } else {
+                    pinnedCell = cell;
+                    showSeatInfo(cell);
+                }
+            });
         }
-    });
+    }
 });
 
 var studentprofile = document.getElementById("back");

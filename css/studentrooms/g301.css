@@ -4,6 +4,7 @@
     flex-direction: column;
     align-items: stretch;
     color: var(--ls-green);
+    position: relative;
 }
 
 .topcont{
@@ -32,7 +33,7 @@
     background-color: var(--ls-white);
     color: var(--ls-green);
     border: 1px solid var(--ls-green);
-    width: auto;
+    width: 130px;
     height: 40px;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
@@ -234,8 +235,7 @@
 
 .date-grid-cell.selected {
     background-color: var(--ls-azure);
-    pointer-events: none;
-    cursor: default;
+    cursor: pointer;
 }
 
 .date-grid-cell.unavailable {
@@ -316,4 +316,92 @@
 
 .whiteboard p{
     margin: 0%;
+}
+
+.seat-info-card{
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    padding: 24px 20px;
+    background-color: var(--ls-white);
+    border-radius: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border: 2px solid var(--midgrey-green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 50;
+}
+
+.seat-info-avatar{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.seat-info-username{
+    margin: 0;
+    font-weight: 700;
+    color: var(--ls-green);
+}
+
+
+
+.butt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-radius: 5px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.butt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.butt h3{
+    margin: 0;
+}
+
+.butt img{
+    height: 70%;
+    width: auto;
+    border-radius: 0;
+}
+
+
+.backbutt{
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.backbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
 }
