@@ -12,7 +12,7 @@ studentprofile.addEventListener('click', function(){
 })
 
 reservations.addEventListener('click', function(){
-    window.location.href = "../myreservations.html";
+    window.location.href = "../reservations.html";
 })
 
 g301.addEventListener('click', function(){
