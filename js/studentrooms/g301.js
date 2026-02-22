@@ -95,6 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
+
+    seatInfoCard.addEventListener('click', function(){
+    window.location.href = "../studentprof.html";}) 
+
 });
 
 var studentprofile = document.getElementById("back");
@@ -119,3 +123,4 @@ if (crossback) {
         map.classList.add('hidden');
     });
 }
+

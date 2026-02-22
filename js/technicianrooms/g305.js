@@ -209,6 +209,8 @@ document.addEventListener("DOMContentLoaded", function () {
             revcancel.classList.add("hidden");
         });
     }
+    seatInfoCard.addEventListener('click', function(){
+    window.location.href = "../techstudentprof.html";}) 
 });
 
 var technicianprofile = document.getElementById("back");

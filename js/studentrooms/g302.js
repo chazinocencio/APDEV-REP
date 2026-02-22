@@ -95,6 +95,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
+
+    seatInfoCard.addEventListener('click', function(){
+    window.location.href = "../studentprof.html";}) 
 });
 
 var studentprofile = document.getElementById("back");

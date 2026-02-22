@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/interface.css">
+    <link rel="stylesheet" href="css/techstudentprof.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Student Profile</title>
+</head>
+<body>
+    <div class="cointainer">
+        <div class="header">
+            <img src="assets/images/headerlogo.png" alt="Logo">
+            <div class="backbutt" id="back">
+                <h3>Back</h3>
+            </div>
+        </div>
+
+        <div class="techstudentprof">
+                <div class="leftdetails">
+
+                    <div class="pictureedit hidden" id="pictureedit">
+                        <img src="assets/images/editprofilesym.png" alt="editprofilesym">
+                    </div>
+
+                    <img src="assets/images/diffusersym.png" alt="profile-picture" id="profilepic">
+                    <h1 id="profileusername">@<span>Username</span></h1>
+
+                    <div class="butt" id="viewrev">
+                        <img src="assets/images/reservationssym.png" alt="editprofilesym">
+                        <h3>View Reservations</h3>
+                    </div>
+
+                    
+                    <div class="deactbutt" id="blockbutt">
+                        <img src="assets/images/blockstudentsym.png" alt="deact">
+                        <h3>Block Student</h3>
+                    </div>
+                    
+                </div>
+
+                <div class="rightdetails" id="card">
+                    <div class="contain">
+                        <h1 id="profileusername">username</h1>
+                    </div>
+
+                    <div class="box">
+                        <div class="prof-info">
+                            <div class="prof-desc">
+                                <dl>
+                                <dt>ID: </dt>
+                                <dd id="prof-id">12412910</dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>College: </dt>
+                                    <dd id="campus">Manila</dd>
+                                </dl>
+
+                                <dl>
+                                    <dt>Program: </dt>
+                                    <dd id="prof-program">Bachelor of Science in Computer Science major in Software Technology</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contain">
+                                <h1>Bio</h1>
+                    </div>
+
+                    <div class="box">
+                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                    </div>
+                </div>
+
+                <div class="rightdetails hidden editinfo" id="info">
+                    <div class="contain">
+                        <h1 id="profileusername">username</h1>
+                    </div>
+
+                    <div class="box">
+                        <input type="text" placeholder="Username" name="editusername" id="editusername" class="editusername">
+                    </div>
+
+                    <div class="errormess hidden">
+                        <h3>This username is already taken.</h3>
+                        <h3>Username may only contain alphanumeric characters, periods, or underscores.</h3>
+                    </div>
+
+                    <div class="contain">
+                            <h1>Bio</h1>
+                    </div>
+
+                    <div class="box">
+                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                    </div>
+                </div>
+
+                <div class="editphotocard hidden" id="editphotocard">
+                    <div class="label">
+                        <h3>Update Photo</h3>
+                    </div>
+                    
+                    <div class="dragdrop">
+                        <div class="instructions">
+                            <img src="assets/images/photoeditsym.png" alt="photoeditsym">
+                            <h3>Drag and drop your image here or click here to browse files.</h3>
+                        </div>
+                    </div>
+
+                    <div class="editbutt" id="photosave">
+                            <h3>Save</h3>    
+                    </div>
+
+                    <div class="editbutt cancel" id="photocancel">
+                        <h3>Cancel</h3>
+                    </div>
+
+                </div>
+
+                <div class="editpass hidden" id="editpass">
+                        <h1>Change Password</h1>
+
+                        <div class="inpt">
+
+                            <div class="passdeet">
+                                <h3>Old Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="Old Password" name="oldpass" id="oldpass" class="editusername">
+                                </div>
+                            </div>
+
+                            <div class="passdeets">
+                                <h3>New Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="New Password" name="newpass" id="newpass" class="editusername">
+                                </div>
+                            </div>
+                        
+                            <div class="passdeets">
+                                <h3>Confirm New Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="Confirm Password" name="conpass" id="conpass" class="editusername">
+                                </div>
+                            </div>
+                
+                        </div>
+
+                        <p class="errormess hidden">Please fill out all fields.</p>
+                        <p class="errormess hidden">Password does not match.</p>
+                        <p class="errormess hidden">Old password is incorrect.</p>
+
+                        <div class="confirm">
+                            <div class="butts">
+                                <div class="butt" id="savepass">
+                                    <h3>Save</h3>
+                                </div>
+                                <div class="canbutt" id="cancelpass">
+                                    <h3>Cancel</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="deact hidden" id="deact">
+                        <h1>Deactivate Account</h1>
+
+                        <div class="inpt">
+
+                            <div class="passdeet">
+                                <h3>Enter Password</h3>
+
+                                <div class="box">
+                                    <input type="text" placeholder="Password" name="deactpass" id="deactpass" class="editusername">
+                                </div>
+                            </div>
+               
+                        </div>
+
+                        <p class="errormess hidden">Password Incorrect.</p>
+
+                        <div class="confirm">
+                            <div class="butts">
+                                <div class="conbutt" id="confirmdeact">
+                                    <h3>Confirm</h3>
+                                </div>
+                                <div class="canbutt" id="canceldeact">
+                                    <h3>Cancel</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                
+           <div class="blockroom1 hidden" id="blockroom1">
+                <div class="blockroom" id="blockroom">
+                <h1>Block Room</h1>
+
+                <div class="inpt">
+
+                    <div class="passdeet">
+                        <h3>Enter Password</h3>
+
+                        <div class="box">
+                            <input type="text" placeholder="Password" name="blockroom" id="blockroompass">
+                        </div>
+                    </div>
+        
+                </div>
+
+                <p class="errormess hidden">Password Incorrect.</p>
+
+                <div class="confirm">
+                    <div class="butts">
+                        <div class="conbutt" id="confirmblock">
+                            <h3>Confirm</h3>
+                        </div>
+                        <div class="canbutt" id="cancelblock">
+                            <h3>Cancel</h3>
+                        </div>
+                    </div>
+                </div>
+                </div>
+           </div>
+
+        </div>
+    </div>
+
+    <script src="js/techstudentprof.js"></script>
+</body>
+</html>
