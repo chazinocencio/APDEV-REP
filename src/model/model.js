@@ -195,7 +195,7 @@ export const RoomSchema = new mongoose.Schema(
 );
 
 // Index for room lookups
-RoomSchema.index({ roomID: 1 });
+RoomSchema.index({room_id: 1 });
 
 export const roomModel = mongoose.model("Room", RoomSchema);
 
