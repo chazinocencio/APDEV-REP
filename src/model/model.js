@@ -12,11 +12,7 @@ import bcrypt from "bcryptjs";
 export const UserSchema = new mongoose.Schema(
     {
         // Unique identifier for user
-        user_id: {
-            type: String,
-            unique: true,
-            sparse: true, // Allows null for polymorphic usage
-        },
+        // (removed) redundant user_id — username is used as unique identifier
 
         // DLSU email - must be unique
         email: {
@@ -194,31 +190,12 @@ export const RoomSchema = new mongoose.Schema(
             uppercase: true,
             trim: true,
         },
-
-        // Room name or description
-        room_name: {
-            type: String,
-            required: true,
-        },
-
-        // Building location
-        building: {
-            type: String,
-            default: "Engineering Building",
-        },
-
-        // Total number of seats in the room
-        capacity: {
-            type: Number,
-            required: true,
-            min: 1,
-        },
     },
     { timestamps: true }
 );
 
 // Index for room lookups
-RoomSchema.index({ room_id: 1 });
+RoomSchema.index({ roomID: 1 });
 
 export const roomModel = mongoose.model("Room", RoomSchema);
 
@@ -257,12 +234,6 @@ export const SeatSchema = new mongoose.Schema(
             default: "available",
         },
 
-        // Additional metadata
-        seat_type: {
-            type: String,
-            enum: ["standard", "accessible"],
-            default: "standard",
-        },
     },
     { timestamps: true }
 );
