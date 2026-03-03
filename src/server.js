@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./db.js";
 import { authErrorHandler } from "./middleware/auth.js";
+import { engine } from "express-handlebars";
 
 // Import routes
 import routes from "./routes/routes.js";
@@ -15,6 +16,11 @@ import studentRoutes from "./routes/studentRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Handlebars view engine setup
+app.engine("hbs", engine({ extname: ".hbs", defaultLayout: "main" }));
+app.set("view engine", "hbs");
+app.set("views", "./views");
 
 // ============================================================================
 // DATABASE CONNECTION
