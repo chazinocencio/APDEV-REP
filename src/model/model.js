@@ -281,6 +281,15 @@ export const ReservationSchema = new mongoose.Schema(
         // Reservation ID - Primary Key (auto-generated ObjectId)
         // Note: MongoDB generates _id automatically
 
+        // Human-friendly/explicit reservation identifier
+        reservation_id: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+            default: () => new mongoose.Types.ObjectId().toString(),
+        },
+
         // Foreign Key to Seat
         seat_id: {
             type: String,
@@ -349,6 +358,9 @@ ReservationSchema.index(
     { seat_id: 1, start: 1, end: 1 },
     { unique: false } // Handled in application logic due to date ranges
 );
+
+// Explicit unique index for reservation_id
+ReservationSchema.index({ reservation_id: 1 }, { unique: true });
 
 // Indexes for common queries
 ReservationSchema.index({ id_number: 1, status: 1 });
