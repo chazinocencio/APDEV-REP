@@ -17,10 +17,9 @@ export const StudentSchema = new mongoose.Schema({
     idNumber: Number,
     email: String,
     passwordHash: String,
-    last_name: String,
+    lastName: String,
     firstName: String,
     middleName: String,
-    lastName: String,
     profilePicture: String,
     bio: String,
     degreeProgram: String,
@@ -29,3 +28,58 @@ export const StudentSchema = new mongoose.Schema({
 });
 
 export const studentModel = mongoose.model("students", StudentSchema);
+
+export const TechnicianSchema = new mongoose.Schema({
+    userName: String,
+    email: String,
+    passwordHash: String,
+    lastName: String,
+    firstName: String,
+    middleName: String,
+    profilePicture: String,
+    bio: String,
+    isActive: Boolean,
+    employeeID: String,
+    department: String,
+    role: String
+});
+
+export const technicianModel = mongoose.model("technicians", TechnicianSchema);
+
+export const ReservationSchema = new mongoose.Schema({
+    status: {
+        type: String,
+        enum: {
+            values: ['Pending','Active', 'Cancelled', 'Completed']
+        },
+        default: 'Pending'
+    },
+    seatID: String,
+    idNumber: Number,
+    startTime: Date,
+    endTime: Date,
+    is_anonymous: Boolean,
+    reservation_type: {
+        type: String,
+        enum: {
+            values: ['Student', 'Walk In', 'Blocked'] 
+        },
+        default: 'Student'
+    },
+    description: String
+});
+
+export const reservationModel = mongoose.model("reservations", ReservationSchema);
+
+export const RoomSchema = new mongoose.Schema({
+    roomID: String
+});
+
+export const roomModel = mongoose.model("rooms", RoomSchema);
+
+export const SeatSchema = new mongoose.Schema({
+    seatID: String,
+    roomID: String
+});
+
+export const seatModel = mongoose.model("seats", SeatSchema);
