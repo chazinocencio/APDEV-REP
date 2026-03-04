@@ -7,6 +7,7 @@ import cors from "cors";
 import { connectDB } from './db.js';
 
 import routes from './routes/routes.js'
+import studentRoutes from './routes/student_routes.js'
 
 const app = express();
 const port = 5000;
@@ -20,6 +21,7 @@ app.use(express.static("views"));
 
 // route to the user api keys
 app.use("/api/users", routes);
+app.use("/api/students", studentRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
