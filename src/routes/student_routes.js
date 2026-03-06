@@ -83,10 +83,10 @@ router.get('/viewprofile/:username', async (req, res) => {
 });
 
 //search profile
-router.get('/searchprofile/:username', async (req, res) => {
+router.get('/searchprofile/:name', async (req, res) => {
     try {
-        const { username } = req.params;
-        const studentProfile = await model.studentModel.find({username: username});
+        const { name } = req.params;
+        const studentProfile = await model.studentModel.find({first_name: name});
         res.json(studentProfile);
     } catch (error) {
         console.error(error);
@@ -96,10 +96,18 @@ router.get('/searchprofile/:username', async (req, res) => {
 
 //edit profile
 
-router.put('/editprofile/:id', async (req, res) =>{ 
+router.put('/editprofile/:idNumber', async (req, res) =>{ 
   try {
+    const { idNumber } = req.params; 
     const { bio, username } = req.body;
-    const user = await studentModel.findByIdAndUpdate(req.params.id,{ bio, username },{ new: true, runValidators: true });
+
+     const studentId = parseInt(idNumber);
+
+       const updateFields = {};
+        if (bio !== undefined) updateFields.bio = bio;
+        if (username !== undefined) updateFields.username = username;
+
+    const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { new: true, runValidators: true });
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -179,9 +187,40 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
     }
 });
 
-//register student
+//cancel reservation
 
-// Registration and login moved to auth routes
+router.delete('/delete_reservation/:seatID', async (req, res) => {
+    try{
+          const { seatID } = req.params;
+          const { startTime, endTime } = req.body;
+        
+          const query = { seatID: seatID };
+          
+          query.startTime = startTime;
+          query.endTime = endTime;
+
+        const reservation = await model.reservationModel.findOneAndDelete(query);
+
+        res.json({ 
+            success: true, 
+            message: 'reservation deleted successfully',
+            data: {
+                reservation: reservation
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+//update reservation
+
+//Viewing reservations of a room per day (table graphic)
+
+
 
 
 
