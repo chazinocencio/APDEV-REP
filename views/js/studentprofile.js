@@ -69,7 +69,7 @@ save.addEventListener('click', event =>{
     cancel.classList.add('hidden');
     changepass.classList.remove('hidden');
     deactbutt.classList.remove('hidden');
-    
+
 })
 
 cancel.addEventListener('click', event =>{ 
