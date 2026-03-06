@@ -189,26 +189,91 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
 
 //cancel reservation
 
-router.delete('/delete_reservation/:seatID', async (req, res) => {
+// cancel reservation - require authentication and ownership (students) or technician role
+router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
     try{
           const { seatID } = req.params;
           const { startTime, endTime } = req.body;
-        
-          const query = { seatID: seatID };
-          
-          query.startTime = startTime;
-          query.endTime = endTime;
 
-        const reservation = await model.reservationModel.findOneAndDelete(query);
+          if (!startTime || !endTime) {
+              return res.status(400).json({ message: 'startTime and endTime required in body' });
+          }
+
+          // find reservation
+          const query = { seatID: seatID, startTime: new Date(startTime), endTime: new Date(endTime) };
+          const reservation = await model.reservationModel.findOne(query);
+          if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
+
+          // fetch requester info from token
+          const requester = req.user; // { id, role, email } <-- extracted from JWT dun sa auth.js middleware
+
+          if (requester.role === 'student') {
+              // verify ownership by matching student's idNumber
+              const student = await model.studentModel.findOne({ email: requester.email });
+              if (!student) return res.status(404).json({ message: 'Student not found' });
+              if (student.idNumber !== reservation.idNumber) { //<-- lowkirkenuinely not sure if this will ever even happen (i forgor front end)
+                  return res.status(403).json({ message: 'Not authorized to cancel this reservation' });
+              }
+          } else if (requester.role === 'technician') {
+              // technicians are allowed to cancel, do nothing
+          } else {
+              return res.status(403).json({ message: 'Not authorized' });
+          }
+
+          const deleted = await model.reservationModel.findOneAndDelete({ _id: reservation._id });
 
         res.json({ 
             success: true, 
             message: 'reservation deleted successfully',
             data: {
-                reservation: reservation
+                reservation: deleted
             }
         });
 
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// change password for logged-in student
+router.put('/change_password', verifyToken, async (req, res) => {
+    try {
+        const requester = req.user; // { id, role, email }
+        if (requester.role !== 'student') return res.status(403).json({ message: 'Only students can change student password' });
+
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) return res.status(400).json({ message: 'oldPassword and newPassword are required' });
+
+        const student = await model.studentModel.findOne({ email: requester.email });
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
+        if (student.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+
+        student.passwordHash = newPassword;
+        await student.save();
+
+        res.json({ success: true, message: 'Password changed successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// deactivate profile (set isActive to false) for logged-in student
+router.put('/deactivate', verifyToken, async (req, res) => {
+    try {
+        const requester = req.user;
+        if (requester.role !== 'student') return res.status(403).json({ message: 'Only students can deactivate their profile' });
+
+        const student = await model.studentModel.findOne({ email: requester.email });
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
+        student.isActive = false;
+        student.canReserve = false;
+        await student.save();
+
+        res.json({ success: true, message: 'Profile deactivated' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
