@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = Router()
 
@@ -134,7 +135,7 @@ router.get('/seats/:roomID', async (req, res) => {
 
 //create new reservation
 
-router.post('/create_reservation/:username', async (req, res) => {
+router.post('/create_reservation/:username', verifyToken, async (req, res) => {
      try {
         const {username} = req.params;
         const {seatID, startTime, endTime, is_anonymous, description } = req.body;
@@ -180,39 +181,8 @@ router.post('/create_reservation/:username', async (req, res) => {
 
 //register student
 
-router.post('/register_student/:username', async (req, res) => {
-     try {
-        const {username} = req.params;
-        const {email, bio, password, first_name, last_name, middle_name, IDnumber, degree_program } = req.body;
+// Registration and login moved to auth routes
 
-        const registerStudent = new model.studentModel({
-            username: username,
-            idNumber: IDnumber,
-            email: email,
-            passwordHash: password,
-            lastName: last_name,
-            firstName: first_name,
-            middleName: middle_name,
-            profilePicture: 'null',
-            bio: bio,
-            degreeProgram: degree_program,
-            isActive: 'true',
-            canReserve: 'true',
-        });
-
-        await registerStudent.save();
-
-        res.status(201).json({
-            message: "Registered successfully",
-            register: registerStudent
-        });
-        console.log("new register created successfully");
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
 
 
 

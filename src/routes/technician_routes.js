@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = Router()
 
