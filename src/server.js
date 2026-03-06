@@ -9,10 +9,17 @@ import { connectDB } from "./db.js";
 import { authErrorHandler } from "./middleware/auth.js";
 import { engine } from "express-handlebars";
 
+<<<<<<< HEAD
 // Import routes
 import routes from "./routes/routes.js";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import technicianRoutes from "./routes/technicianRoutes.js";
+=======
+import routes from './routes/routes.js'
+import studentRoutes from './routes/student_routes.js'
+import technicianRoutes from './routes/technician_routes.js'
+>>>>>>> origin/main
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -50,17 +57,15 @@ app.use(express.static("views"));
 // ROUTE MOUNTING
 // ============================================================================
 
-// Authentication Routes (no middleware, public access)
-/**
- * Auth Endpoints:
- * - POST /api/auth/student/login - Student login
- * - POST /api/auth/student/register - Student registration
- * - POST /api/auth/verify - Verify JWT token (protected)
- */
+// Authentication Routes (public)
 app.use("/api/auth", authRoutes);
 
 // API Routes
 app.use("/api/users", routes);
+
+// Student & Technician Routes
+app.use("/api/student", studentRoutes);
+app.use("/api/technician", technicianRoutes);
 
 // Student API Routes (with authentication middleware)
 /**

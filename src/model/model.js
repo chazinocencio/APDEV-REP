@@ -109,6 +109,7 @@ UserSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password_hash);
 };
 
+<<<<<<< HEAD
 export const userModel = mongoose.model("User", UserSchema);
 
 // ============================================================================
@@ -339,3 +340,20 @@ ReservationSchema.index({ start: 1, end: 1 });
 ReservationSchema.index({ seat_id: 1, status: 1 });
 
 export const reservationModel = mongoose.model("Reservation", ReservationSchema);
+
+
+export const reservationModel = mongoose.model("reservations", ReservationSchema);
+
+export const RoomSchema = new mongoose.Schema({
+    roomID: String
+});
+
+export const roomModel = mongoose.model("rooms", RoomSchema);
+
+export const SeatSchema = new mongoose.Schema({
+    seatID: String,
+    roomID: String
+});
+
+export const seatModel = mongoose.model("seats", SeatSchema);
+>>>>>>> origin/main
