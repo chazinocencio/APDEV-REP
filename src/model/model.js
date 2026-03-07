@@ -50,7 +50,7 @@ export const ReservationSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: {
-            values: ['Pending','Active', 'Cancelled', 'Completed']
+            values: ['Pending', 'Active', 'Cancelled', 'Completed']
         },
         default: 'Pending'
     },

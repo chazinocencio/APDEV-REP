@@ -24,7 +24,7 @@ app.use(express.static("views"));
 // route to the user api keys
 app.use("/api/users", routes); // sample
 
-app.use("/api/students", studentRoutes);
+app.use("/api/student", studentRoutes);
 app.use("/api/technician", technicianRoutes);
 app.use("/api/auth", authRoutes);
 
