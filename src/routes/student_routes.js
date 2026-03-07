@@ -117,7 +117,7 @@ router.get('/seats/:roomID', async (req, res) => {
 router.post('/create_reservation/:username', verifyToken, async (req, res) => {
      try {
         const {username} = req.params;
-        const {seatID, startTime, endTime, is_anonymous, description } = req.body;
+        const {seatID, startTime, endTime, isAnonymous, description } = req.body;
 
          const student = await model.studentModel.findOne({ username: username });
          
@@ -139,8 +139,8 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             idNumber: student.idNumber,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
-            is_anonymous: is_anonymous || false,
-            reservation_type: 'Student',
+            isAnonymous: isAnonymous || false,
+            reservationType: 'Student',
             description: description || '',
             status: 'Pending'
         });

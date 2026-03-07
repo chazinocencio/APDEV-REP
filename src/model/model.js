@@ -50,8 +50,8 @@ export const ReservationSchema = new mongoose.Schema({
     idNumber: Number,
     startTime: Date,
     endTime: Date,
-    is_anonymous: Boolean,
-    reservation_type: {
+    isAnonymous: Boolean,
+    reservationType: {
         type: String,
         enum: {
             values: ['Student', 'Walk In', 'Blocked'] 
