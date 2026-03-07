@@ -182,4 +182,23 @@ router.put('/change_password', verifyToken, async (req, res) => {
     }
 });
 
+// deactivate profile (set isActive to false) for logged-in technician
+router.put('/deactivate', verifyToken, async (req, res) => {
+    try {
+        const requester = req.user;
+        if (requester.role !== 'technician') return res.status(403).json({ message: 'Only technicians can deactivate their profile' });
+
+        const technician = await model.technicianModel.findOne({ email: requester.email });
+        if (!technician) return res.status(404).json({ message: 'technician not found' });
+
+        technician.isActive = false;
+        await technician.save();
+
+        res.json({ success: true, message: 'Profile deactivated' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router;

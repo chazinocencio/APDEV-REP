@@ -22,7 +22,7 @@ export const StudentSchema = new mongoose.Schema({
 export const studentModel = mongoose.model("students", StudentSchema);
 
 export const TechnicianSchema = new mongoose.Schema({
-    userName: String,
+    username: String,
     email: String,
     passwordHash: String,
     lastName: String,
