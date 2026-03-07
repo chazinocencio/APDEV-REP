@@ -98,6 +98,18 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
 
 /* insert code */
 
+// view all reservations
+
+router.get('/all_reservations', async(req, res) => {
+    try {
+        const reservations = await model.reservationModel.find();
+        res.json(reservations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // block student
 
 router.put('/block_student/:id', async(req, res) =>{
