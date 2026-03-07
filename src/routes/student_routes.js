@@ -4,36 +4,6 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = Router()
 
-// --------------------------- EXAMPLES ----------------------------------//
-//Sample route 
-router.get('/getStudents', async (req, res) => {
-    try {
-        const students = await model.studentModel.find();
-        res.json(students);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// API Key: /api/students/getStudents
-
-// EXAMPLE:
-
-router.get('/getRooms', async (req, res) => {
-    try {
-        const rooms = await model.roomModel.find({roomID: "G301"});
-        res.json(rooms);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// /api/students/getRooms
-
-// -----------------------------------------------------------------------//
-
 
 //view all reservations of student
 // /api/student/reservations/:id
