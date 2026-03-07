@@ -139,8 +139,6 @@ router.put('/edit_profile/:employeeID', async (req, res) =>{
         const { employeeID } = req.params; 
         const { bio, username, profilePicture } = req.body;
 
-        const studentId = parseInt(idNumber);
-
         const updateFields = {};
             if (bio !== undefined) updateFields.bio = bio;
             if (username !== undefined) updateFields.username = username;
