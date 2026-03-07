@@ -44,7 +44,7 @@ router.get('/specific_reservation/:id', async (req, res) => {
 router.get('/view_profile/:username', async (req, res) => {
     try {
         const { username } = req.params;
-        const studentProfile = await model.studentModel.find({username: username});
+        const studentProfile = await model.studentModel.findOne({username: username});
         res.json(studentProfile);
     } catch (error) {
         console.error(error);
@@ -53,11 +53,21 @@ router.get('/view_profile/:username', async (req, res) => {
 });
 
 //search profile
-router.get('/search_profile/:name', async (req, res) => {
+router.get('/search_profile/:value', async (req, res) => {
     try {
-        const { name } = req.params;
-        const studentProfile = await model.studentModel.find({first_name: name});
-        res.json(studentProfile);
+        const { value } = req.params;
+        const studentProfiles = await model.studentModel.find({
+            isActive: true, // dont show deactivated accounts
+            $or: [
+                { username: {$regex: value, $options: "i"}},
+                { lastName: {$regex: value, $options: "i"}},
+                { firstName: {$regex: value, $options: "i"}},
+            ] // search value matches either username, last name, or first name
+        });
+        res.json({
+            success: true,
+            data: studentProfiles
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
@@ -93,18 +103,6 @@ router.put('/edit_profile/:idNumber', async (req, res) =>{
 router.get('/search_seats', async (req, res) => {
     try {
         const seats = await model.seatModel.find();
-        res.json(seats);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-//view available seats *NOT COMPLETE
-router.get('/seats/:roomID', async (req, res) => {
-    try {
-        const { roomID } = req.params;
-        const seats = await model.seatModel.find({roomID: roomID});
         res.json(seats);
     } catch (error) {
         console.error(error);
