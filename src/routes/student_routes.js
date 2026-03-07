@@ -58,7 +58,7 @@ router.get('/reservations/:id', async (req, res) => {
 
 //view specific reservation
 
-router.get('/reservations/specific/:id', async (req, res) => {
+router.get('/specific_reservation/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -71,7 +71,7 @@ router.get('/reservations/specific/:id', async (req, res) => {
 });
 
 //view profile
-router.get('/viewprofile/:username', async (req, res) => {
+router.get('/view_profile/:username', async (req, res) => {
     try {
         const { username } = req.params;
         const studentProfile = await model.studentModel.find({username: username});
@@ -83,7 +83,7 @@ router.get('/viewprofile/:username', async (req, res) => {
 });
 
 //search profile
-router.get('/searchprofile/:name', async (req, res) => {
+router.get('/search_profile/:name', async (req, res) => {
     try {
         const { name } = req.params;
         const studentProfile = await model.studentModel.find({first_name: name});
@@ -96,26 +96,27 @@ router.get('/searchprofile/:name', async (req, res) => {
 
 //edit profile
 
-router.put('/editprofile/:idNumber', async (req, res) =>{ 
-  try {
-    const { idNumber } = req.params; 
-    const { bio, username } = req.body;
+router.put('/edit_profile/:idNumber', async (req, res) =>{ 
+    try {
+        const { idNumber } = req.params; 
+        const { bio, username, profilePicture } = req.body;
 
-     const studentId = parseInt(idNumber);
+        const studentId = parseInt(idNumber);
 
-       const updateFields = {};
-        if (bio !== undefined) updateFields.bio = bio;
-        if (username !== undefined) updateFields.username = username;
+        const updateFields = {};
+            if (bio !== undefined) updateFields.bio = bio;
+            if (username !== undefined) updateFields.username = username;
+            if (profilePicture !== undefined) updateFields.profilePicture = profilePicture;
 
-    const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { new: true, runValidators: true });
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+        const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { new: true, runValidators: true });
+        if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, data: user });
+    } 
+    catch (error) {  
+        res.status(400).json({ success: false, message: error.message });
     }
-    res.json({ success: true, data: user });
-  } 
-  catch (error) {  
-    res.status(400).json({ success: false, message: error.message });
-  }
 });
 
 //search time slot *NOT COMPLETE

@@ -115,6 +115,8 @@ router.put('/block_student/:id', async(req, res) =>{
     }
 });
 
+// unblock student
+
 router.put('/unblock_student/:id', async(req, res) =>{
     try{
         const { id } = req.params;
@@ -126,6 +128,31 @@ router.put('/unblock_student/:id', async(req, res) =>{
         
         res.json({ success: true, data: student });
     } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+});
+
+// edit profile
+
+router.put('/edit_profile/:employeeID', async (req, res) =>{ 
+    try {
+        const { employeeID } = req.params; 
+        const { bio, username, profilePicture } = req.body;
+
+        const studentId = parseInt(idNumber);
+
+        const updateFields = {};
+            if (bio !== undefined) updateFields.bio = bio;
+            if (username !== undefined) updateFields.username = username;
+            if (profilePicture !== undefined) updateFields.profilePicture = profilePicture;
+
+        const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { new: true, runValidators: true });
+        if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, data: user });
+    } 
+    catch (error) {  
         res.status(400).json({ success: false, message: error.message });
     }
 });
