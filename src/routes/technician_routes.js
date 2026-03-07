@@ -157,4 +157,29 @@ router.put('/edit_profile/:employeeID', async (req, res) =>{
     }
 });
 
+
+//change password for logged-in technician
+router.put('/change_password', verifyToken, async (req, res) => {
+    try {
+        const requester = req.user; // { id, role, email }
+        if (requester.role !== 'technician') return res.status(403).json({ message: 'Only technician can change technician password' });
+
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) return res.status(400).json({ message: 'oldPassword and newPassword are required' });
+
+        const technician = await model.technicianModel.findOne({ email: requester.email });
+        if (!technician) return res.status(404).json({ message: 'Technician not found' });
+
+        if (technician.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+
+        technician.passwordHash = newPassword;
+        await technician.save();
+
+        res.json({ success: true, message: 'Password changed successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router;
