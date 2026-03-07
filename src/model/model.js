@@ -15,6 +15,7 @@ export const StudentSchema = new mongoose.Schema({
     profilePicture: String,
     bio: String,
     degreeProgram: String,
+    college: String,
     isActive: Boolean,
     canReserve: Boolean,
 });
