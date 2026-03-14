@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="js/studentprofile.js"></script>
     <title>Student Profile</title>
 </head>
 <body>
@@ -57,7 +58,7 @@
 
                 <div class="rightdetails" id="card">
                     <div class="contain">
-                        <h1 id="profileusername">username</h1>
+                        <h1 id="header-profileusername">username</h1>
                     </div>
 
                     <div class="box">
@@ -70,7 +71,7 @@
 
                                 <dl>
                                     <dt>College: </dt>
-                                    <dd id="campus">Manila</dd>
+                                    <dd id="college">Manila</dd>
                                 </dl>
 
                                 <dl>
@@ -86,13 +87,13 @@
                     </div>
 
                     <div class="box">
-                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                        <h3 id="bio">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
                     </div>
                 </div>
 
                 <div class="rightdetails hidden editinfo" id="info">
                     <div class="contain">
-                        <h1 id="profileusername">username</h1>
+                        <h1 id="hidden-profileusername">username</h1>
                     </div>
 
                     <div class="box">
@@ -109,7 +110,7 @@
                     </div>
 
                     <div class="box">
-                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                        <input type="text" placeholder="Bio" name="editbio" id="editbio" class="editusername">
                     </div>
                 </div>
 
@@ -212,7 +213,5 @@
                     </div>
         </div>
     </div>
-
-    <script src="js/studentprofile.js"></script>
 </body>
 </html>
