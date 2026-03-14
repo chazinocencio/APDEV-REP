@@ -1,41 +1,51 @@
-const studentprofile = document.getElementById('studentprofile')
-const studentreserve = document.getElementById('studentreserve')
-const logout = document.getElementById('logout')
-const search = document.getElementById('studentsearch')
-const searchprof = document.getElementById('searchstudent')
-const searchroom = document.getElementById('searchroom')
+document.addEventListener("DOMContentLoaded", function(){
+	const user = JSON.parse(localStorage.getItem("user"));
 
-studentprofile.addEventListener('click', function(){
+    if (!user) {
+        window.location.href = "student_login.html";
+        return;
+    }
 
-        window.location.href = "../studentprofile.html"
-})
+    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName[0]}.`;
 
-studentreserve.addEventListener('click', function(){
-        window.location.href = "../studentreserve.html"
-})
+	document.querySelector('#headusername').innerHTML = fullName;
+	document.querySelector('#username-fullname').innerHTML = fullName;
+	
+	const studentprofile = document.getElementById('studentprofile')
+	const studentreserve = document.getElementById('studentreserve')
+	const logout = document.getElementById('logout')
+	const search = document.getElementById('studentsearch')
+	const searchprof = document.getElementById('searchstudent')
+	const searchroom = document.getElementById('searchroom')
 
-searchprof.addEventListener('click', function(){
-        window.location.href = "../studentsearchprof.html"
-})
+	studentprofile.addEventListener('click', function(){
+		window.location.href = "../studentprofile.html"
+	})
 
-searchroom.addEventListener('click', function(){
-        window.location.href = "../studentsearchroom.html"
-})
+	studentreserve.addEventListener('click', function(){
+		window.location.href = "../studentreserve.html"
+	})
 
-logout.addEventListener('click', function(){
-        window.location.href = "../index.html"
-})
+	searchprof.addEventListener('click', function(){
+		window.location.href = "../studentsearchprof.html"
+	})
 
-search.addEventListener('click', function(e){
-        var searchmenu = document.getElementById('searchmenu')
-;
+	searchroom.addEventListener('click', function(){
+		window.location.href = "../studentsearchroom.html"
+	})
 
-        if(searchmenu.classList.contains("hidden")){
-                searchmenu.classList.remove("hidden");
-        }
-        else{
-               searchmenu.classList.add("hidden");  
-        }
-               
-        
+	logout.addEventListener('click', function(){
+		window.location.href = "../index.html"
+	})
+
+	search.addEventListener('click', function(e){
+		var searchmenu = document.getElementById('searchmenu');
+
+		if(searchmenu.classList.contains("hidden")){
+			searchmenu.classList.remove("hidden");
+		}
+		else{
+			searchmenu.classList.add("hidden");  
+		}     
+	})
 })
