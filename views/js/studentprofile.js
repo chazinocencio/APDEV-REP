@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", async function(){
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
@@ -6,21 +6,27 @@ document.addEventListener("DOMContentLoaded", function(){
         return;
     }
 
-    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName ? user.middleName[0] + '.' : ''}`;
+    const response = await fetch(`api/common_routes/view_profile/${user.username}`);
+    const data = await response.json();
+    const studentProfile = data;
 
-    document.querySelector('#profileusername').innerHTML = `@${user.username}`
+    const fullName = `${studentProfile.lastName}, ${studentProfile.firstName} ${studentProfile.middleName ? studentProfile.middleName[0] + '.' : ''}`;
+
+    document.querySelector('#profileusername').innerHTML = `@${studentProfile.username}`
     document.querySelector('#header-fullname').innerHTML = fullName;
-    document.querySelector('#prof-id').innerHTML = user.idNumber;
-    document.querySelector('#college').innerHTML = user.college;
-    document.querySelector('#prof-program').innerHTML = user.degreeProgram;
-    document.querySelector('#bio').innerHTML = user.bio;
-    document.querySelector('#editbio').value = user.bio;
+    document.querySelector('#prof-id').innerHTML = studentProfile.idNumber;
+    document.querySelector('#college').innerHTML = studentProfile.college;
+    document.querySelector('#prof-program').innerHTML = studentProfile.degreeProgram;
+    document.querySelector('#bio').innerHTML = studentProfile.bio;
+	document.querySelector('#profile-picture').src = studentProfile.profilePicture;
+    document.querySelector('#editbio').value = studentProfile.bio;
+    document.querySelector('#editusername').value = studentProfile.username;
 
     const studentprofile = document.getElementById('back')
     const edit = document.getElementById('edit')
     const save = document.getElementById('save')
     const cancel = document.getElementById('cancel')
-    const profilepic = document.getElementById('profilepic')
+    const profilepic = document.getElementById('profile-picture')
     const pictureedit = document.getElementById('pictureedit')
     const card = document.getElementById('card')
     const editinfo = document.getElementById('info')
