@@ -28,11 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return true;
         }
 
-        function validateId(value) {
-            if (!value) return false;
-            if (!/^[0-9]{8}$/.test(value)) return false;
-            return true;
-        }
 
         if (continueBtn) {
             continueBtn.addEventListener("click", function () {
@@ -90,14 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var registerBtn = document.getElementById("account-register");
         var backAccountBtn = document.getElementById("account-back");
 
-        function hasStrongPassword(value) {
-            if (!value || value.length < 8) return false;
-            if (!/[A-Z]/.test(value)) return false;
-            if (!/[a-z]/.test(value)) return false;
-            if (!/[0-9]/.test(value)) return false;
-            if (!/[^A-Za-z0-9]/.test(value)) return false;
-            return true;
-        }
+       
 
         if (registerBtn) {
             registerBtn.addEventListener("click", function () {
