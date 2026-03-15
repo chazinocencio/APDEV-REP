@@ -135,3 +135,23 @@ body{
 .rememberme:hover input{
     cursor: pointer;
 }
+
+.register-link{
+    width: 95%;
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--dark-green);
+}
+
+.register-link a{
+    color: var(--ls-green);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link a:hover{
+    text-decoration: underline;
+}

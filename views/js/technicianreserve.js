@@ -16,7 +16,7 @@ reservations.addEventListener('click', function(){
 })
 
 g301.addEventListener('click', function(){
-    window.location.href = "../technicianrooms/G301.html";
+    window.location.href = "../views/technicianrooms/G301.html";
 })
 
 if (g302) g302.addEventListener('click', function(){

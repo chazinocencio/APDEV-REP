@@ -1,0 +1,121 @@
+.register-container{
+    justify-content: flex-start;
+}
+
+.register-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    background-color: var(--ls-white);
+    border-radius: 10px;
+    border-top: 5px solid var(--ls-green);
+    padding: 32px 48px 40px;
+    box-sizing: border-box;
+    font-weight: 700;
+}
+
+.register-title{
+    font-size: 50px;
+    color: var(--ls-green);
+    margin: 0 0 8px 0;
+}
+
+.register-subtitle{
+    margin: 0 0 32px 0;
+    font-size: 20px;
+    color: var(--dark-green);
+}
+
+.register-form{
+    width: 100%;
+}
+
+.register-columns{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 40px;
+    margin-bottom: 16px;
+}
+
+.register-column{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.single-column{
+    max-width: 520px;
+}
+
+.register-input{
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid var(--midgrey-green);
+    padding: 0 12px;
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.register-input:focus{
+    outline: none;
+    border: 2px solid var(--ls-green);
+}
+
+.field-error{
+    margin: 4px 0 12px 0;
+    font-size: 0.8rem;
+    color: var(--ls-red);
+    display: none;
+}
+
+.form-error{
+    margin: 4px 0 20px 0;
+    font-size: 0.85rem;
+    color: var(--ls-red);
+    text-align: center;
+    display: none;
+}
+
+.register-actions{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.primary-btn{
+    min-width: 180px;
+    height: 44px;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: all 0.3s ease-in-out;
+}
+
+.primary-btn:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.secondary-btn{
+    min-width: 140px;
+    height: 44px;
+    border-radius: 6px;
+    border: 2px solid var(--ls-green);
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: all 0.3s ease-in-out;
+}
+
+.secondary-btn:hover{
+    cursor: pointer;
+    background-color: var(--hover-bg);
+}
