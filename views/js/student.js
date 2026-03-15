@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", async function(){
 	})
 
 	logout.addEventListener('click', function(){
+  		localStorage.removeItem("token");
+		localStorage.removeItem("user");
 		window.location.href = "../index.html"
 	})
 

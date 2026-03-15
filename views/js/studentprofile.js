@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
-        window.location.href = "student_login.html";
+		window.location.href = "../index.html"
         return;
     }
 
@@ -41,8 +41,6 @@ document.addEventListener("DOMContentLoaded", async function(){
     const deact = document.getElementById("deact")
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
-
-    console.log({edit, profilepic, pictureedit, card, editinfo});
 
     studentprofile.addEventListener('click', function(){
     window.location.href = "../student.html";
