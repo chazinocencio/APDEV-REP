@@ -21,6 +21,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("views"));
+app.use("/uploads", express.static("src/uploads"));
 
 // route to the user api keys
 app.use("/api/users", routes); // sample

@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function(){
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+		window.location.href = "../index.html"
+        return;
+    }
+
     const studentprofile = document.getElementById('back');
     const searchBar = document.querySelector('#searchbar');
     const searchButton = document.querySelector('#searchbutt');
@@ -16,10 +23,10 @@ document.addEventListener("DOMContentLoaded", function(){
                 // profile picture to be changed to actual profile picture when implemented, currently default
                 searchResults.innerHTML += `
                     <div class="results" data-id="${profile.username}">
-                        <img src="/assets/images/diffusersym.png" alt="Profile Picture"> 
+                        <img src="${profile.profilePicture || ''}" onerror="this.src='assets/images/diffusersym.png'" alt="Profile Picture"> 
                         <div class="resultdeets">
-                            <h3>${profile.lastName}, ${profile.firstName} ${profile.middleName ? profile.middleName[0] + '.' : ''}</h3>
-                            <p>@${profile.username}</p>
+                            <h3>@${profile.username}</h3>
+                            <p>${profile.lastName}, ${profile.firstName} ${profile.middleName ? profile.middleName[0] + '.' : ''}</p>
                         </div>
                     </div>
                 `

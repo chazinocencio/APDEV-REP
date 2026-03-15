@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", async function(){
 	const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
@@ -6,16 +6,21 @@ document.addEventListener("DOMContentLoaded", function(){
         return;
     }
 
-    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName ? user.middleName[0] + '.' : ''}`;
+	const response = await fetch(`api/common_routes/view_profile/${user.username}`);
+    const data = await response.json();
+    const studentProfile = data;
+
+    const fullName = `${studentProfile.lastName}, ${studentProfile.firstName} ${studentProfile.middleName ? studentProfile.middleName[0] + '.' : ''}`;
 	var username;
-	if (user.username){
-		username = `@${user.username}`
+	if (studentProfile.username){
+		username = `@${studentProfile.username}`
 	} else {
 		username = fullName
 	}
 
 	document.querySelector('#headusername').innerHTML = fullName;
 	document.querySelector('#student-username').innerHTML = username;
+	document.querySelector('#profile-picture').src = studentProfile.profilePicture;
 	
 	const studentprofile = document.getElementById('studentprofile')
 	const studentreserve = document.getElementById('studentreserve')
@@ -41,6 +46,8 @@ document.addEventListener("DOMContentLoaded", function(){
 	})
 
 	logout.addEventListener('click', function(){
+  		localStorage.removeItem("token");
+		localStorage.removeItem("user");
 		window.location.href = "../index.html"
 	})
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import upload from '../middleware/upload.js';
 import { verifyToken } from "../middleware/auth.js";
 
 const router = Router()
@@ -76,19 +77,19 @@ router.get('/search_profile/:value', async (req, res) => {
 
 //edit profile
 
-router.put('/edit_profile/:idNumber', async (req, res) =>{ 
+router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { idNumber } = req.params; 
-        const { bio, username, profilePicture } = req.body;
+        const { username, bio } = req.body;
 
         const studentId = parseInt(idNumber);
 
         const updateFields = {};
-            if (bio !== undefined) updateFields.bio = bio;
             if (username !== undefined) updateFields.username = username;
-            if (profilePicture !== undefined) updateFields.profilePicture = profilePicture;
+            if (bio !== undefined) updateFields.bio = bio;
+            if (req.file) updateFields.profilePicture = `/uploads/profilepics/${req.file.filename}`;
 
-        const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { new: true, runValidators: true });
+        const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { returnDocument: 'after', runValidators: true });
         if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
         }

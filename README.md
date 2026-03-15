@@ -10,6 +10,9 @@ npm install nodemon --save-dev
 ```
 npm install jsonwebtoken
 ```
+```
+npm install multer
+```
 
 ### How to run
 ```
