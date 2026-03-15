@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function(){
                     <div class="results" data-id="${profile.username}">
                         <img src="${profile.profilePicture || ''}" onerror="this.src='assets/images/diffusersym.png'" alt="Profile Picture"> 
                         <div class="resultdeets">
-                            <h3>${profile.lastName}, ${profile.firstName} ${profile.middleName ? profile.middleName[0] + '.' : ''}</h3>
-                            <p>@${profile.username}</p>
+                            <h3>@${profile.username}</h3>
+                            <p>${profile.lastName}, ${profile.firstName} ${profile.middleName ? profile.middleName[0] + '.' : ''}</p>
                         </div>
                     </div>
                 `
