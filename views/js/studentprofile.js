@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function(){
         return;
     }
 
-    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName[0]}.`;
+    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName ? user.middleName[0] + '.' : ''}`;
 
     document.querySelector('#profileusername').innerHTML = `@${user.username}`
     document.querySelector('#header-fullname').innerHTML = fullName;
