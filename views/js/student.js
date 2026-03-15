@@ -7,9 +7,15 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     const fullName = `${user.lastName}, ${user.firstName} ${user.middleName[0]}.`;
+	var username;
+	if (user.username){
+		username = `@${user.username}`
+	} else {
+		username = fullName
+	}
 
 	document.querySelector('#headusername').innerHTML = fullName;
-	document.querySelector('#username-fullname').innerHTML = fullName;
+	document.querySelector('#student-username').innerHTML = username;
 	
 	const studentprofile = document.getElementById('studentprofile')
 	const studentreserve = document.getElementById('studentreserve')

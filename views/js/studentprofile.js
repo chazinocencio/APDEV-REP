@@ -6,9 +6,10 @@ document.addEventListener("DOMContentLoaded", function(){
         return;
     }
 
+    const fullName = `${user.lastName}, ${user.firstName} ${user.middleName[0]}.`;
+
     document.querySelector('#profileusername').innerHTML = `@${user.username}`
-    document.querySelector('#header-profileusername').innerHTML = user.username;
-    document.querySelector('#hidden-profileusername').innerHTML = user.username;
+    document.querySelector('#header-fullname').innerHTML = fullName;
     document.querySelector('#prof-id').innerHTML = user.idNumber;
     document.querySelector('#college').innerHTML = user.college;
     document.querySelector('#prof-program').innerHTML = user.degreeProgram;
