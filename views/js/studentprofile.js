@@ -33,9 +33,15 @@ document.addEventListener("DOMContentLoaded", async function(){
     const pictureedit = document.getElementById('pictureedit')
     const card = document.getElementById('card')
     const editinfo = document.getElementById('info')
+
     const editphotocard = document.getElementById('editphotocard')
     const photosave = document.getElementById('photosave')
-    const photocancel = document.getElementById('photocancel') 
+    const photocancel = document.getElementById('photocancel')
+    const dragdrop = document.getElementById("dragdrop");
+    const input = document.getElementById("photoInput");
+    const previewImg = document.querySelector(".instructions img");
+    let selectedFile = null;
+    
     const changepass = document.getElementById("changepass")
     const deactbutt = document.getElementById("deactbutt")
     const editpass = document.getElementById("editpass")
@@ -97,30 +103,30 @@ document.addEventListener("DOMContentLoaded", async function(){
                 }
             }
 
+            const formData = new FormData();
+            formData.append('username', editUsername.value);
+            formData.append('bio', editBio.value);
+
+            if(selectedFile){
+                formData.append('profilePicture', selectedFile);
+            }
+
             const response2 = await fetch(`api/student/edit_profile/${user.idNumber}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: editUsername.value,
-                    bio: editBio.value
-                })
+                body: formData
             });
+            
+            if (!response2.ok) {
+                const text = await response2.text();
+                console.error("Server error:", text);
+                return;
+            }
+            const updatedUser = await response2.json();
+            user.username = updatedUser.data.username;
+            user.bio = updatedUser.data.bio;
+            user.profilePicture = updatedUser.data.profilePicture;
 
-            user.username = editUsername.value;
-            user.bio = editBio.value;
             localStorage.setItem("user", JSON.stringify(user));
-
-            profilepic.style.filter = "brightness(1)";
-            edit.classList.remove('hidden');
-            card.classList.remove('hidden');
-            editinfo.classList.add('hidden');
-            pictureedit.classList.add('hidden');
-            save.classList.add('hidden');
-            cancel.classList.add('hidden');
-            changepass.classList.remove('hidden');
-            deactbutt.classList.remove('hidden');
 
             location.reload();
         } else {
@@ -130,15 +136,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     })
 
     cancel.addEventListener('click', event =>{ 
-        profilepic.style.filter = "brightness(1)";
-        edit.classList.remove('hidden');
-        card.classList.remove('hidden');
-        editinfo.classList.add('hidden');
-        pictureedit.classList.add('hidden');
-        save.classList.add('hidden');
-        cancel.classList.add('hidden');
-        changepass.classList.remove('hidden');
-        deactbutt.classList.remove('hidden');
+        location.reload();
     })
 
     pictureedit.addEventListener('click', event =>{
@@ -147,10 +145,63 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     photosave.addEventListener('click', event =>{
         editphotocard.classList.add('hidden');
+        if(selectedFile){
+            profilepic.src = previewImg.src;
+            previewImg.src = "assets/images/photoeditsym.png";
+            previewImg.style.height = "auto";
+            previewImg.style.width = "70px";
+        }
     })
 
     photocancel.addEventListener('click', event =>{
         editphotocard.classList.add('hidden');
+        previewImg.src = "assets/images/photoeditsym.png";
+        previewImg.style.height = "auto";
+        previewImg.style.width = "70px";
+        selectedFile = null;
     })
+
+    // click to browse
+    dragdrop.addEventListener("click", () => {
+        input.click();
+    });
+
+    // file selected
+    input.addEventListener("change", (e) => {
+        selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewImg.style.height = "150px";
+            previewImg.style.width = "auto";
+        };
+
+        reader.readAsDataURL(selectedFile);
+    });
+
+    // drag events
+    dragdrop.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    });
+
+    dragdrop.addEventListener("drop", (e) => {
+        e.preventDefault();
+        selectedFile = e.dataTransfer.files[0];
+
+        if (!selectedFile) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewImg.style.height = "150px";
+            previewImg.style.width = "auto";
+        };
+
+        reader.readAsDataURL(selectedFile);
+    });
 }) 
     
