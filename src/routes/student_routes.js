@@ -79,13 +79,13 @@ router.get('/search_profile/:value', async (req, res) => {
 router.put('/edit_profile/:idNumber', async (req, res) =>{ 
     try {
         const { idNumber } = req.params; 
-        const { bio, username, profilePicture } = req.body;
+        const { username, bio, profilePicture } = req.body;
 
         const studentId = parseInt(idNumber);
 
         const updateFields = {};
-            if (bio !== undefined) updateFields.bio = bio;
             if (username !== undefined) updateFields.username = username;
+            if (bio !== undefined) updateFields.bio = bio;
             if (profilePicture !== undefined) updateFields.profilePicture = profilePicture;
 
         const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { new: true, runValidators: true });

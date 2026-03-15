@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     const edit = document.getElementById('edit')
     const save = document.getElementById('save')
     const cancel = document.getElementById('cancel')
+    const usernameError = document.getElementById('username-error');
+    const editUsername = document.getElementById('editusername');
+    const editBio = document.getElementById('editbio');
     const profilepic = document.getElementById('profile-picture')
     const pictureedit = document.getElementById('pictureedit')
     const card = document.getElementById('card')
@@ -81,17 +84,49 @@ document.addEventListener("DOMContentLoaded", async function(){
         cancel.classList.remove('hidden');
     });
 
-    save.addEventListener('click', event =>{ 
-        profilepic.style.filter = "brightness(1)";
-        edit.classList.remove('hidden');
-        card.classList.remove('hidden');
-        editinfo.classList.add('hidden');
-        pictureedit.classList.add('hidden');
-        save.classList.add('hidden');
-        cancel.classList.add('hidden');
-        changepass.classList.remove('hidden');
-        deactbutt.classList.remove('hidden');
+    save.addEventListener('click', async function(){
+        if(editUsername.value !== ''){
+            const response = await fetch(`api/common_routes/view_profile/${editUsername.value}`);
+            const data = await response.json();
 
+            if(data){
+                if(data.username !== studentProfile.username){
+                    usernameError.classList.remove('hidden');
+                    usernameError.innerHTML = "<h3>This username is already taken.</h3>";
+                    return;
+                }
+            }
+
+            const response2 = await fetch(`api/student/edit_profile/${user.idNumber}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: editUsername.value,
+                    bio: editBio.value
+                })
+            });
+
+            user.username = editUsername.value;
+            user.bio = editBio.value;
+            localStorage.setItem("user", JSON.stringify(user));
+
+            profilepic.style.filter = "brightness(1)";
+            edit.classList.remove('hidden');
+            card.classList.remove('hidden');
+            editinfo.classList.add('hidden');
+            pictureedit.classList.add('hidden');
+            save.classList.add('hidden');
+            cancel.classList.add('hidden');
+            changepass.classList.remove('hidden');
+            deactbutt.classList.remove('hidden');
+
+            location.reload();
+        } else {
+            usernameError.classList.remove('hidden');
+            usernameError.innerHTML = "<h3>Username cannot be empty.</h3>";
+        }
     })
 
     cancel.addEventListener('click', event =>{ 
