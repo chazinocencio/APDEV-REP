@@ -11,7 +11,7 @@ studentprofile.addEventListener('click', function(){
     window.location.href = "../student.html";
 })
 
-reservations.addEventListener('click', function(){
+reservations.addEventListener('click', async function(){
     window.location.href = "../myreservations.html";
 })
 

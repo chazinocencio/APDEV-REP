@@ -100,10 +100,11 @@ router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (re
     }
 });
 
-//search time slot *NOT COMPLETE
-router.get('/search_seats', async (req, res) => {
+//search seat
+router.get('/search_seat/:seatID', async (req, res) => {
     try {
-        const seats = await model.seatModel.find();
+        const{seatID} = req.params;
+        const seats = await model.seatModel.findOne({seatID: seatID});
         res.json(seats);
     } catch (error) {
         console.error(error);
