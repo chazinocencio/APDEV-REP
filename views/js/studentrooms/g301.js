@@ -30,6 +30,95 @@ document.addEventListener("DOMContentLoaded", function () {
             updateDateDisplay();
         });
     }
+    
+    var reserveButton = document.getElementById("rev");
+    if (reserveButton){
+        reserveButton.addEventListener("click", async function(e) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            const token = localStorage.getItem("token");
+
+            if (!user) {
+            window.location.href = "../index.html"
+            return;
+            }
+            
+            try {
+            const response = await fetch(`/api/common_routes/view_profile/${user.username}`, 
+                {headers: { "Authorization": `Bearer ${token}` }});
+
+            const studentProfile = await response.json();
+
+           var anonCheckbox = document.getElementById('anonymous-toggle');
+           var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
+
+            var room = "G301";
+            var reservationDate = document.getElementById("dayanddate").innerHTML;
+
+            var selectedCells = document.querySelectorAll('.date-grid-cell.chosen');
+            var reservations = [];
+
+
+                selectedCells.forEach(function(cell) {
+                    var row = cell.closest('.date-grid-row');
+                    var seatText = row.querySelector('.date-grid-seat').textContent;
+                    var seatNumber = seatText.replace('Seat ', '');
+
+                    var cellsInRow = row.querySelectorAll('.date-grid-cell');
+                    var cellIndex = Array.from(cellsInRow).indexOf(cell);
+                    var timeHeaders = document.querySelectorAll('.date-grid-time');
+                    var timeHeader = timeHeaders[cellIndex];
+
+                    if (timeHeader) {
+                        var spans = timeHeader.querySelectorAll('span');
+                        var startTime = spans[0].textContent;
+                        var endTime = spans[1].textContent;
+
+                        reservations.push({
+                        room: room,
+                        idNumber: studentProfile.idNumber,
+                        seatID: seatNumber,
+                        startTime: reservationDate + " " + startTime,
+                        endTime: reservationDate + " " + endTime,
+                        date: reservationDate,
+                        isAnonymous: isAnonymous,
+                        description: "reserved"
+                        
+                    });
+                    
+
+                    }
+                })
+
+            for (const reservation of reservations) {
+                 
+                try {
+                    const postResponse = await fetch("/api/student/create_reservation/" + studentProfile.username, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`},
+                        
+                        body: JSON.stringify(reservation)
+                        
+                    });
+                     
+                    const result = await postResponse.json();
+                   
+                      if (postResponse.ok) {
+                        console.log("✅ Success:", result);
+                    } else {
+                    console.warn("⚠️ Server returned an error:", result);
+                    }
+            
+                } catch (error) {
+                    console.error("POST failed:", error);
+                }
+            }
+            
+             } catch (error) {
+            console.error("Error:", error);
+            }
+        });
+    }
 
     var gridWrap = document.querySelector(".date-grid-wrap");
     if (gridWrap) {
@@ -37,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
             var cell = e.target.closest(".date-grid-cell");
             if (cell && !cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
                 cell.classList.toggle("chosen");
-                var reserveButton = document.getElementById("rev");
                 if (reserveButton) {
                     var anyChosen = gridWrap.querySelector(".date-grid-cell.chosen");
                     if (anyChosen) {
