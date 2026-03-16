@@ -9,6 +9,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script>
+        // Check if the user is logged in
+        document.addEventListener("DOMContentLoaded", function() {
+            const user = localStorage.getItem("user");
+            if (user) {
+                // Redirect to student dashboard if already logged in
+                window.location.href = "student.html";
+            }
+        });
+    </script>
     <title>Lab Reservation System</title>
 </head>
 <body>
