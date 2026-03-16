@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/student_register.css">
+    <script src="js/student_register.js" type="text/javascript"></script>
+    <title>Student Register</title>
+</head>
+<body>
+    <div class="container register-container">
+        <img src="assets/images/dlsulogowname.png" alt="Logo" class="logo">
+        <div class="register-card">
+            <h1 class="register-title">Register</h1>
+            <h2 class="register-subtitle">Student Information</h2>
+            <form id="student-info-form" class="register-form">
+                <div class="register-columns">
+                    <div class="register-column">
+                        <label for="first-name">First Name* (e.g.: Juan Miguel)</label>
+                        <input type="text" id="first-name" class="register-input">
+
+                        <label for="last-name">Last Name* (e.g.: Dela Cruz)</label>
+                        <input type="text" id="last-name" class="register-input">
+
+                        <label for="middle-name">Middle Name* (e.g.: Perez)</label>
+                        <input type="text" id="middle-name" class="register-input">
+
+                        <label for="college">College* (e.g.: College of Computer Studies)</label>
+                        <input type="text" id="college" class="register-input">
+                    </div>
+                    <div class="register-column">
+                        <label for="degree-program">Degree Program* (e.g.: BS Computer Science)</label>
+                        <input type="text" id="degree-program" class="register-input">
+
+                        <label for="dlsu-email">DLSU Email*</label>
+                        <input type="email" id="dlsu-email" class="register-input">
+                        <p class="field-error" id="email-error">Not a valid DLSU Email</p>
+
+                        <label for="id-number">ID Number* (e.g.: 12345678)</label>
+                        <input type="text" id="id-number" class="register-input">
+                        <p class="field-error" id="id-error">Not a valid DLSU ID Number</p>
+                    </div>
+                </div>
+                <p class="form-error" id="form-error">Enter all required(*) fields.</p>
+                <div class="register-actions">
+                    <button type="button" class="primary-btn" id="info-continue">Continue</button>
+                    <button type="button" class="secondary-btn" id="info-back">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

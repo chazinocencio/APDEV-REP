@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/student_register.css">
+    <script src="js/student_register.js" type="text/javascript"></script>
+    <title>Student Register</title>
+</head>
+<body>
+    <div class="container register-container">
+        <img src="assets/images/dlsulogowname.png" alt="Logo" class="logo">
+        <div class="register-card">
+            <h1 class="register-title">Register</h1>
+            <h2 class="register-subtitle">Username &amp; Password</h2>
+            <form id="account-form" class="register-form single-column">
+                <label for="reg-username">Create Username*</label>
+                <input type="text" id="reg-username" class="register-input">
+                <p class="field-error" id="username-error">This username is already taken</p>
+
+                <label for="reg-password">Create New Password*</label>
+                <input type="password" id="reg-password" class="register-input">
+
+                <label for="reg-password-confirm">Confirm New Password*</label>
+                <input type="password" id="reg-password-confirm" class="register-input">
+                <p class="field-error" id="password-error">Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character.</p>
+
+                <div class="register-actions">
+                    <button type="button" class="primary-btn" id="account-register">Register</button>
+                    <button type="button" class="secondary-btn" id="account-back">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

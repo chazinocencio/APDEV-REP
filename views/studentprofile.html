@@ -28,7 +28,7 @@
                         <img src="assets/images/editprofilesym.png" alt="editprofilesym">
                     </div>
 
-                    <img src="assets/images/diffusersym.png" alt="profile-picture" id="profilepic">
+                    <img src="assets/images/diffusersym.png" onerror="this.src='assets/images/diffusersym.png'" alt="profile-picture" id="profile-picture">
                     <h1 id="profileusername"></h1>
 
                     <div class="butt" id="edit">
@@ -100,9 +100,8 @@
                         <input type="text" placeholder="Username" name="editusername" id="editusername" class="editusername">
                     </div>
 
-                    <div class="errormess hidden">
+                    <div class="errormess hidden" id="username-error">
                         <h3>This username is already taken.</h3>
-                        <h3>Username may only contain alphanumeric characters, periods, or underscores.</h3>
                     </div>
 
                     <div class="contain">
@@ -119,7 +118,8 @@
                         <h3>Update Photo</h3>
                     </div>
                     
-                    <div class="dragdrop">
+                    <div class="dragdrop" id="dragdrop">
+                        <input type="file" id="photoInput" accept="image/*" hidden>
                         <div class="instructions">
                             <img src="assets/images/photoeditsym.png" alt="photoeditsym">
                             <h3>Drag and drop your image here or click here to browse files.</h3>
