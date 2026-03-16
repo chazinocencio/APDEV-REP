@@ -15,6 +15,10 @@
     font-weight: 700;
 }
 
+label span{
+    color: red;
+}
+
 .register-title{
     font-size: 50px;
     color: var(--ls-green);

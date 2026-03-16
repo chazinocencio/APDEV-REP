@@ -75,6 +75,30 @@ router.get('/search_profile/:value', async (req, res) => {
     }
 });
 
+//search profile by email 
+router.get('/search_email/:email', async (req, res) => {
+    try {
+        const { email } = req.params;
+        const studentProfile = await model.studentModel.findOne({email: email});
+        res.json(studentProfile);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+//search profile by idNumber 
+router.get('/search_idNumber/:idNumber', async (req, res) => {
+    try {
+        const { idNumber } = req.params;
+        const studentProfile = await model.studentModel.findOne({idNumber: parseInt(idNumber)});
+        res.json(studentProfile);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 //edit profile
 
 router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (req, res) =>{ 

@@ -16,17 +16,19 @@
             <h1 class="register-title">Register</h1>
             <h2 class="register-subtitle">Username &amp; Password</h2>
             <form id="account-form" class="register-form single-column">
-                <label for="reg-username">Create Username*</label>
+                <label for="reg-username">Create Username<span>*</span></label>
                 <input type="text" id="reg-username" class="register-input">
                 <p class="field-error" id="username-error">This username is already taken</p>
 
-                <label for="reg-password">Create New Password*</label>
+                <label for="reg-password">Create New Password<span>*</span></label>
                 <input type="password" id="reg-password" class="register-input">
 
-                <label for="reg-password-confirm">Confirm New Password*</label>
+                <label for="reg-password-confirm">Confirm New Password<span>*</span></label>
                 <input type="password" id="reg-password-confirm" class="register-input">
                 <p class="field-error" id="password-error">Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character.</p>
 
+                
+                <p class="form-error" id="form-error">Enter all required(*) fields.</p>
                 <div class="register-actions">
                     <button type="button" class="primary-btn" id="account-register">Register</button>
                     <button type="button" class="secondary-btn" id="account-back">Back</button>
