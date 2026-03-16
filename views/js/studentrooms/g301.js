@@ -12,8 +12,57 @@ function updateDateDisplay() {
     if (el) el.textContent = formatDate(currentDate);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+async function loadReservations(token, studentProfile) {
+
+    const reservationResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    const reservations = await reservationResponse.json();
+
+    document.querySelectorAll('.date-grid-cell').forEach(cell => {
+        cell.classList.remove('chosen');
+    });
+
+    reservations.forEach(reservation => {
+        const rows = document.querySelectorAll('.date-grid-row');
+        rows.forEach(row => {
+            const seatText = row.querySelector('.date-grid-seat').textContent;
+            const seatNumber = seatText.replace('Seat ', '');
+
+            if (seatNumber === reservation.seatID) {
+                const cellsInRow = row.querySelectorAll('.date-grid-cell');
+                const timeHeaders = document.querySelectorAll('.date-grid-time');
+
+                timeHeaders.forEach((timeHeader, index) => {
+                    const spans = timeHeader.querySelectorAll('span');
+                    const startTime = spans[0].textContent;
+
+                    const dbTime = new Date(reservation.startTime).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+    });
+
+    if (dbTime === startTime) {
+        cellsInRow[index].classList.add('selected');
+    }
+});
+            }
+        });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
     updateDateDisplay();
+
+    const user = JSON.parse(localStorage.getItem("user"));  
+    const token = localStorage.getItem("token");
+    const response = await fetch(`/api/common_routes/view_profile/${user.username}`, 
+                {headers: { "Authorization": `Bearer ${token}` }});
+
+            const studentProfile = await response.json();
+
+    await loadReservations(token, studentProfile);
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
@@ -113,6 +162,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error("POST failed:", error);
                 }
             }
+            
+            await loadReservations(token, studentProfile);
+            reserveButton.classList.add("hidden");
             
              } catch (error) {
             console.error("Error:", error);
