@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         return;
     }
 
-    const profileResponse = await fetch(`/api/common_routes/view_profile/${user.username}`, {
+    const profileResponse = await fetch(`/api/student/view_profile/${user.username}`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     const studentProfile = await profileResponse.json();
