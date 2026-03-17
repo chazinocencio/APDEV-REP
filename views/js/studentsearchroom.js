@@ -1,5 +1,7 @@
-const studentprofile = document.getElementById('back')
+document.addEventListener('DOMContentLoaded', function() {
+    const studentprofile = document.getElementById('back')
 
-studentprofile.addEventListener('click', function(){
-    window.location.href = "../student.html";
-})
+    studentprofile.addEventListener('click', function(){
+        window.location.href = "../student.html";
+    })
+});

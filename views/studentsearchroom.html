@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="js/studentsearchroom.js"></script>
     <title>Search Room</title>
 </head>
 <body>
@@ -29,41 +30,58 @@
 
                             <div class="options">
                                 <div class="search">
-                                        <input type="text" placeholder="Search" name= "searchbar" id="date">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
+                                    <input type="date" placeholder="Search" name= "searchbar" id="date">
                                 </div>
                             </div>
                         </div>
                         <div class="searchdeets">
                             <h3>Time Start</h3>
-
                             <div class="options">
-                                <div class="search">
-                                        <input type="text" placeholder="Search" name= "searchbar" id="timestart">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
-                                </div>
+                                <select id="hourstart" class="search">
+                                    <option value="">Hour</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                </select>
+                                <select id="minutestart" class="search">
+                                    <option value="">Minute</option>
+                                    <option value="00">00</option>
+                                    <option value="30">30</option>
+                                </select>
                             </div>
                         </div>
                         <div class="searchdeets">
                             <h3>Time End</h3>
-
                             <div class="options">
-                                <div class="search">
-                                        <input type="text" placeholder="Search" name= "searchbar" id="timeend">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
-                                </div>
+                                <select id="hourend" class="search">
+                                    <option value="">Hour</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                </select>
+                                <select id="minuteend" class="search">
+                                    <option value="">Minute</option>
+                                    <option value="00">00</option>
+                                    <option value="30">30</option>
+                                </select>
                             </div>
                         </div>
-                        
                     </div>
                     
-
                     <div class="butt" id="searchbutt">
                         <h3>search</h3>
                     </div>
@@ -115,7 +133,5 @@
                 </div>
         </div>
     </div>
-
-    <script src="js/studentsearchroom.js"></script>
 </body>
 </html>
