@@ -14,16 +14,29 @@ function updateDateDisplay() {
 
 async function loadReservations(token, studentProfile) {
 
-    const reservationResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
+    const reservationResponse = await fetch(`/api/student/all_reservations`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     const reservations = await reservationResponse.json();
 
     document.querySelectorAll('.date-grid-cell').forEach(cell => {
         cell.classList.remove('chosen');
+        cell.classList.remove('selected');
     });
 
+    const displayedDate = document.getElementById("dayanddate").textContent;
+
     reservations.forEach(reservation => {
+
+        const reservationDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        if (reservationDate !== displayedDate) return;
+
         const rows = document.querySelectorAll('.date-grid-row');
         rows.forEach(row => {
             const seatText = row.querySelector('.date-grid-seat').textContent;
@@ -66,17 +79,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
-        dateback.addEventListener("click", function () {
+        dateback.addEventListener("click", async function () {
             currentDate.setDate(currentDate.getDate() - 1);
             updateDateDisplay();
+            await loadReservations(token, studentProfile);
         });
     }
 
     var datego = document.getElementById("datego");
     if (datego) {
-        datego.addEventListener("click", function () {
+        datego.addEventListener("click", async function () {
             currentDate.setDate(currentDate.getDate() + 1);
             updateDateDisplay();
+            await loadReservations(token, studentProfile);
         });
     }
     
@@ -165,6 +180,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             
             await loadReservations(token, studentProfile);
             reserveButton.classList.add("hidden");
+            anonCheckbox.checked = false;
             
              } catch (error) {
             console.error("Error:", error);
@@ -197,12 +213,63 @@ document.addEventListener("DOMContentLoaded", async function () {
                 return cell && cell.classList.contains("selected");
             }
 
-            function showSeatInfo(cell) {
+            async function showSeatInfo(cell) {
                 seatInfoCard.classList.remove("hidden");
+
+                var reservationDate = document.getElementById("dayanddate").innerHTML;
+
+                var row = cell.closest('.date-grid-row');
+                    var seatText = row.querySelector('.date-grid-seat').textContent;
+                    var seatNumber = seatText.replace('Seat ', '');
+
+                    var cellsInRow = row.querySelectorAll('.date-grid-cell');
+                    var cellIndex = Array.from(cellsInRow).indexOf(cell);
+                    var timeHeaders = document.querySelectorAll('.date-grid-time');
+                    var timeHeader = timeHeaders[cellIndex];
+
+                    if (timeHeader) {
+                        var spans = timeHeader.querySelectorAll('span');
+                        var startTime = reservationDate + " " + spans[0].textContent;
+                        var endTime =  reservationDate + " " + spans[1].textContent;
+                    }
+                    const getResponse = await fetch(`/api/student/reservations/key/${seatNumber}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`,
+                    {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const reservation = await getResponse.json();
+
+                    const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+
+                    });
+
+                    const studentProfile = await getStudent.json();
+                    const picture = studentProfile.profilePicture;
+                    const user = studentProfile.username;
+
+                    if(reservation.isAnonymous == false){
+
+                    const card = document.getElementById("seat-info-card");
+                    card.querySelector(".seat-info-avatar").src = picture
+                    card.querySelector(".seat-info-username").textContent = "@" + user;
+
+                    }
+                    else{
+
+                    const card = document.getElementById("seat-info-card");
+                    card.querySelector(".seat-info-avatar").src = "/uploads/profilepics/images.png";
+                    card.querySelector(".seat-info-username").textContent = "@anonymous";
+
+                    }
+
+        
             }
 
             function hideSeatInfo() {
                 seatInfoCard.classList.add("hidden");
+                
             }
 
             gridWrap.addEventListener("mouseover", function (e) {

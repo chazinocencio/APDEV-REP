@@ -27,6 +27,44 @@ router.get('/reservations/:id', async (req, res) => {
     }
 });
 
+//all reservations
+
+router.get('/all_reservations', async (req, res) => {
+    try {
+        const reservations = await model.reservationModel.find();
+        res.json(reservations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+//get student who reserved through reservation key
+
+router.get('/reservations/key/:seat_id', async (req, res) => {
+    try {
+        const { seat_id } = req.params;
+        const { startTime, endTime } = req.query;
+
+        const allReservations = await model.reservationModel.find({ seatID: seat_id });
+
+        const match = allReservations.find(r => {
+            const dbTime = new Date(r.startTime).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            const sentTime = startTime.split(' ').slice(-2).join(' ');
+        
+            return dbTime === sentTime;
+        });
+        res.json(match);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 //view specific reservation
 
 router.get('/specific_reservation/:id', async (req, res) => {
@@ -52,6 +90,19 @@ router.get('/view_profile/:username', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+//get student
+router.get('/get_profile/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const studentProfile = await model.studentModel.findOne({idNumber: id});
+        res.json(studentProfile);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 //search profile
 router.get('/search_profile/:value', async (req, res) => {
