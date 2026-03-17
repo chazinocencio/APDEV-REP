@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
+    if (!user || !token) {
+        window.location.href = "../index.html"
+        return;
+    }
+
+
     const dateInput = document.getElementById('date');
     const hourStart = document.getElementById('hourstart');
     const minuteStart = document.getElementById('minutestart');
@@ -19,11 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
             errorMess.style.color = 'red';  
             return;
         }
-        const startTime = (hourStart.value + ':' + minuteStart.value);
-        const endTime = (hourEnd.value + ':' + minuteEnd.value);
 
-        const startDateTime = new Date(`${dateInput.value}T${startTime}`);
-        const endDateTime = new Date(`${dateInput.value}T${endTime}`);
+        const startTime = `${dateInput.value}T${hourStart.value}:${minuteStart.value}:00`;
+        const endTime = `${dateInput.value}T${hourEnd.value}:${minuteEnd.value}:00`;
+
+        const startDateTime = new Date(startTime);
+        const endDateTime = new Date(endTime);
 
         if (startDateTime >= endDateTime) {
             errorMess.style.display = 'block';
@@ -39,8 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                startTime: `${dateInput.value}T${startTime}:00`,
-                endTime: `${dateInput.value}T${endTime}:00`
+                startTime: startTime,
+                endTime: endTime
             })
         });
         const data = await response.json();
@@ -55,21 +64,48 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        availableSeats.forEach(seat => {
-            const seatNo = seat.seatID.split('-')[1];
+        if (availableSeats.length > 0) {
+            availableSeats.forEach(seat => {
+                const seatNo = seat.seatID.split('-')[1];
 
-            results.innerHTML += `
-                <div class="results">
-                    <div class="resultdeets">
-                        <p>${seat.roomID}</p>
-                        <p>${seatNo}</p>
-                    </div>
-                        <div class="butt" id="reserve">
-                            <h3>Reserve</h3>
+                results.innerHTML += `
+                    <div class="results">
+                        <div class="resultdeets">
+                            <p>${seat.roomID}</p>
+                            <p>${seatNo}</p>
                         </div>
-                </div>
-            `;
-        });
+                            <div class="butt" id="reserve" data-seatid="${seat.seatID}">
+                                <h3>Reserve</h3>
+                            </div>
+                    </div>
+                `;
+            });
+            document.querySelectorAll('.results .butt').forEach(reserveButton => {
+                reserveButton.addEventListener('click', async function() {
+                    const selectedSeatId = this.getAttribute('data-seatid');
+                    
+                    const response = await fetch(`/api/student/create_reservation/${user.username}`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        
+                        body: JSON.stringify({
+                            seatID: selectedSeatId,
+                            startTime: startTime,
+                            endTime: endTime,
+                            isAnonymous: false,
+                        })
+                    });
+
+                    const reservationResult = await response.json();
+                    console.log(reservationResult);
+
+                    this.closest('.results').remove();
+                });
+            });
+        }
     });
 
     studentprofile.addEventListener('click', function(){
