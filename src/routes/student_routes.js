@@ -58,6 +58,9 @@ router.get('/reservations/key/:seat_id', async (req, res) => {
         
             return dbTime === sentTime;
         });
+
+        if (!match) return res.status(404).json({ message: "No reservation found" });
+        
         res.json(match);
     } catch (error) {
         console.error(error);

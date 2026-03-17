@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             currentDate.setDate(currentDate.getDate() - 1);
             updateDateDisplay();
             await loadReservations(token, studentProfile);
+            reserveButton.classList.add("hidden");
         });
     }
 
@@ -92,6 +93,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             currentDate.setDate(currentDate.getDate() + 1);
             updateDateDisplay();
             await loadReservations(token, studentProfile);
+            reserveButton.classList.add("hidden");
         });
     }
     
