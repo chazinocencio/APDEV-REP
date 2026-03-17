@@ -48,18 +48,6 @@ router.get('/specific_reservation/:id', async (req, res) => {
     }
 });
 
-//view profile
-router.get('/view_profile/:username', async (req, res) => {
-    try {
-        const { username } = req.params;
-        const studentProfile = await model.studentModel.findOne({username: username});
-        res.json(studentProfile);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
 //search profile
 router.get('/search_profile/:value', async (req, res) => {
     try {
