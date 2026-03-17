@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         return;
     }
 
-	const response = await fetch(`api/common_routes/view_profile/${user.username}`);
+	const response = await fetch(`api/student/view_profile/${user.username}`);
     const data = await response.json();
     const studentProfile = data;
 
