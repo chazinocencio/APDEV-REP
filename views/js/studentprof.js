@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.querySelector('#profileusername').innerHTML = `@${studentProfile.username}`
     document.querySelector('#header-fullname').innerHTML = fullName;
-    document.querySelector('#prof-id').innerHTML = studentProfile.idNumber;
+    document.querySelector('#prof-id').innerHTML = studentProfile.idNumber.toString().slice(0,3);
     document.querySelector('#college').innerHTML = studentProfile.college;
     document.querySelector('#prof-program').innerHTML = studentProfile.degreeProgram;
     document.querySelector('#bio').innerHTML = studentProfile.bio;
