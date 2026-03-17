@@ -27,6 +27,7 @@ export async function register(req, res) {
         firstName: body.first_name || body.firstName,
         middleName: body.middle_name || body.middleName,
         profilePicture: body.profilePicture || 'null',
+        college: body.college || '',
         bio: body.bio || '',
         degreeProgram: body.degree_program || body.degreeProgram || '',
         isActive: true,

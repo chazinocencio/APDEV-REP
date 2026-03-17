@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="box">
-                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                        <h3 id="bio">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
                     </div>
                 </div>
 
@@ -109,7 +109,7 @@
                     </div>
 
                     <div class="box">
-                        <h3>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita mollitia architecto dignissimos earum doloribus laudantium quasi quam! Incidunt eveniet ullam quod accusamus accusantium. Molestias vero expedita rerum quis a molestiae.</h3>
+                        <input type="text" placeholder="Bio" name="editbio" id="editbio" class="editusername">
                     </div>
                 </div>
 
@@ -118,7 +118,8 @@
                         <h3>Update Photo</h3>
                     </div>
                     
-                    <div class="dragdrop">
+                    <div class="dragdrop" id="dragdrop">
+                        <input type="file" id="photoInput" accept="image/*" hidden>
                         <div class="instructions">
                             <img src="assets/images/photoeditsym.png" alt="photoeditsym">
                             <h3>Drag and drop your image here or click here to browse files.</h3>
@@ -180,7 +181,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                </div>
 
                     <div class="deact hidden" id="deact">
                         <h1>Deactivate Account</h1>

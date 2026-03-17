@@ -48,18 +48,6 @@ router.get('/specific_reservation/:id', async (req, res) => {
     }
 });
 
-//view profile
-router.get('/view_profile/:username', async (req, res) => {
-    try {
-        const { username } = req.params;
-        const studentProfile = await model.studentModel.findOne({username: username});
-        res.json(studentProfile);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
 //search profile
 router.get('/search_profile/:value', async (req, res) => {
     try {
@@ -83,10 +71,26 @@ router.get('/search_profile/:value', async (req, res) => {
 });
 
 //search time slot *NOT COMPLETE
-router.get('/search_seats', async (req, res) => {
+router.post('/search_timeslot', async (req, res) => {
     try {
-        const seats = await model.seatModel.find();
-        res.json(seats);
+        const { startTime, endTime } = req.body;
+        const requestedStart = new Date(startTime);
+        const requestedEnd = new Date(endTime);
+        const reservations = await model.reservationModel.find({
+            $or: [
+                { startTime: { $lt: requestedEnd, $gte: requestedStart } },
+                { endTime: { $gt: requestedStart, $lte: requestedEnd } },
+                { startTime: { $lte: requestedStart }, endTime: { $gte: requestedEnd } }
+            ]
+        });
+
+        const reservedSeatIDs = reservations.map(reservation => reservation.seatID);
+        const availableSeats = await model.seatModel.find({ seatID: { $nin: reservedSeatIDs } });
+        res.json({
+            success: true,
+            availableSeats: availableSeats
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });

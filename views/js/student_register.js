@@ -18,66 +18,187 @@ document.addEventListener("DOMContentLoaded", function () {
         var continueBtn = document.getElementById("info-continue");
         var backBtn = document.getElementById("info-back");
 
+        const studentData = JSON.parse(localStorage.getItem("registerData"));
+        if (studentData) {
+            firstName.value = studentData.firstName || "";
+            lastName.value = studentData.lastName || "";
+            middleName.value = studentData.middleName || "";
+            college.value = studentData.college || "";
+            degreeProgram.value = studentData.degreeProgram || "";
+            email.value = studentData.email || "";
+            idNumber.value = studentData.idNumber || "";
+        }
+        
         function trimValue(input) {
             return input ? input.value.trim() : "";
         }
 
-        function validateEmail(value) {
+        function isValidEmail(value) {
             if (!value) return false;
-            if (value.indexOf("@") === -1) return false;
+            if (!value.endsWith("@dlsu.edu.ph")) return false;
             return true;
         }
+        function isValidId(value) {
+            if (!value) return false;
+            if (isNaN(value)) return false;
+            value = Number(value);
+            if (!Number.isInteger(value)) return false;
+            if (value < 10000000 || value > 99999999) return false;
+            return true;
+        }
+        async function emailExists(value) {
+            const response = await fetch(`api/student/search_email/${value}`);
+            const data = await response.json();
+            return !!data; // Return true if student exists, false otherwise
+        }
+        async function idNumberExists(value) {
+            const response = await fetch(`api/student/search_idNumber/${value}`);
+            const data = await response.json();
+            return !!data; // Return true if student exists, false otherwise
+        }
 
+        function capitalizeFirstChar(str) {
+            return str.replace(/(^|\s)\S/g, function(match) {
+                return match.toUpperCase();
+            });
+        }
 
         if (continueBtn) {
-            continueBtn.addEventListener("click", function () {
+            continueBtn.addEventListener("click", async function () {
                 var valid = true;
 
-                var firstOk = trimValue(firstName) !== "";
-                var lastOk = trimValue(lastName) !== "";
-                var middleOk = trimValue(middleName) !== "";
-                var collegeOk = trimValue(college) !== "";
-                var degreeOk = trimValue(degreeProgram) !== "";
-
-                var emailVal = trimValue(email);
-                var idVal = trimValue(idNumber);
-
-                var emailOk = validateEmail(emailVal);
-                var idOk = validateId(idVal);
-
-                if (!firstOk || !lastOk || !middleOk || !collegeOk || !degreeOk || !emailOk || !idOk) {
+                if (trimValue(firstName) === ""){
                     valid = false;
+                    firstName.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(lastName) === ""){
+                    valid = false;
+                    lastName.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(middleName) === ""){
+                    valid = false;
+                    middleName.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(college) === ""){
+                    valid = false;
+                    college.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(degreeProgram) === ""){
+                    valid = false;
+                    degreeProgram.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(email) === ""){
+                    valid = false;
+                    email.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (idNumber.value === ""){
+                    valid = false;
+                    idNumber.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (email.value !== "" && !isValidEmail(email.value)) {
+                    valid = false;
+                    email.style.borderColor = "red";
+                    emailError.style.display = "block";
+                    emailError.textContent = "Not a valid DLSU Email.";
+                } else if (email.value !== "" && isValidEmail(email.value) && await emailExists(email.value)) {
+                    valid = false;
+                    email.style.borderColor = "red";
+                    emailError.textContent = "This email is already registered.";
+                    emailError.style.display = "block";
                 }
 
-                if (emailError) {
-                    emailError.style.display = emailOk ? "none" : "block";
-                }
-
-                if (idError) {
-                    idError.style.display = idOk ? "none" : "block";
-                }
-
-                if (formError) {
-                    formError.style.display = valid ? "none" : "block";
+                if (idNumber.value !== "" && !isValidId(idNumber.value)) {
+                    console.log("Invalid ID Number: " + idNumber.value);
+                    valid = false;
+                    idNumber.style.borderColor = "red";
+                    idError.style.display = "block";
+                    idError.textContent = "Not a valid DLSU ID Number.";
+                } else if (idNumber.value !== "" && isValidId(idNumber.value) && await idNumberExists(idNumber.value)) {
+                    valid = false;
+                    idNumber.style.borderColor = "red";
+                    idError.textContent = "This ID Number is already registered.";
+                    idError.style.display = "block";
                 }
 
                 if (valid) {
+                    const studentData = {
+                        firstName: capitalizeFirstChar(trimValue(firstName)),
+                        lastName: capitalizeFirstChar(trimValue(lastName)),
+                        middleName: capitalizeFirstChar(trimValue(middleName)),
+                        college: trimValue(college),
+                        degreeProgram: trimValue(degreeProgram),
+                        email: trimValue(email),
+                        idNumber: trimValue(idNumber)
+                    };
+                    localStorage.setItem("registerData", JSON.stringify(studentData));
                     window.location.href = "student_register_account.html";
                 }
             });
         }
 
+        firstName.addEventListener("click", function () {
+            firstName.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+        });
+
+        lastName.addEventListener("click", function () {
+            lastName.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+        });
+
+        middleName.addEventListener("click", function () {
+            middleName.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+        });
+
+        college.addEventListener("click", function () {
+            college.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+        });
+
+        degreeProgram.addEventListener("click", function () {
+            degreeProgram.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+        });
+
+        email.addEventListener("click", function () {
+            email.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+            emailError.style.display = "none";
+        });
+
+        idNumber.addEventListener("click", function () {
+            idNumber.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+            idError.style.display = "none";
+        });
+
         if (backBtn) {
             backBtn.addEventListener("click", function () {
+                localStorage.removeItem("registerData");
                 window.location.href = "student_login.html";
             });
         }
     }
 
     if (accountForm) {
+        const studentData = JSON.parse(localStorage.getItem("registerData"));
+        if (!studentData) {
+            window.location.href = "student_register.html";
+            return;
+        }
+
         var username = document.getElementById("reg-username");
         var password = document.getElementById("reg-password");
         var passwordConfirm = document.getElementById("reg-password-confirm");
+        var formError = document.getElementById("form-error");
 
         var usernameError = document.getElementById("username-error");
         var passwordError = document.getElementById("password-error");
@@ -85,31 +206,109 @@ document.addEventListener("DOMContentLoaded", function () {
         var registerBtn = document.getElementById("account-register");
         var backAccountBtn = document.getElementById("account-back");
 
-       
+        function trimValue(input) {
+            return input ? input.value.trim() : "";
+        }
+        
+        async function usernameExists(value) {
+            const response = await fetch(`api/student/view_profile/${value}`);
+            const data = await response.json();
+            return !!data; // Return true if student exists, false otherwise
+        }
+        function hasStrongPassword(value) {
+            if (!value) return false;
+            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return strongPasswordRegex.test(value);
+        }
+        function isValidUsername(value) {
+            if (!value) return false;
+            const usernameRegex = /^[a-zA-Z0-9_.]+$/;
+            return usernameRegex.test(value);
+        }
 
         if (registerBtn) {
-            registerBtn.addEventListener("click", function () {
-                var userVal = username ? username.value.trim() : "";
-                var passVal = password ? password.value : "";
-                var confirmVal = passwordConfirm ? passwordConfirm.value : "";
+            registerBtn.addEventListener("click", async function () {
+                valid = true;
 
-                var userOk = userVal !== "";
-                var passStrong = hasStrongPassword(passVal);
-                var passMatch = passVal !== "" && passVal === confirmVal;
-
-                if (usernameError) {
-                    usernameError.style.display = userOk ? "none" : "block";
+                if (trimValue(username) === ""){
+                    valid = false;
+                    username.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(password) === ""){
+                    valid = false;
+                    password.style.borderColor = "red";
+                    formError.style.display = "block";
+                }
+                if (trimValue(passwordConfirm) === ""){
+                    valid = false;
+                    passwordConfirm.style.borderColor = "red";
+                    formError.style.display = "block";
                 }
 
-                if (passwordError) {
-                    passwordError.style.display = passStrong && passMatch ? "none" : "block";
+                if (trimValue(username) !== "" && !isValidUsername(username.value.trim())){
+                    valid = false;
+                    username.style.borderColor = "red";
+                    usernameError.style.display = "block";
+                    usernameError.textContent = "Username can only contain letters, numbers, underscores, and periods.";
+                } else if (trimValue(username) !== "" && isValidUsername(username.value.trim()) && await usernameExists(username.value.trim())) {
+                    valid = false;
+                    username.style.borderColor = "red";
+                    usernameError.textContent = "This username is already taken.";
+                    usernameError.style.display = "block";
                 }
 
-                if (userOk && passStrong && passMatch) {
+                if (trimValue(password) !== "" && !hasStrongPassword(password.value)) {
+                    valid = false;
+                    password.style.borderColor = "red";
+                    passwordError.style.display = "block";
+                    passwordError.textContent = "Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character.";
+                } else if (trimValue(password) !== trimValue(passwordConfirm)) {
+                    valid = false;
+                    password.style.borderColor = "red";
+                    passwordConfirm.style.borderColor = "red";
+                    passwordError.textContent = "Passwords do not match.";
+                    passwordError.style.display = "block";
+                }
+
+                if (valid) {
+                    const response = await fetch("api/auth/student/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username: trimValue(username),
+                            password: trimValue(password),
+                            ...studentData
+                        })
+                    });
+                    localStorage.removeItem("registerData");
+                    const data = await response.json();
                     window.location.href = "student_login.html";
                 }
             });
         }
+
+        username.addEventListener("click", function () {
+            username.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+            usernameError.style.display = "none";
+        });
+
+        password.addEventListener("click", function () {
+            password.style.borderColor = "var(--ls-green)";
+            passwordConfirm.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+            passwordError.style.display = "none";
+        }); 
+
+        passwordConfirm.addEventListener("click", function () {
+            password.style.borderColor = "var(--ls-green)";
+            passwordConfirm.style.borderColor = "var(--ls-green)";
+            formError.style.display = "none";
+            passwordError.style.display = "none";
+        });
 
         if (backAccountBtn) {
             backAccountBtn.addEventListener("click", function () {

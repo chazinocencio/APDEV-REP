@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
 import { verifyToken } from "../middleware/auth.js";
+import upload from '../middleware/upload.js';
 
 const router = Router()
 
@@ -8,6 +9,18 @@ router.get('/getTechnicians', async (req, res) => {
     try {
         const technicians = await model.technicianModel.find();
         res.json(technicians);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// view technician profile
+router.get('/view_profile/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        const techProfile = await model.technicianModel.findOne({ username: username });
+        res.json(techProfile);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
@@ -146,15 +159,15 @@ router.put('/unblock_student/:id', async(req, res) =>{
 
 // edit profile
 
-router.put('/edit_profile/:employeeID', async (req, res) =>{ 
+router.put('/edit_profile/:employeeID', upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { employeeID } = req.params; 
-        const { bio, username, profilePicture } = req.body;
+        const { bio, username } = req.body;
 
         const updateFields = {};
             if (bio !== undefined) updateFields.bio = bio;
             if (username !== undefined) updateFields.username = username;
-            if (profilePicture !== undefined) updateFields.profilePicture = profilePicture;
+            if (req.file) updateFields.profilePicture = `/uploads/profilepics/${req.file.filename}`;
 
         const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { new: true, runValidators: true });
         if (!user) {

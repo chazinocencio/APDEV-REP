@@ -26,7 +26,12 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         } else {
             try {
-                const response = await fetch("/api/auth/student/login", {
+                // determine which endpoint and redirect to use based on the form action
+                const formAction = loginForm.getAttribute('action') || '';
+                const isTechnician = formAction.toLowerCase().includes('technician');
+                const endpoint = isTechnician ? "/api/auth/technician/login" : "/api/auth/student/login";
+
+                const response = await fetch(endpoint, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -43,8 +48,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     localStorage.setItem("token", data.token);
                     // optional: store user info
                     localStorage.setItem("user", JSON.stringify(data.user));
-                    // redirect to student dashboard
-                    window.location.href = "student.html";
+                    // redirect to appropriate dashboard (use the form action path)
+                    // ensure we don't accidentally redirect to an external URL
+                    const redirectPath = formAction || (isTechnician ? "technician.html" : "student.html");
+                    window.location.href = redirectPath;
 
                 } else {
                     errormess.style.opacity = 1;
