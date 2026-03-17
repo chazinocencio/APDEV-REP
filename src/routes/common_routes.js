@@ -71,7 +71,7 @@ router.get('/search_profile/:value', async (req, res) => {
 });
 
 //search time slot *NOT COMPLETE
-router.get('/search_seats', async (req, res) => {
+router.get('/search_timeslot', async (req, res) => {
     try {
         const { startTime, endTime } = req.body;
         const requestedStart = new Date(startTime);
