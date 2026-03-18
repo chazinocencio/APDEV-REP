@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function(){
     const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
 
-    if (!user) {
+    if (!user || !token) {
 		window.location.href = "../index.html"
         return;
     }
@@ -51,23 +52,32 @@ document.addEventListener("DOMContentLoaded", async function(){
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
 
+    const oldPass = document.getElementById("oldpass");
+    const newPass = document.getElementById("newpass");
+    const confirmPass = document.getElementById("conpass");
+    const errorMess = document.getElementById("errormess");
+    const oldPassError = document.getElementById("oldpasserror");
+
+    const deactPass = document.getElementById("deactpass");
+    const deactErrorMess = document.getElementById("deac-error-mess");
+
     function hasStrongPassword(value) {
         if (!value) return false;
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return strongPasswordRegex.test(value);
     }
 
-    /************* CREATE API ******************/
     async function oldPasswordValid(value) {
         const response = await fetch(`api/student/check_password/${user.idNumber}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ password: value })
         });
         const data = await response.json();
-        return data.isValid;
+        return data.success;
     }
 
     studentprofile.addEventListener('click', function(){
@@ -75,15 +85,13 @@ document.addEventListener("DOMContentLoaded", async function(){
     }) 
 
     cancelpass.addEventListener('click', function(){
-    editpass.classList.add('hidden');
+        oldPass.value = '';
+        newPass.value = '';
+        confirmPass.value = '';
+        editpass.classList.add('hidden');
     }) 
 
     savepass.addEventListener('click', async function(){
-        const oldPass = document.getElementById("oldpass");
-        const newPass = document.getElementById("newpass");
-        const confirmPass = document.getElementById("confirmpass");
-        const errorMess = document.getElementById("errormess");
-        const oldPassError = document.getElementById("oldpasserror");
         var valid = true;
 
         if(oldPass.value === '' || newPass.value === '' || confirmPass.value === ''){   
@@ -125,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     user: user,
@@ -134,16 +142,50 @@ document.addEventListener("DOMContentLoaded", async function(){
                 })
             });
             
+            oldPass.value = '';
+            newPass.value = '';
+            confirmPass.value = '';
             editpass.classList.add('hidden');
         }
     }) 
 
     canceldeact.addEventListener('click', function(){
-    deact.classList.add('hidden');
+        deactPass.value = '';
+        deact.classList.add('hidden');
+        deactErrorMess.classList.add('hidden');
     }) 
 
-    confirmdeact.addEventListener('click', function(){
-    deact.classList.add('hidden');
+    confirmdeact.addEventListener('click', async function(){
+        deactErrorMess.classList.add('hidden');
+        if(deactPass.value === ''){
+            deactErrorMess.classList.remove('hidden');
+            deactErrorMess.innerHTML = "Please enter your password.";
+            return;
+        } else {
+            const response = await fetch(`api/student/deactivate/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    password: deactPass.value
+                })
+            });
+
+            const data = await response.json();
+            if(data.success){
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "../index.html";
+            } else {
+                deactErrorMess.classList.remove('hidden');
+                deactErrorMess.innerHTML = data.message || "An error occurred. Please try again.";
+                return;
+            }
+        }
+        deact.classList.add('hidden');
     }) 
 
     changepass.addEventListener('click', function(){
