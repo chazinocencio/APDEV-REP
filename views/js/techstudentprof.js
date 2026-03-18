@@ -17,11 +17,40 @@ document.addEventListener('DOMContentLoaded', async function(){
     }) 
 
     if (blockbutt) blockbutt.addEventListener('click', function(){
-       document.getElementById('blockroom1').classList.remove('hidden');
+          // if student is currently blocked, send unblock request immediately
+          if (typeof window.__studentBlocked !== 'undefined' && window.__studentBlocked) {
+               (async () => {
+                  if (!window.__studentIdNumber) return;
+                  try {
+                     const resp = await fetch(`/api/technician/unblock_student/${window.__studentIdNumber}`, { method: 'PUT' });
+                     if (!resp.ok) throw new Error('Failed to unblock student');
+                     window.__studentBlocked = false;
+                     blockbutt.querySelector('h3').textContent = 'Block Student';
+                  } catch (err) {
+                     console.error('Unblock failed', err);
+                  }
+               })();
+               return;
+          }
+
+          document.getElementById('blockroom1').classList.remove('hidden');
     }) 
 
     if (confirmblock) confirmblock.addEventListener('click', function(){
-       document.getElementById('blockroom1').classList.add('hidden');
+          // perform block action
+          (async () => {
+             document.getElementById('blockroom1').classList.add('hidden');
+             if (!studentIdNumber) return;
+             try {
+                const resp = await fetch(`/api/technician/block_student/${studentIdNumber}`, { method: 'PUT' });
+                if (!resp.ok) throw new Error('Failed to block student');
+                window.__studentBlocked = true;
+                window.__studentIdNumber = studentIdNumber;
+                if (blockbutt) blockbutt.querySelector('h3').textContent = 'Unblock Student';
+             } catch (err) {
+                console.error('Block failed', err);
+             }
+          })();
     }) 
     if (cancelblock) cancelblock.addEventListener('click', function(){
        document.getElementById('blockroom1').classList.add('hidden');
@@ -59,6 +88,11 @@ document.addEventListener('DOMContentLoaded', async function(){
         if (bio) bio.textContent = profile.bio || '';
       // store idNumber for other pages (like viewing reservations)
       if (profile.idNumber) studentIdNumber = profile.idNumber;
+
+      // expose globals for block/unblock actions and set button state
+      window.__studentIdNumber = studentIdNumber;
+      window.__studentBlocked = (typeof profile.canReserve !== 'undefined') ? !profile.canReserve : false;
+      if (blockbutt && window.__studentBlocked) blockbutt.querySelector('h3').textContent = 'Unblock Student';
 
     } catch (err) {
         console.error('Error loading student profile', err);
