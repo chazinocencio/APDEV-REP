@@ -51,6 +51,25 @@ document.addEventListener("DOMContentLoaded", async function(){
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
 
+    function hasStrongPassword(value) {
+        if (!value) return false;
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return strongPasswordRegex.test(value);
+    }
+
+    /************* CREATE API ******************/
+    async function oldPasswordValid(value) {
+        const response = await fetch(`api/student/check_password/${user.idNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password: value })
+        });
+        const data = await response.json();
+        return data.isValid;
+    }
+
     studentprofile.addEventListener('click', function(){
     window.location.href = "../student.html";
     }) 
@@ -59,8 +78,64 @@ document.addEventListener("DOMContentLoaded", async function(){
     editpass.classList.add('hidden');
     }) 
 
-    savepass.addEventListener('click', function(){
-    editpass.classList.add('hidden');
+    savepass.addEventListener('click', async function(){
+        const oldPass = document.getElementById("oldpass");
+        const newPass = document.getElementById("newpass");
+        const confirmPass = document.getElementById("confirmpass");
+        const errorMess = document.getElementById("errormess");
+        const oldPassError = document.getElementById("oldpasserror");
+        var valid = true;
+
+        if(oldPass.value === '' || newPass.value === '' || confirmPass.value === ''){   
+            errorMess.classList.remove('hidden');
+            errorMess.innerHTML = "Please fill out all fields.";
+            valid = false;
+            return;
+        } else {
+            errorMess.classList.add('hidden');
+            oldPassError.classList.add('hidden');
+            if(!(await oldPasswordValid(oldPass.value))){
+                valid = false;
+                oldPassError.classList.remove('hidden');
+                oldPassError.innerHTML = "Old password is incorrect.";
+                return;
+            }
+            if(!hasStrongPassword(newPass.value)){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password must be at least 8 characters long, include uppercase letters, lowercase letters, numbers, and special characters.";
+                return;
+            }
+            if(newPass.value === oldPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "New password cannot be the same as the old password.";
+                return;
+            }
+            if(newPass.value !== confirmPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password does not match.";
+                return;
+            }
+        }
+
+        if(valid){
+            const response = await fetch(`api/student/change_password/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    oldPassword: oldPass.value,
+                    newPassword: newPass.value
+                })
+            });
+            
+            editpass.classList.add('hidden');
+        }
     }) 
 
     canceldeact.addEventListener('click', function(){
