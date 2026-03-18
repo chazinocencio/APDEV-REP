@@ -267,7 +267,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             const deleteText = await deleteResponse.text();
             const deleteResult = deleteText ? JSON.parse(deleteText) : {};
-            console.log("Deleted old reservation:", deleteResult);
         }
 
         const newReservation = {
@@ -293,7 +292,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         const postResult = await postResponse.json();
 
         if (postResponse.ok) {
-            console.log("Reservation updated:", postResult);
             errormess.classList.add("hidden");
             editrev.classList.add('hidden');
 
@@ -304,7 +302,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             await repaintDisplay(reservations, token, card);
 
         } else {
-            console.warn("⚠️ Post failed:", postResult);
+            console.warn("Post failed:", postResult);
             errormess.textContent = "Failed to update reservation.";
             errormess.classList.remove("hidden");
         }
