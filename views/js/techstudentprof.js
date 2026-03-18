@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!username) return; // nothing to load
 
     try {
-        const res = await fetch(`api/common_routes/view_profile/${username}`);
+        const res = await fetch(`api/student/view_profile/${username}`);
         if (!res.ok) throw new Error('Failed to fetch profile');
         const profile = await res.json();
 
