@@ -100,6 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    const params = new URLSearchParams(window.location.search);
+    room = params.get("room");
+
     room = "G302";
     updateDateDisplay();
     let activeRow = null;
