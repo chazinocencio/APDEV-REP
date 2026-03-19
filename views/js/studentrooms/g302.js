@@ -196,16 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 var cellsInRow = row.querySelectorAll('.date-grid-cell');
                 var cellIndex = Array.from(cellsInRow).indexOf(cell);
-                /*
-                var timeHeaders = document.querySelectorAll('.date-grid-time');
-                var timeHeader = timeHeaders[cellIndex];
-
-                if (timeHeader) {
-                    var spans = timeHeader.querySelectorAll('span');
-                    var startTime = reservationDate + " " + spans[0].textContent;
-                    var endTime =  reservationDate + " " + spans[1].textContent;
-                }
-                */
 
                 const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start;
                 const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end;
@@ -223,18 +213,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 const picture = studentProfile.profilePicture;
                 const username = studentProfile.username;
 
-                if(reservation.isAnonymous == false){
+                if(!reservation.isAnonymous){
                     const card = document.getElementById("seat-info-card");
                     card.querySelector(".seat-info-avatar").src = picture
                     card.querySelector(".seat-info-username").textContent = "@" + username;
                     seatInfoCard.addEventListener('click', function(){
-                    window.location.href = `../studentprof.html?id=${username}`;
-                }); 
-                }
+                        window.location.href = `../studentprof.html?id=${username}`;
+                    }); 
+                }   
                 else{
                     const card = document.getElementById("seat-info-card");
-                    card.querySelector(".seat-info-avatar").src = "/uploads/profilepics/images.png";
-                    card.querySelector(".seat-info-username").textContent = "@anonymous";
+                    card.innerHTML = `
+                        <img src="../assets/images/diffusersym.png" alt="User avatar" class="seat-info-avatar">
+                        <h2 class="seat-info-username">@anonymous</h2>
+                    `;
                 }
             }
 
@@ -272,27 +264,27 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
+
+    var studentprofile = document.getElementById("back");
+    if (studentprofile) {
+        studentprofile.addEventListener("click", function () {
+            window.location.href = "../studentreserve.html";
+        });
+    }
+
+    var map = document.getElementById('map');
+
+    var seatmap = document.getElementById('seatmap');
+    if (seatmap) {
+        seatmap.addEventListener("click", function () {
+            map.classList.remove('hidden');
+        });
+    }
+
+    var crossback = document.getElementById('crossback');
+    if (crossback) {
+        crossback.addEventListener("click", function () {
+            map.classList.add('hidden');
+        });
+    }
 });
-
-var studentprofile = document.getElementById("back");
-if (studentprofile) {
-    studentprofile.addEventListener("click", function () {
-        window.location.href = "../studentreserve.html";
-    });
-}
-
-var map = document.getElementById('map');
-
-var seatmap = document.getElementById('seatmap');
-if (seatmap) {
-    seatmap.addEventListener("click", function () {
-        map.classList.remove('hidden');
-    });
-}
-
-var crossback = document.getElementById('crossback');
-if (crossback) {
-    crossback.addEventListener("click", function () {
-        map.classList.add('hidden');
-    });
-}
