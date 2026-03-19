@@ -292,6 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const card = document.getElementById("seat-info-card");
                     card.querySelector(".seat-info-avatar").src = picture
                     card.querySelector(".seat-info-username").textContent = "@" + username;
+                    seatInfoCard.classList.remove('disabled');
                     seatInfoCard.addEventListener('click', function(){
                         window.location.href = `./studentprof.html?id=${username}`;
                     }); 
@@ -302,6 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <img src="./assets/images/diffusersym.png" alt="User avatar" class="seat-info-avatar">
                         <h2 class="seat-info-username">@anonymous</h2>
                     `;
+                    seatInfoCard.classList.add('disabled');
                 }
             }
 

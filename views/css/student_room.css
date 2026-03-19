@@ -154,6 +154,10 @@
     color: var(--ls-white);
 }
 
+.disabled{
+    pointer-events: none;
+}
+
 .timelabel{
     display: grid;
     grid-template-columns: 72px repeat(18, 1fr) 70px;
