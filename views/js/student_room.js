@@ -95,12 +95,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const user = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("token");
 
-    /*
+    
     if (!user || !token) {
         window.location.href = "./index.html"
         return;
     }
-        */
+
 
     const params = new URLSearchParams(window.location.search);
     room = params.get("room");
