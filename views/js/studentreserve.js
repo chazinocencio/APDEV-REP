@@ -7,34 +7,91 @@ const g305 = document.getElementById('G305')
 const g306 = document.getElementById('G306')
 const reservations = document.getElementById('reservations')
 
-studentprofile.addEventListener('click', function(){
-    window.location.href = "../student.html";
-})
+document.addEventListener("DOMContentLoaded", async function() {
 
-reservations.addEventListener('click', async function(){
-    window.location.href = "../myreservations.html";
-})
+    const token = localStorage.getItem("token");
 
-g301.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G301.html";
-})
+    const response = await fetch('/api/student/all_reservations', {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    const allReservations = await response.json();
 
-if (g302) g302.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G302.html";
-})
+    const today = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
 
-if (g303) g303.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G303.html";
-})
+    const roomCounts = {
+        "g301": 0,
+        "g302": 0,
+        "g303": 0,
+        "g304": 0,
+        "g305": 0,
+        "g306": 0
+    };
 
-if (g304) g304.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G304.html";
-})
+    allReservations.forEach(reservation => {
+        const reservationDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
 
-if (g305) g305.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G305.html";
-})
 
-if (g306) g306.addEventListener('click', function(){
-    window.location.href = "../studentrooms/G306.html";
+        if (reservationDate !== today) return;
+
+    
+        const room = reservation.seatID.split('-')[0].toLowerCase();
+        if (roomCounts[room] !== undefined) {
+            roomCounts[room]++;
+        }
+    });
+
+    var percentage = (roomCounts["g301"] / 432) * 100;
+    percentage = Math.round(percentage);
+    
+    document.getElementById("G301").innerHTML = `
+                    <div class="roomheader">
+                        <img src="assets/images/roompic.png" alt="Room Thumbnail">
+                        <div class="roomlabel">
+                            <h3>Room G301</h3>
+                        </div>
+                    </div>
+                    <div class="vacancyinfo">
+                        <span>Vacancy:</span>
+                        <span>`+percentage+`%</span>
+                    </div>
+                    <div class="progressbar">
+                        <div class="progressfill" style="width: `+percentage+`%;"></div>
+                    </div>`
+
+    studentprofile.addEventListener('click', function(){
+        window.location.href = "../student.html";
+    })
+
+    reservations.addEventListener('click', async function(){
+        window.location.href = "../myreservations.html";
+    })
+
+    g301.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G301.html";
+    })
+
+    if (g302) g302.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G302.html";
+    })
+
+    if (g303) g303.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G303.html";
+    })
+
+    if (g304) g304.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G304.html";
+    })
+
+    if (g305) g305.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G305.html";
+    })
+
+    if (g306) g306.addEventListener('click', function(){
+        window.location.href = "../studentrooms/G306.html";
+    })
+
 })
