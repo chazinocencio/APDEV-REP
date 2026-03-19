@@ -83,6 +83,14 @@ async function fetchReservations(room) {
     });
 }
 
+function validateSelectedCells(selectedCells, row){
+    const cellsInRow = row.querySelectorAll('.date-grid-cell');
+    const startCellIndex = Array.from(cellsInRow).indexOf(selectedCells[0]);
+    const endCellIndex = Array.from(cellsInRow).indexOf(selectedCells[selectedCells.length-1]);
+    
+    return (endCellIndex - startCellIndex + 1) === selectedCells.length;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const user = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("token");
@@ -132,6 +140,70 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    
+    var reserveButton = document.getElementById("rev");
+
+    if(reserveButton){
+        reserveButton.addEventListener("click", async function () {
+            const selectedCells = document.querySelectorAll(".date-grid-cell.chosen");
+            const row = selectedCells[0].closest(".date-grid-row");
+            const cellsInRow = row.querySelectorAll('.date-grid-cell');
+            const startCellIndex = Array.from(cellsInRow).indexOf(selectedCells[0]);
+            const endCellIndex = Array.from(cellsInRow).indexOf(selectedCells[selectedCells.length-1]);
+            const seatNumber = row.querySelector('.date-grid-seat').textContent.replace('Seat ', '');
+           
+            if((endCellIndex - startCellIndex + 1) !== selectedCells.length){
+                alert("Invalid Selection");
+                return;
+            }
+
+            var anonCheckbox = document.getElementById('anonymous-toggle');
+            var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
+
+            const reserveDate = currentDate.toLocaleDateString('en-CA');
+
+            const startTime = reserveDate + "T" + getTimeRangeStringFromIndex(startCellIndex).start;
+            const endTime = reserveDate + "T" + getTimeRangeStringFromIndex(endCellIndex).end;
+
+            const reservation = {
+                seatID: room + '-' + seatNumber,
+                startTime: startTime,
+                endTime: endTime,
+                isAnonymous: isAnonymous
+            }
+
+            try {
+                const response = await fetch(`/api/student/create_reservation/${user.username}`,{
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(reservation)
+                });
+
+                const result = await response.json();
+
+                if(result.success){
+                    alert("Reserved");
+                    updateDateDisplay();
+                    activeRow = null;
+                    document.querySelectorAll(".date-grid-row").forEach(r => {
+                        r.classList.remove("disabled");
+                    });
+                    selectedCells.forEach(c => {
+                        c.classList.remove("chosen")
+                    })
+                    reserveButton.classList.add("hidden");
+                } else {
+                    console.warn("Server returned an error:", result);
+                }
+            } catch (error) {
+                console.error("POST failed:", error);
+            }
+        });
+    }
+
     var gridWrap = document.querySelector(".date-grid-wrap");
     if (gridWrap) {
         gridWrap.addEventListener("click", function (e) {
@@ -158,8 +230,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
                     cell.classList.toggle("chosen");
-
-                    var reserveButton = document.getElementById("rev");
 
                     if (reserveButton) {
                         var anyChosen = document.querySelector(".date-grid-cell.chosen");
@@ -251,16 +321,22 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             gridWrap.addEventListener("click", function (e) {
+                e.stopPropagation();
+                
                 var cell = e.target.closest(".date-grid-cell");
-                if (!isInfoCell(cell)) return;
 
-                if (pinnedCell === cell) {
+                if (pinnedCell !== null) {
                     pinnedCell = null;
                     hideSeatInfo();
-                } else {
+                } else if (isInfoCell(cell)) {
                     pinnedCell = cell;
                     showSeatInfo(cell);
                 }
+            });
+
+            document.addEventListener("click", function () {
+                pinnedCell = null;
+                hideSeatInfo();
             });
         }
     }

@@ -221,6 +221,7 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
 
         const savedReservation = await newReservation.save();
         res.status(201).json({
+            success: true,
             message: "Reservation created successfully",
             reservation: savedReservation
         });
