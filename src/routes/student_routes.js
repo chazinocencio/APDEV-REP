@@ -309,17 +309,34 @@ router.put('/change_password', verifyToken, async (req, res) => {
     }
 });
 
+router.post('/check_password/:idNumber', verifyToken, async (req, res) => {
+    try {
+        const { idNumber } = req.params;
+        const { password } = req.body;
+
+        const student = await model.studentModel.findOne({ idNumber });
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
+        if (student.passwordHash !== password) return res.status(401).json({ success: false, message: 'Password is incorrect' });
+
+        res.json({ success: true, message: 'Password is correct' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // deactivate profile (set isActive to false) for logged-in student
 router.put('/deactivate', verifyToken, async (req, res) => {
     try {
-        const requester = req.user;
-        if (requester.role !== 'student') return res.status(403).json({ message: 'Only students can deactivate their profile' });
+        const { user, password } = req.body;
 
-        const student = await model.studentModel.findOne({ email: requester.email });
+        const student = await model.studentModel.findOne({ email: user.email });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
+        if (student.passwordHash !== password) return res.status(401).json({ message: 'Password is incorrect' });
+
         student.isActive = false;
-        student.canReserve = false;
         await student.save();
 
         res.json({ success: true, message: 'Profile deactivated' });

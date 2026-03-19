@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function(){
     const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
 
-    if (!user) {
+    if (!user || !token) {
 		window.location.href = "../index.html"
         return;
     }
@@ -51,24 +52,140 @@ document.addEventListener("DOMContentLoaded", async function(){
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
 
+    const oldPass = document.getElementById("oldpass");
+    const newPass = document.getElementById("newpass");
+    const confirmPass = document.getElementById("conpass");
+    const errorMess = document.getElementById("errormess");
+    const oldPassError = document.getElementById("oldpasserror");
+
+    const deactPass = document.getElementById("deactpass");
+    const deactErrorMess = document.getElementById("deac-error-mess");
+
+    function hasStrongPassword(value) {
+        if (!value) return false;
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return strongPasswordRegex.test(value);
+    }
+
+    async function oldPasswordValid(value) {
+        const response = await fetch(`api/student/check_password/${user.idNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ password: value })
+        });
+        const data = await response.json();
+        return data.success;
+    }
+
     studentprofile.addEventListener('click', function(){
     window.location.href = "../student.html";
     }) 
 
     cancelpass.addEventListener('click', function(){
-    editpass.classList.add('hidden');
+        oldPass.value = '';
+        newPass.value = '';
+        confirmPass.value = '';
+        editpass.classList.add('hidden');
     }) 
 
-    savepass.addEventListener('click', function(){
-    editpass.classList.add('hidden');
+    savepass.addEventListener('click', async function(){
+        var valid = true;
+
+        if(oldPass.value === '' || newPass.value === '' || confirmPass.value === ''){   
+            errorMess.classList.remove('hidden');
+            errorMess.innerHTML = "Please fill out all fields.";
+            valid = false;
+            return;
+        } else {
+            errorMess.classList.add('hidden');
+            oldPassError.classList.add('hidden');
+            if(!(await oldPasswordValid(oldPass.value))){
+                valid = false;
+                oldPassError.classList.remove('hidden');
+                oldPassError.innerHTML = "Old password is incorrect.";
+                return;
+            }
+            if(!hasStrongPassword(newPass.value)){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password must be at least 8 characters long, include uppercase letters, lowercase letters, numbers, and special characters.";
+                return;
+            }
+            if(newPass.value === oldPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "New password cannot be the same as the old password.";
+                return;
+            }
+            if(newPass.value !== confirmPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password does not match.";
+                return;
+            }
+        }
+
+        if(valid){
+            const response = await fetch(`api/student/change_password/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    oldPassword: oldPass.value,
+                    newPassword: newPass.value
+                })
+            });
+            
+            oldPass.value = '';
+            newPass.value = '';
+            confirmPass.value = '';
+            editpass.classList.add('hidden');
+        }
     }) 
 
     canceldeact.addEventListener('click', function(){
-    deact.classList.add('hidden');
+        deactPass.value = '';
+        deact.classList.add('hidden');
+        deactErrorMess.classList.add('hidden');
     }) 
 
-    confirmdeact.addEventListener('click', function(){
-    deact.classList.add('hidden');
+    confirmdeact.addEventListener('click', async function(){
+        deactErrorMess.classList.add('hidden');
+        if(deactPass.value === ''){
+            deactErrorMess.classList.remove('hidden');
+            deactErrorMess.innerHTML = "Please enter your password.";
+            return;
+        } else {
+            const response = await fetch(`api/student/deactivate/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    password: deactPass.value
+                })
+            });
+
+            const data = await response.json();
+            if(data.success){
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "../index.html";
+            } else {
+                deactErrorMess.classList.remove('hidden');
+                deactErrorMess.innerHTML = data.message || "An error occurred. Please try again.";
+                return;
+            }
+        }
+        deact.classList.add('hidden');
     }) 
 
     changepass.addEventListener('click', function(){
