@@ -71,27 +71,27 @@ document.addEventListener("DOMContentLoaded", async function() {
     })
 
     g301.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G301.html";
+        window.location.href = "./student_room.html?room=G301";
     })
 
     if (g302) g302.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G302.html";
+        window.location.href = "./student_room.html?room=G302";
     })
 
     if (g303) g303.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G303.html";
+        window.location.href = "./student_room.html?room=G303";
     })
 
     if (g304) g304.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G304.html";
+        window.location.href = "./student_room.html?room=G304";
     })
 
     if (g305) g305.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G305.html";
+        window.location.href = "./student_room.html?room=G305";
     })
 
     if (g306) g306.addEventListener('click', function(){
-        window.location.href = "../studentrooms/G306.html";
+        window.location.href = "./student_room.html?room=G306";
     })
 
 })
