@@ -80,12 +80,16 @@ async function repaintDisplay(reservations, token, card) {
         const seatData = await seatResponse.json();
         const div = document.createElement("div");
 
+        const seat = reservation.seatID;
+        const extractSeat = seat.split('-');
+        const getSeat = extractSeat.pop();
+
         div.classList.add("results");
         div.innerHTML = `
             <div class="resultdeets">
                 <p>${index + 1}</p>
                 <p>${seatData.roomID}</p>
-                <p>${reservation.seatID}</p>
+                <p>${getSeat}</p>
                 <p>${new Date(reservation.startTime).toLocaleDateString()}</p>
                 <p>${new Date(reservation.startTime).toLocaleTimeString()}</p>
                 <p>${new Date(reservation.endTime).toLocaleTimeString()}</p>
