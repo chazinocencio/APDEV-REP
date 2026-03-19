@@ -1,7 +1,9 @@
 var currentDate = new Date();
+let room = null;
 
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 
 function formatDate(d) {
     return weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
@@ -10,24 +12,123 @@ function formatDate(d) {
 function updateDateDisplay() {
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
+    fetchReservations(room);
+}
+
+function getTimeIndex(timeString) {
+    const date = new Date(timeString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const startHour = 8; // grid starts at 8:00 AM
+
+    return ((hours - startHour) * 60 + minutes) / 30;
+}
+
+function getTimeRangeStringFromIndex(index) {
+    const startHour = 8;
+
+    const startMinutesTotal = index * 30;
+    const endMinutesTotal = (index + 1) * 30;
+
+    function format(totalMinutes) {
+        const hours = startHour + Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+
+    return {
+        start: format(startMinutesTotal),
+        end: format(endMinutesTotal)
+    };
+}
+
+async function fetchReservations(room) {
+    var dateGrid = document.querySelector(".date-grid");
+    if (!dateGrid) return;
+
+    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`);
+    const data = await response.json();
+    const reservations = data.reservations;
+
+    dateGrid.querySelectorAll(".date-grid-cell").forEach(cell => {
+        cell.className = "date-grid-cell"; // reset classes
+    });
+
+    reservations.forEach(reservation => {
+        const { seatID, startTime, endTime, reservationType } = reservation;
+        const seatNumber = parseInt(seatID.split("-")[1]);
+
+        if (!seatNumber) return;
+
+        const rowIndex = seatNumber - 1;
+        const row = document.querySelectorAll(".date-grid-row")[rowIndex];
+
+        if (!row) return;
+
+        const cells = row.querySelectorAll(".date-grid-cell");
+        const startIndex = getTimeIndex(startTime);
+        const endIndex = getTimeIndex(endTime);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            if (!cells[i]) continue;
+            
+            if (reservationType === "Student") {
+                cells[i].classList.add("selected");
+            } else if (reservationType === "Blocked") {
+                cells[i].classList.add("unavailable");
+            }
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
+
+    if (!user || !token) {
+        window.location.href = "../index.html"
+        return;
+    }
+
+    room = "G302";
     updateDateDisplay();
+    let activeRow = null;
+    let dayCounter = 0;
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
+        dateback.classList.add("disabled");
         dateback.addEventListener("click", function () {
-            currentDate.setDate(currentDate.getDate() - 1);
-            updateDateDisplay();
+            if (dayCounter === 6) {
+                datego.classList.remove("disabled");
+            }
+            if (dayCounter > 0) {
+                currentDate.setDate(currentDate.getDate() - 1);
+                updateDateDisplay();
+                dayCounter--;
+                if (dayCounter === 0) {
+                    dateback.classList.add("disabled");
+                }
+            } 
         });
     }
 
     var datego = document.getElementById("datego");
     if (datego) {
         datego.addEventListener("click", function () {
-            currentDate.setDate(currentDate.getDate() + 1);
-            updateDateDisplay();
+            if (dayCounter === 0) {
+                dateback.classList.remove("disabled");
+            }
+            if (dayCounter < 6) {
+                currentDate.setDate(currentDate.getDate() + 1);
+                updateDateDisplay();
+                dayCounter++;
+                if (dayCounter === 6) {
+                    datego.classList.add("disabled");
+                }
+            } 
         });
     }
 
@@ -35,15 +136,42 @@ document.addEventListener("DOMContentLoaded", function () {
     if (gridWrap) {
         gridWrap.addEventListener("click", function (e) {
             var cell = e.target.closest(".date-grid-cell");
-            if (cell && !cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
-                cell.classList.toggle("chosen");
-                var reserveButton = document.getElementById("rev");
-                if (reserveButton) {
-                    var anyChosen = gridWrap.querySelector(".date-grid-cell.chosen");
-                    if (anyChosen) {
-                        reserveButton.classList.remove("hidden");
-                    } else {
-                        reserveButton.classList.add("hidden");
+
+            if(!cell) return;
+
+            var row = cell.closest(".date-grid-row");
+
+            if(!cell.classList.contains("unavailable") && !cell.classList.contains("selected")){
+                if(!activeRow){
+                    activeRow = row;
+
+                    document.querySelectorAll(".date-grid-row").forEach(r => {
+                        if(r !== activeRow){
+                            r.classList.add("disabled");
+                        }
+                    });           
+                }
+
+                if (row !== activeRow) {
+                    activeRow = row;
+                }
+
+                if (!cell.classList.contains("unavailable") && !cell.classList.contains("selected")) {
+                    cell.classList.toggle("chosen");
+
+                    var reserveButton = document.getElementById("rev");
+
+                    if (reserveButton) {
+                        var anyChosen = document.querySelector(".date-grid-cell.chosen");
+                        if (anyChosen) {
+                            reserveButton.classList.remove("hidden");
+                        } else {
+                            reserveButton.classList.add("hidden");
+                            activeRow = null;
+                            document.querySelectorAll(".date-grid-row").forEach(r => {
+                                r.classList.remove("disabled");
+                            });
+                        }
                     }
                 }
             }
@@ -57,8 +185,57 @@ document.addEventListener("DOMContentLoaded", function () {
                 return cell && cell.classList.contains("selected");
             }
 
-            function showSeatInfo(cell) {
+            async function showSeatInfo(cell) {
                 seatInfoCard.classList.remove("hidden");
+                var reservationDate = currentDate.toLocaleDateString('en-CA');
+
+                var row = cell.closest('.date-grid-row');
+                var seatText = row.querySelector('.date-grid-seat').textContent;
+                var seatNumber = seatText.replace('Seat ', '');
+                var roomSeat = room + "-" + seatNumber;
+
+                var cellsInRow = row.querySelectorAll('.date-grid-cell');
+                var cellIndex = Array.from(cellsInRow).indexOf(cell);
+                /*
+                var timeHeaders = document.querySelectorAll('.date-grid-time');
+                var timeHeader = timeHeaders[cellIndex];
+
+                if (timeHeader) {
+                    var spans = timeHeader.querySelectorAll('span');
+                    var startTime = reservationDate + " " + spans[0].textContent;
+                    var endTime =  reservationDate + " " + spans[1].textContent;
+                }
+                */
+
+                const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start;
+                const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end;
+
+                const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
+                    method: "GET",
+                });
+                const reservation = await getResponse.json();
+
+                const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
+                    method: "GET",
+                });
+
+                const studentProfile = await getStudent.json();
+                const picture = studentProfile.profilePicture;
+                const username = studentProfile.username;
+
+                if(reservation.isAnonymous == false){
+                    const card = document.getElementById("seat-info-card");
+                    card.querySelector(".seat-info-avatar").src = picture
+                    card.querySelector(".seat-info-username").textContent = "@" + username;
+                    seatInfoCard.addEventListener('click', function(){
+                    window.location.href = `../studentprof.html?id=${username}`;
+                }); 
+                }
+                else{
+                    const card = document.getElementById("seat-info-card");
+                    card.querySelector(".seat-info-avatar").src = "/uploads/profilepics/images.png";
+                    card.querySelector(".seat-info-username").textContent = "@anonymous";
+                }
             }
 
             function hideSeatInfo() {
@@ -95,9 +272,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
-
-    seatInfoCard.addEventListener('click', function(){
-    window.location.href = "../studentprof.html";}) 
 });
 
 var studentprofile = document.getElementById("back");

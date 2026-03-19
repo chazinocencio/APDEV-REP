@@ -143,6 +143,11 @@
     padding-right: 10px;
 }
 
+.datebutt.disabled{
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .datebutt:hover{
     cursor: pointer;
     background-color: var(--ls-green);
@@ -209,6 +214,11 @@
 
 .date-grid-row {
     display: contents;
+}
+
+.date-grid-row.disabled{
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .date-grid-seat {
