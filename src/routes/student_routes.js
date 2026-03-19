@@ -44,24 +44,20 @@ router.get('/all_reservations', async (req, res) => {
 router.get('/reservations/key/:seat_id', async (req, res) => {
     try {
         const { seat_id } = req.params;
-        const { startTime, endTime } = req.query;
+        const { start, end } = req.query;
 
-        const allReservations = await model.reservationModel.find({ seatID: seat_id });
+        const startTime = new Date(start);
+        const endTime = new Date(end);
 
-        const match = allReservations.find(r => {
-            const dbTime = new Date(r.startTime).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-            const sentTime = startTime.split(' ').slice(-2).join(' ');
-        
-            return dbTime === sentTime;
+        const reservation = await model.reservationModel.findOne({ 
+            seatID: seat_id , 
+            startTime: { $lte: startTime },
+            endTime: { $gte: endTime }
         });
 
-        if (!match) return res.status(404).json({ message: "No reservation found" });
+        if (!reservation) return res.status(404).json({ message: "No reservation found" });
         
-        res.json(match);
+        res.json(reservation);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
@@ -207,13 +203,13 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             return res.status(403).json({ message: "Student is not allowed to make reservations" });
         }
 
-        const seat = await model.seatModel.findOne({ seatID: seatID });
+        const seat = await model.seatModel.findOne({ seatID: { $regex: seatID, $options: 'i' } });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
 
         const newReservation = new model.reservationModel({
-            seatID: seatID,
+            seatID: seatID.toUpperCase(),
             idNumber: student.idNumber,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
@@ -225,6 +221,7 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
 
         const savedReservation = await newReservation.save();
         res.status(201).json({
+            success: true,
             message: "Reservation created successfully",
             reservation: savedReservation
         });
