@@ -80,12 +80,16 @@ async function repaintDisplay(reservations, token, card) {
         const seatData = await seatResponse.json();
         const div = document.createElement("div");
 
+        const seat = reservation.seatID;
+        const extractSeat = seat.split('-');
+        const getSeat = extractSeat.pop();
+
         div.classList.add("results");
         div.innerHTML = `
             <div class="resultdeets">
                 <p>${index + 1}</p>
                 <p>${seatData.roomID}</p>
-                <p>${reservation.seatID}</p>
+                <p>${getSeat}</p>
                 <p>${new Date(reservation.startTime).toLocaleDateString()}</p>
                 <p>${new Date(reservation.startTime).toLocaleTimeString()}</p>
                 <p>${new Date(reservation.endTime).toLocaleTimeString()}</p>
@@ -108,7 +112,8 @@ async function repaintDisplay(reservations, token, card) {
             populateDropdowns();
 
             document.getElementById("room").value = seatData.roomID || "";
-            document.getElementById("seat").value = reservation.seatID || "";
+            const seatNumber = reservation.seatID.split('-').pop();
+            document.getElementById("seat").value = seatNumber || "";
             const resDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
@@ -197,8 +202,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 
     editsave.addEventListener('click', async function() {
-        const room = document.getElementById("room").value;
-        const seat = document.getElementById("seat").value;
+        var room = document.getElementById("room").value;
+        room = room.toLowerCase();
+        var seat = document.getElementById("seat").value;
+        const seatID = room + "-" + seat;
         const date = document.getElementById("date").value;
         const startTime = document.getElementById("timestart").value;
         const endTime = document.getElementById("timeend").value;
@@ -239,7 +246,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const startFullDate = date + " " + startTime;
         const endFullDate = date + " " + endTime;
 
-        const getReservation = await fetch(`/api/student/reservations/key/${seat}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`, {
+        const getReservation = await fetch(`/api/student/reservations/key/${seatID}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`, {
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -270,9 +277,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
 
         const newReservation = {
-            room: room,
             idNumber: studentProfile.idNumber,
-            seatID: seat,
+            seatID: seatID,
             startTime: startFullDate,
             endTime: endFullDate,
             date: date,

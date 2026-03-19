@@ -3,7 +3,11 @@ var currentDate = new Date();
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function formatDate(d) {
+var extractRoom = document.querySelector('.label h1').textContent;
+let getRoom = extractRoom.substring(5);
+getRoom = getRoom.toLowerCase();
+
+function formatDate(d) {    
     return weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
 }
 
@@ -41,8 +45,10 @@ async function loadReservations(token, studentProfile) {
         rows.forEach(row => {
             const seatText = row.querySelector('.date-grid-seat').textContent;
             const seatNumber = seatText.replace('Seat ', '');
+            const room = getRoom;
+            const roomSeat = room + "-" + seatNumber;
 
-            if (seatNumber === reservation.seatID) {
+            if (roomSeat === reservation.seatID) {
                 const cellsInRow = row.querySelectorAll('.date-grid-cell');
                 const timeHeaders = document.querySelectorAll('.date-grid-time');
 
@@ -117,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async function () {
            var anonCheckbox = document.getElementById('anonymous-toggle');
            var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
 
-            var room = "G301";
+            var room = getRoom;
             var reservationDate = document.getElementById("dayanddate").innerHTML;
 
             var selectedCells = document.querySelectorAll('.date-grid-cell.chosen');
@@ -140,9 +146,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                         var endTime = spans[1].textContent;
 
                         reservations.push({
-                        room: room,
                         idNumber: studentProfile.idNumber,
-                        seatID: seatNumber,
+                        seatID: room + "-" + seatNumber,
                         startTime: reservationDate + " " + startTime,
                         endTime: reservationDate + " " + endTime,
                         date: reservationDate,
@@ -223,6 +228,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 var row = cell.closest('.date-grid-row');
                     var seatText = row.querySelector('.date-grid-seat').textContent;
                     var seatNumber = seatText.replace('Seat ', '');
+                    var roomSeat = getRoom + "-" + seatNumber;
 
                     var cellsInRow = row.querySelectorAll('.date-grid-cell');
                     var cellIndex = Array.from(cellsInRow).indexOf(cell);
@@ -234,7 +240,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         var startTime = reservationDate + " " + spans[0].textContent;
                         var endTime =  reservationDate + " " + spans[1].textContent;
                     }
-                    const getResponse = await fetch(`/api/student/reservations/key/${seatNumber}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`,
+                    const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`,
                     {
                     method: "GET",
                     headers: { "Authorization": `Bearer ${token}` }
