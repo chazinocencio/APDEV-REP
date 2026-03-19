@@ -56,13 +56,13 @@ document.addEventListener('DOMContentLoaded', async function(){
             if (r.seatID){
                 if (r.seatID.includes('-')){
                     const parts = r.seatID.split('-');
-                    room = parts[0];
-                    seat = parts.slice(1).join('-');
+                    room = parts[0].toUpperCase();
+                    seat = parts.slice(1).join('-').toUpperCase();
                 } else if (r.seatID.length > 4){
-                    room = r.seatID.slice(0,4);
-                    seat = r.seatID.slice(4);
+                    room = r.seatID.slice(0,4).toUpperCase();
+                    seat = r.seatID.slice(4).toUpperCase();
                 } else {
-                    seat = r.seatID;
+                    seat = r.seatID.toUpperCase();
                 }
             }
 

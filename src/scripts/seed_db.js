@@ -118,7 +118,7 @@ async function seed() {
     // Naomi (1240001) - 3 reservations
     reservations.push(
         {
-            seatID: 'G301-S1',
+            seatID: 'g301-1',
             idNumber: 1240001,
             startTime: new Date('2026-02-14T08:00:00'),
             endTime: new Date('2026-02-14T09:00:00'),
@@ -128,7 +128,7 @@ async function seed() {
             status: 'Active'
         },
         {
-            seatID: 'G302-S2',
+            seatID: 'g302-2',
             idNumber: 1240001,
             startTime: new Date('2026-02-15T10:00:00'),
             endTime: new Date('2026-02-15T11:30:00'),
@@ -138,7 +138,7 @@ async function seed() {
             status: 'Pending'
         },
         {
-            seatID: 'G303-S3',
+            seatID: 'g303-3',
             idNumber: 1240001,
             startTime: new Date('2026-02-16T13:00:00'),
             endTime: new Date('2026-02-16T15:00:00'),
@@ -152,7 +152,7 @@ async function seed() {
     // JR (1240002) - 3 reservations
     reservations.push(
         {
-            seatID: 'G301-S4',
+            seatID: 'g301-4',
             idNumber: 1240002,
             startTime: new Date('2026-03-01T09:00:00'),
             endTime: new Date('2026-03-01T10:00:00'),
@@ -162,7 +162,7 @@ async function seed() {
             status: 'Active'
         },
         {
-            seatID: 'G304-S1',
+            seatID: 'g304-1',
             idNumber: 1240002,
             startTime: new Date('2026-03-02T11:00:00'),
             endTime: new Date('2026-03-02T12:30:00'),
@@ -172,7 +172,7 @@ async function seed() {
             status: 'Pending'
         },
         {
-            seatID: 'G305-S2',
+            seatID: 'g305-2',
             idNumber: 1240002,
             startTime: new Date('2026-03-03T14:00:00'),
             endTime: new Date('2026-03-03T15:00:00'),
@@ -186,7 +186,7 @@ async function seed() {
     // Adrian (1240003) - 3 reservations
     reservations.push(
         {
-            seatID: 'G306-S3',
+            seatID: 'g306-3',
             idNumber: 1240003,
             startTime: new Date('2026-04-01T08:30:00'),
             endTime: new Date('2026-04-01T10:30:00'),
@@ -196,7 +196,7 @@ async function seed() {
             status: 'Active'
         },
         {
-            seatID: 'G301-S2',
+            seatID: 'g301-2',
             idNumber: 1240003,
             startTime: new Date('2026-04-05T12:00:00'),
             endTime: new Date('2026-04-05T13:00:00'),
@@ -206,7 +206,7 @@ async function seed() {
             status: 'Pending'
         },
         {
-            seatID: 'G302-S5',
+            seatID: 'g302-5',
             idNumber: 1240003,
             startTime: new Date('2026-04-10T15:00:00'),
             endTime: new Date('2026-04-10T16:00:00'),

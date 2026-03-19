@@ -25,136 +25,100 @@
                     <h1>Search Reservations</h1>
                     <div class="inpt">
 
+                        <!-- Reservation ID Filter -->
                         <div class="searchdeets">
-                            <h3>Search By</h3>
-
+                            <h3>Reservation ID</h3>
                             <div class="options">
                                 <div class="search">
-                                        <input list="rooms" id="room-choice" name="room-choice" placeholder="Type or select...">
-                                        <datalist id="rooms">
-                                            <option value="Room">
-                                            <option value="Reservation ID">
-                                            <option value="Seat">
-                                            <option value="Date">
-                                            <option value="Start Time">
-                                            <option value="End Time">
-                                        </datalist>
+                                    <input type="text" placeholder="Enter ID" id="filterResID" name="filterResID">
                                 </div>
                             </div>
                         </div>
-                       
+
+                        <!-- Room Filter -->
                         <div class="searchdeets">
-                             <div class="options">
+                            <h3>Room</h3>
+                            <div class="options">
                                 <div class="search">
-                                        <input type="text" placeholder="Search" name="searchbar" id="searchbar">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
+                                    <select id="filterRoom" name="filterRoom">
+                                        <option value="">Select Room</option>
+                                        <option value="G301">G301</option>
+                                        <option value="G302">G302</option>
+                                        <option value="G303">G303</option>
+                                        <option value="G304">G304</option>
+                                        <option value="G305">G305</option>
+                                        <option value="G306">G306</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seat Filter -->
+                        <div class="searchdeets">
+                            <h3>Seat</h3>
+                            <div class="options">
+                                <div class="search">
+                                    <select id="filterSeat" name="filterSeat" disabled>
+                                        <option value="">Select Seat</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Filter -->
+                        <div class="searchdeets">
+                            <h3>Date</h3>
+                            <div class="options">
+                                <div class="search">
+                                    <input type="date" id="filterDate" name="filterDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Time Slot Filter -->
+                        <div class="searchdeets">
+                            <h3>Time Slot</h3>
+                            <div class="options">
+                                <div class="search">
+                                    <select id="filterTime" name="filterTime" disabled>
+                                        <option value="">Select Time</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         
                     </div>
                     
-
                     <div class="butt" id="searchbutt">
                         <h3>Search</h3>
+                    </div>
+
+                    <div class="butt" id="clearbutt" style="margin-top: 10px; background-color: var(--darkgrey-green);">
+                        <h3>Clear Filters</h3>
                     </div>
                 </div>
 
                 <div class="rightdetails" id="card">
                     <div class="label">
-                        <div class="resultdeetslabel">
-                                <p>ID#</p>
-                                <p>Username</p>
-                                <p>Reservation </p>
-                                <p>Room </p>
-                                <p>Seat </p>
-                                <span>
-                                    <p>Date </p>
-                                    <p>Start Time </p>
-                                    <p>End Time </p>    
-                                </span>
+                        <div class="leb">
+                            <div class="lab">
+                                <h3>Reservation #</h3>
+                                <h3>Room #</h3>
+                                <span><h3>Seat #</h3></span>
+                            </div>
+                            <h3>Date</h3>
+                            <div class="st"><h3>Start Time</h3></div>
+                            <h3>End Time</h3>
                         </div>
                     </div>
                     
-                    <div class="results">
-                        <div class="resultdeets">
-                            <p>12412910</p>
-                            <p>Naomi Reyes</p>
-                            <p>6767676767</p>
-                            <p>Room G301</p>
-                            <p>Seat 1</p>
-                            <p>12/12/2024</p>
-                            <p>12:00 PM</p>
-                            <p>1:00 PM</p>
-                        </div>
-                            <div class="butt" id="reserve">
-                                <h3>Reserve</h3>
-                            </div>
-                            <div class="butt" id="block">
-                                <h3>Block</h3>
-                            </div>
+                    <div id="resultsContainer">
+                        <!-- Results will be populated by JavaScript -->
                     </div>
 
-                     <div class="results">
-                        <div class="resultdeets">
-                            <p>12412910</p>
-                            <p>Naomi Reyes</p>
-                            <p>6767676767</p>
-                            <p>Room G301</p>
-                            <p>Seat 1</p>
-                            <p>12/12/2024</p>
-                            <p>12:00 PM</p>
-                            <p>1:00 PM</p>
-                        </div>
-                            <div class="butt" id="reserve">
-                                <h3>Reserve</h3>
-                            </div>
-                            <div class="butt" id="block">
-                                <h3>Block</h3>
-                            </div>
+                    <div id="noResultsMessage" class="hidden" style="text-align: center; padding: 40px; font-size: 18px; color: var(--ls-green);">
+                        <p>No reservations found. Try adjusting your filters.</p>
                     </div>
-
-                     <div class="results">
-                        <div class="resultdeets">
-                            <p>12412910</p>
-                            <p>Naomi Reyes</p>
-                            <p>6767676767</p>
-                            <p>Room G301</p>
-                            <p>Seat 1</p>
-                            <p>12/12/2024</p>
-                            <p>12:00 PM</p>
-                            <p>1:00 PM</p>
-                        </div>
-                            <div class="butt" id="reserve">
-                                <h3>Reserve</h3>
-                            </div>
-                            <div class="butt" id="block">
-                                <h3>Block</h3>
-                            </div>
-                    </div>
-
-                     <div class="results">
-                        <div class="resultdeets">
-                            <p>12412910</p>
-                            <p>Naomi Reyes</p>
-                            <p>6767676767</p>
-                            <p>Room G301</p>
-                            <p>Seat 1</p>
-                            <p>12/12/2024</p>
-                            <p>12:00 PM</p>
-                            <p>1:00 PM</p>
-                        </div>
-                            <div class="butt" id="reserve">
-                                <h3>Reserve</h3>
-                            </div>
-                            <div class="butt" id="block">
-                                <h3>Block</h3>
-                            </div>
-                    </div>
-
-
                 </div>
         </div>
     </div>

@@ -142,9 +142,7 @@
 }
 
 .label{
-    margin-left: 0;
-    width: 100%;
-    padding-left: 20px;
+    width: 90%;
 }
 
 .results{
@@ -177,11 +175,13 @@
 .resultdeets{
     display: flex;
     justify-content: space-between;
-    width: 95%;
+    width: 80%;
 }
+
 .resultdeets h3{
     margin: 0;
 }
+
 .resultdeets p{
     margin: 0;
 }
@@ -205,4 +205,102 @@
 .resultdeetslabel span{
    display: flex ;
    gap: 60px;
+}
+
+/* Alignment and styling for lab and leb structure (matching userreservations) */
+.label{
+    width: 90%;
+}
+
+#resultsContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.lab{
+    margin-right: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.lab span{
+    margin-left: 35px;
+}
+
+.leb{
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    gap: 10px;
+}
+
+.leb h3{
+    margin: 0;
+}
+
+/* Styles for filter select and date inputs */
+.search select,
+.search input[type="date"] {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    border: 0px;
+    background-color: var(--interface-bg);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.search select:disabled,
+.search input[type="date"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.search select:focus,
+.search input[type="date"]:focus {
+    outline: none;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.st{
+    margin-left: 50px;
+}
+
+/* Button container for results */
+.butts{
+    display: flex;
+    gap: 10px;
+}
+
+.canbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-white);
+    width: auto;
+    height: 30px;
+    border: 1px solid var(--ls-green);
+    border-radius: 5px;
+    color: var(--ls-green);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.canbutt:hover{
+    cursor: pointer;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+}
+
+.canbutt h3{
+    margin: 0;
 }
