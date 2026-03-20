@@ -774,6 +774,14 @@
     flex-direction: column;
 }
 
+#revcancel-box .inpt{
+    padding-left: 24px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 
 .canbutt{
     padding-left: 10px;

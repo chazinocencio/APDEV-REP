@@ -122,6 +122,40 @@
                 </div>
         </div>
     </div>
+    <!-- Reused edit modal from technician_rooms.html -->
+    <div class="block-modal hidden" id="edit-block-modal">
+        <div class="block-card">
+            <h2 class="block-title">Edit Student Reservation</h2>
+            <div class="block-details">
+                <div class="block-labels">
+                    <p>Room #:</p>
+                    <p>Start Date:</p>
+                    <p>End Date:</p>
+                    <p>Start Time:</p>
+                    <p>End Time:</p>
+                    <p>Seat #:</p>
+                    <p>Reason:</p>
+                </div>
+                <div class="block-values">
+                    <p id="edit-block-room">G302</p>
+                    <input type="date" id="edit-block-start-date" class="block-input">
+                    <input type="date" id="edit-block-end-date" class="block-input">
+                    <select id="edit-block-start-time" class="block-input"></select>
+                    <select id="edit-block-end-time" class="block-input"></select>
+                    <select id="edit-block-seat" class="block-input"></select>
+                    <textarea id="edit-block-reason" class="block-input block-textarea"></textarea>
+                </div>
+            </div>
+            <div class="block-actions">
+                <div class="block-primary" id="edit-confirm">
+                    <h3>Edit</h3>
+                </div>
+                <div class="block-cancel" id="edit-cancel">
+                    <h3>Cancel</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/techniciansearchrev.js"></script>
 </body>

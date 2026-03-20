@@ -33,6 +33,8 @@ const searchBtn = document.getElementById('searchbutt');
 const clearBtn = document.getElementById('clearbutt');
 const resultsContainer = document.getElementById('resultsContainer');
 const noResultsMessage = document.getElementById('noResultsMessage');
+// auth token for API calls
+const token = localStorage.getItem('token');
 
 // Back button functionality
 technicianBack.addEventListener('click', function(){
@@ -162,11 +164,11 @@ function createResultElement(reservation, index) {
             <p>${reservation.endTime}</p>
         </div>
         <div class="butts">
-            <div class="butt reserve-button" data-id="${reservation.reservationId}">
-                <h3>Reserve</h3>
+            <div class="butt edit-button" data-id="${reservation.reservationId}">
+                <h3>Edit</h3>
             </div>
-            <div class="canbutt block-button" data-id="${reservation.reservationId}">
-                <h3>Block</h3>
+            <div class="canbutt cancel-button" data-id="${reservation.reservationId}" data-seat="${reservation.rawSeatID}" data-start="${reservation.rawStart}" data-end="${reservation.rawEnd}">
+                <h3>Cancel</h3>
             </div>
         </div>
     `;
@@ -251,7 +253,11 @@ async function fetchReservations() {
                     seat: seat,
                     date: dateStr,
                     startTime: startTimeStr,
-                    endTime: endTimeStr
+                    endTime: endTimeStr,
+                    rawSeatID: res.seatID,
+                    rawStart: res.startTime,
+                    rawEnd: res.endTime,
+                    _id: res._id
                 };
             }).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort oldest to newest
             
@@ -268,6 +274,181 @@ async function fetchReservations() {
         console.error('Error fetching reservations:', error);
         noResultsMessage.textContent = 'Error loading reservations. Please try again later.';
         noResultsMessage.classList.remove('hidden');
+    }
+}
+
+// Delegate click handlers for Edit and Cancel buttons
+resultsContainer.addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.edit-button');
+    const cancelBtn = e.target.closest('.cancel-button');
+
+    if (editBtn) {
+        const id = editBtn.getAttribute('data-id');
+        const res = reservations.find(r => r.reservationId === id || r._id === id);
+        if (!res) return alert('Reservation not found');
+        openEditModal(res);
+    }
+
+    if (cancelBtn) {
+        const id = cancelBtn.getAttribute('data-id');
+        const seat = cancelBtn.getAttribute('data-seat');
+        const start = cancelBtn.getAttribute('data-start');
+        const end = cancelBtn.getAttribute('data-end');
+
+        if (!confirm('Are you sure you want to cancel this reservation?')) return;
+
+        // perform delete
+        (async () => {
+            try {
+                const delResp = await fetch(`/api/technician/delete_reservation/${encodeURIComponent(seat)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ startTime: start, endTime: end })
+                });
+
+                if (delResp.ok) {
+                    alert('Reservation cancelled');
+                    fetchReservations();
+                } else {
+                    const err = await delResp.json().catch(() => ({}));
+                    alert('Error: ' + (err.message || 'Failed to cancel reservation'));
+                }
+            } catch (err) {
+                console.error('Error cancelling reservation:', err);
+                alert('Failed to cancel reservation');
+            }
+        })();
+    }
+});
+
+// Edit modal creation and handling
+let searchEditModal = null;
+let editingReservation = null;
+function openEditModal(reservation) {
+    // use existing modal element inserted into the page
+    searchEditModal = document.getElementById('edit-block-modal');
+    if (!searchEditModal) {
+        alert('Edit modal not found on this page');
+        return;
+    }
+
+    editingReservation = reservation;
+
+    // populate fields (IDs match technician_rooms.html)
+    const roomEl = document.getElementById('edit-block-room');
+    const seatSelect = document.getElementById('edit-block-seat');
+    const startDateEl = document.getElementById('edit-block-start-date');
+    const endDateEl = document.getElementById('edit-block-end-date');
+    const startTimeSelect = document.getElementById('edit-block-start-time');
+    const endTimeSelect = document.getElementById('edit-block-end-time');
+    const reasonEl = document.getElementById('edit-block-reason');
+
+    if (roomEl) roomEl.textContent = reservation.room;
+
+    // populate seat options
+    const seatsList = seatsByRoom[reservation.room] || Array.from({length:30},(_,i)=>String(i+1));
+    seatSelect.innerHTML = '';
+    seatsList.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; seatSelect.appendChild(o); });
+    const parts = (reservation.rawSeatID || '').split('-');
+    const currentSeat = parts[1] || reservation.seat;
+    if (currentSeat) seatSelect.value = currentSeat;
+
+    // set dates and times
+    const sDate = new Date(reservation.rawStart);
+    const eDate = new Date(reservation.rawEnd);
+    if (startDateEl) startDateEl.value = sDate.toISOString().slice(0,10);
+    if (endDateEl) endDateEl.value = eDate.toISOString().slice(0,10);
+
+    function makeTimeOptions(selectEl) {
+        selectEl.innerHTML = '';
+        const startHour = 8; const endHour = 17;
+        for (let h = startHour; h <= endHour; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                const hh = String(h).padStart(2,'0'); const mm = String(m).padStart(2,'0');
+                const val = `${hh}:${mm}`;
+                const opt = document.createElement('option'); opt.value = val; opt.textContent = val; selectEl.appendChild(opt);
+                if (h === endHour && m > 0) break;
+            }
+        }
+    }
+
+    makeTimeOptions(startTimeSelect);
+    makeTimeOptions(endTimeSelect);
+    const fmt = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    if (startTimeSelect) startTimeSelect.value = fmt(sDate);
+    if (endTimeSelect) endTimeSelect.value = fmt(eDate);
+
+    if (reasonEl) reasonEl.value = reservation.description || '';
+
+    searchEditModal.classList.remove('hidden');
+
+    // attach handlers to existing confirm/cancel buttons
+    const confirmBtn = document.getElementById('edit-confirm');
+    const cancelBtn = document.getElementById('edit-cancel');
+
+    if (cancelBtn) cancelBtn.onclick = () => { searchEditModal.classList.add('hidden'); editingReservation = null; };
+
+    if (confirmBtn) {
+        confirmBtn.onclick = async function () {
+            if (!editingReservation) { alert('No reservation selected'); return; }
+
+            const seat = seatSelect ? seatSelect.value : null;
+            const startDate = startDateEl ? startDateEl.value : null;
+            const endDate = endDateEl ? endDateEl.value : null;
+            const startTime = startTimeSelect ? startTimeSelect.value : null;
+            const endTime = endTimeSelect ? endTimeSelect.value : null;
+            const description = reasonEl ? reasonEl.value.trim() : '';
+
+            if (!seat || !startDate || !startTime || !endTime) { alert('Please fill all fields'); return; }
+            const fullStart = `${startDate}T${startTime}`;
+            const fullEnd = `${endDate}T${endTime}`;
+            if (new Date(fullStart) >= new Date(fullEnd)) { alert('End time must be after start time'); return; }
+
+            try {
+                const roomDate = startDate; // YYYY-MM-DD
+                const resp = await fetch(`/api/common_routes/reservations_per_day/${editingReservation.room}/${roomDate}`);
+                const data = await resp.json();
+                const existing = data.reservations || [];
+
+                const newSeatID = `${editingReservation.room}-${seat}`;
+                const newStart = new Date(fullStart);
+                const newEnd = new Date(fullEnd);
+
+                const conflict = existing.some(r => {
+                    if (r._id === editingReservation._id) return false;
+                    if (r.seatID !== newSeatID) return false;
+                    const rStart = new Date(r.startTime); const rEnd = new Date(r.endTime);
+                    return (newStart < rEnd && newEnd > rStart);
+                });
+
+                if (conflict) { alert('Selected time/seat conflicts with an existing reservation or block'); return; }
+
+                const updateResp = await fetch(`/api/technician/update_reservation/${editingReservation._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ seatID: newSeatID, startTime: fullStart, endTime: fullEnd, description })
+                });
+
+                if (updateResp.ok) {
+                    alert('Reservation updated');
+                    searchEditModal.classList.add('hidden');
+                    editingReservation = null;
+                    fetchReservations();
+                } else {
+                    const err = await updateResp.json().catch(() => ({}));
+                    alert('Error: ' + (err.message || 'Failed to update reservation'));
+                }
+            } catch (err) {
+                console.error('Error updating reservation:', err);
+                alert('Failed to update reservation');
+            }
+        };
     }
 }
 
