@@ -214,7 +214,10 @@ async function fetchReservations() {
         const data = await response.json();
         
         if (Array.isArray(data)) {
-            reservations = data.map(res => {
+            // keep only student reservations (filter out blocks made by technicians)
+            const studentReservations = data.filter(r => r.reservationType === 'Student');
+
+            reservations = studentReservations.map(res => {
                 // Parse seatID to extract room and seat (format: "G301-1" or similar)
                 const parts = res.seatID.split('-');
                 const room = (parts[0] || '').toUpperCase();
