@@ -1,13 +1,15 @@
 // Sample reservation data with data attributes
 let reservations = [];
 
+// Generate seat lists (1..24) for each room
+const allSeats = Array.from({ length: 24 }, (_, i) => String(i + 1));
 const seatsByRoom = {
-    'G301': ['1', '2', '3', '4', '5'],
-    'G302': ['1', '2', '3', '4', '5'],
-    'G303': ['1', '2', '3', '4', '5'],
-    'G304': ['1', '2', '3', '4', '5'],
-    'G305': ['1', '2', '3', '4', '5'],
-    'G306': ['1', '2', '3', '4', '5']
+    'G301': allSeats,
+    'G302': allSeats,
+    'G303': allSeats,
+    'G304': allSeats,
+    'G305': allSeats,
+    'G306': allSeats
 };
 
 const timeSlots = [
@@ -341,7 +343,6 @@ function openEditModal(reservation) {
     const roomEl = document.getElementById('edit-block-room');
     const seatSelect = document.getElementById('edit-block-seat');
     const startDateEl = document.getElementById('edit-block-start-date');
-    const endDateEl = document.getElementById('edit-block-end-date');
     const startTimeSelect = document.getElementById('edit-block-start-time');
     const endTimeSelect = document.getElementById('edit-block-end-time');
     const reasonEl = document.getElementById('edit-block-reason');
@@ -358,9 +359,7 @@ function openEditModal(reservation) {
 
     // set dates and times
     const sDate = new Date(reservation.rawStart);
-    const eDate = new Date(reservation.rawEnd);
     if (startDateEl) startDateEl.value = sDate.toISOString().slice(0,10);
-    if (endDateEl) endDateEl.value = eDate.toISOString().slice(0,10);
 
     function makeTimeOptions(selectEl) {
         selectEl.innerHTML = '';
@@ -379,7 +378,9 @@ function openEditModal(reservation) {
     makeTimeOptions(endTimeSelect);
     const fmt = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
     if (startTimeSelect) startTimeSelect.value = fmt(sDate);
-    if (endTimeSelect) endTimeSelect.value = fmt(eDate);
+    // set end time from original reservation end
+    const origEnd = new Date(reservation.rawEnd);
+    if (endTimeSelect) endTimeSelect.value = fmt(origEnd);
 
     if (reasonEl) reasonEl.value = reservation.description || '';
 
@@ -397,14 +398,14 @@ function openEditModal(reservation) {
 
             const seat = seatSelect ? seatSelect.value : null;
             const startDate = startDateEl ? startDateEl.value : null;
-            const endDate = endDateEl ? endDateEl.value : null;
             const startTime = startTimeSelect ? startTimeSelect.value : null;
             const endTime = endTimeSelect ? endTimeSelect.value : null;
             const description = reasonEl ? reasonEl.value.trim() : '';
 
             if (!seat || !startDate || !startTime || !endTime) { alert('Please fill all fields'); return; }
+            // single-day reservations: use startDate for both start and end day
             const fullStart = `${startDate}T${startTime}`;
-            const fullEnd = `${endDate}T${endTime}`;
+            const fullEnd = `${startDate}T${endTime}`;
             if (new Date(fullStart) >= new Date(fullEnd)) { alert('End time must be after start time'); return; }
 
             try {

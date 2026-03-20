@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     })
 
     reservations.addEventListener('click', function(){
-        window.location.href = "../reservations.html";
+        window.location.href = "../techniciansearchrev.html";
     })
 
     g301.addEventListener('click', function(){
