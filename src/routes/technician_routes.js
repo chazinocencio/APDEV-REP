@@ -150,6 +150,49 @@ router.put('/update_reservation/:id', verifyToken, async (req, res) => {
     }
 });
 
+// delete reservation (technician)
+router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
+    try {
+        const { seatID } = req.params;
+        const { startTime, endTime } = req.body;
+
+        if (!startTime || !endTime) {
+            return res.status(400).json({ message: 'startTime and endTime required in body' });
+        }
+
+        // find reservation
+        const query = { seatID: seatID, startTime: new Date(startTime), endTime: new Date(endTime) };
+        const reservation = await model.reservationModel.findOne(query);
+        if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
+
+        // fetch requester info from token
+        const requester = req.user; // { id, role, email }
+
+        if (requester.role === 'student') {
+            const student = await model.studentModel.findOne({ email: requester.email });
+            if (!student) return res.status(404).json({ message: 'Student not found' });
+            if (student.idNumber !== reservation.idNumber) {
+                return res.status(403).json({ message: 'Not authorized to cancel this reservation' });
+            }
+        } else if (requester.role === 'technician') {
+            // allowed
+        } else {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        const deleted = await model.reservationModel.findOneAndDelete({ _id: reservation._id });
+
+        res.json({ 
+            success: true, 
+            message: 'reservation deleted successfully',
+            data: { reservation: deleted }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // block room
 
 /* insert code */

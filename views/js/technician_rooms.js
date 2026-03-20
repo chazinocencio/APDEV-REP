@@ -833,15 +833,61 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // revcancel modal confirm/cancel
+    // revcancel modal: open from cancel button and perform deletion on confirm
+    var cancelRevOpen = document.getElementById('cancelrev');
     var revcancel = document.getElementById('revcancel');
     var confirmCancelBtn = document.getElementById('confirmcancel');
     var cancelCancelBtn = document.getElementById('cancelcancel');
-    if (confirmCancelBtn && revcancel) {
-        confirmCancelBtn.addEventListener('click', function () {
-            revcancel.classList.add('hidden');
+
+    if (cancelRevOpen && revcancel) {
+        cancelRevOpen.addEventListener('click', function () {
+            if (!currentReservation || !currentReservation._id) {
+                alert('No reservation selected to cancel');
+                return;
+            }
+            revcancel.classList.remove('hidden');
         });
     }
+
+    if (confirmCancelBtn && revcancel) {
+        confirmCancelBtn.addEventListener('click', async function () {
+            if (!currentReservation || !currentReservation.seatID) {
+                alert('No reservation selected');
+                revcancel.classList.add('hidden');
+                return;
+            }
+
+            const seatID = currentReservation.seatID;
+            const startTime = currentReservation.startTime;
+            const endTime = currentReservation.endTime;
+
+            try {
+                const delResp = await fetch(`/api/technician/delete_reservation/${encodeURIComponent(seatID)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ startTime, endTime })
+                });
+
+                if (delResp.ok) {
+                    alert('Reservation cancelled');
+                    revcancel.classList.add('hidden');
+                    currentReservation = null;
+                    updateDateDisplay();
+                    hideSeatInfo();
+                } else {
+                    const err = await delResp.json().catch(() => ({}));
+                    alert('Error: ' + (err.message || 'Failed to cancel reservation'));
+                }
+            } catch (error) {
+                console.error('Error cancelling reservation:', error);
+                alert('Failed to cancel reservation');
+            }
+        });
+    }
+
     if (cancelCancelBtn && revcancel) {
         cancelCancelBtn.addEventListener('click', function () {
             revcancel.classList.add('hidden');
