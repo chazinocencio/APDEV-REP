@@ -208,8 +208,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const idNumber = idInput && idInput.value ? parseInt(idInput.value) : null;
             const isAnon = anonInput && anonInput.checked;
 
-            if (!isAnon && (!idNumber || isNaN(idNumber))) {
-                alert('Please enter a valid student ID number or check Anonymous');
+            // Technicians must always provide a student ID when reserving for a student.
+            if (!idNumber || isNaN(idNumber)) {
+                alert('Please enter a valid student ID number');
                 return;
             }
 
@@ -217,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 seatID: selectedAction.seatID,
                 startTime: convertDisplayDateToISO(selectedAction.startTime),
                 endTime: convertDisplayDateToISO(selectedAction.endTime),
-                idNumber: isAnon ? null : idNumber,
+                idNumber: idNumber,
                 reservationType: 'Student',
                 isAnonymous: isAnon
             };
@@ -558,22 +559,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     const picture = studentProfile.profilePicture;
                     const username = studentProfile.username;
 
-                    if (!reservation.isAnonymous) {
-                        const card = document.getElementById("seat-info-card");
-                        card.querySelector(".seat-info-avatar").src = picture
-                        card.querySelector(".seat-info-username").textContent = "@" + username;
-                        seatInfoCard.classList.remove('disabled');
-                        // save the reservation for edit operations
-                        currentReservation = reservation;
-                    } else {
-                        const card = document.getElementById("seat-info-card");
-                        card.innerHTML = `
-                            <img src="./assets/images/diffusersym.png" alt="User avatar" class="seat-info-avatar">
-                            <h2 class="seat-info-username">@anonymous</h2>
-                        `;
-                        seatInfoCard.classList.add('disabled');
-                                currentReservation = null;
-                    }
+                    // For technicians we always show the actual student who made the reservation
+                    // (anonymity applies only between students). Use student profile data
+                    // even if reservation.isAnonymous is true.
+                    const card = document.getElementById("seat-info-card");
+                    card.querySelector(".seat-info-avatar").src = picture || './assets/images/student.png';
+                    card.querySelector(".seat-info-username").textContent = "@" + (username || 'unknown');
+                    seatInfoCard.classList.remove('disabled');
+                    // save the reservation for edit operations
+                    currentReservation = reservation;
                 } catch (error) {
                     console.error("Error fetching seat info:", error);
                     hideSeatInfo();
