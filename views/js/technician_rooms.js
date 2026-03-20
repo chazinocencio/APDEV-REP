@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let activeRow = null;
     let dayCounter = 0;
     let selectedAction = null; // Track which action is in progress
+    let currentReservation = null; // holds reservation being viewed/edited
 
     // ========== DATE NAVIGATION ==========
     var dateback = document.getElementById("dateback");
@@ -562,6 +563,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         card.querySelector(".seat-info-avatar").src = picture
                         card.querySelector(".seat-info-username").textContent = "@" + username;
                         seatInfoCard.classList.remove('disabled');
+                        // save the reservation for edit operations
+                        currentReservation = reservation;
                     } else {
                         const card = document.getElementById("seat-info-card");
                         card.innerHTML = `
@@ -569,6 +572,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <h2 class="seat-info-username">@anonymous</h2>
                         `;
                         seatInfoCard.classList.add('disabled');
+                                currentReservation = null;
                     }
                 } catch (error) {
                     console.error("Error fetching seat info:", error);
@@ -642,11 +646,79 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ========== ADDITIONAL MODAL HANDLERS (ported from G302) ==========
-    // Edit reservation open
+    // Edit reservation open - populate edit modal with current reservation
     var editReserveOpen = document.getElementById('editrevfs');
     var editBlockModal = document.getElementById('edit-block-modal');
     if (editReserveOpen && editBlockModal) {
-        editReserveOpen.addEventListener('click', function () {
+        editReserveOpen.addEventListener('click', async function () {
+            if (!currentReservation || !currentReservation._id) {
+                alert('No reservation selected to edit');
+                return;
+            }
+
+            // populate room (static)
+            const editRoomEl = document.getElementById('edit-block-room');
+            if (editRoomEl) editRoomEl.textContent = room;
+
+            // populate seat select
+            const seatSelect = document.getElementById('edit-block-seat');
+            if (seatSelect) {
+                seatSelect.innerHTML = '';
+                for (let i = 1; i <= SEATS_PER_ROOM; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = i;
+                    seatSelect.appendChild(opt);
+                }
+                // select current seat
+                const parts = currentReservation.seatID ? currentReservation.seatID.split('-') : [];
+                const currentSeat = parts[1] || '';
+                if (currentSeat) seatSelect.value = currentSeat;
+            }
+
+            // date inputs
+            const startDateEl = document.getElementById('edit-block-start-date');
+            const endDateEl = document.getElementById('edit-block-end-date');
+            const resStart = new Date(currentReservation.startTime);
+            const resEnd = new Date(currentReservation.endTime);
+            const isoDate = (d) => d.toISOString().slice(0,10);
+            if (startDateEl) startDateEl.value = isoDate(resStart);
+            if (endDateEl) endDateEl.value = isoDate(resEnd);
+
+            // time selects: populate half-hour slots from 08:00 to 17:00
+            function makeTimeOptions(selectEl) {
+                selectEl.innerHTML = '';
+                const startHour = 8;
+                const endHour = 17; // last slot start 16:30 -> end 17:00
+                for (let h = startHour; h <= endHour; h++) {
+                    for (let m = 0; m < 60; m += 30) {
+                        const hh = String(h).padStart(2,'0');
+                        const mm = String(m).padStart(2,'0');
+                        const val = `${hh}:${mm}`;
+                        const opt = document.createElement('option');
+                        opt.value = val;
+                        opt.textContent = val;
+                        selectEl.appendChild(opt);
+                        // stop at endHour:00
+                        if (h === endHour && m > 0) break;
+                    }
+                }
+            }
+
+            const startTimeSelect = document.getElementById('edit-block-start-time');
+            const endTimeSelect = document.getElementById('edit-block-end-time');
+            if (startTimeSelect && endTimeSelect) {
+                makeTimeOptions(startTimeSelect);
+                makeTimeOptions(endTimeSelect);
+                const fmt = (d) => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+                startTimeSelect.value = fmt(resStart);
+                endTimeSelect.value = fmt(resEnd);
+            }
+
+            // reason
+            const reasonEl = document.getElementById('edit-block-reason');
+            if (reasonEl) reasonEl.value = currentReservation.description || '';
+
             editBlockModal.classList.remove('hidden');
         });
     }
@@ -655,8 +727,89 @@ document.addEventListener("DOMContentLoaded", function () {
     var editConfirm = document.getElementById('edit-confirm');
     var editCancel = document.getElementById('edit-cancel');
     if (editConfirm && editBlockModal) {
-        editConfirm.addEventListener('click', function () {
-            editBlockModal.classList.add('hidden');
+        editConfirm.addEventListener('click', async function () {
+            if (!currentReservation || !currentReservation._id) {
+                alert('No reservation selected');
+                return;
+            }
+
+            const seatSelect = document.getElementById('edit-block-seat');
+            const startDateEl = document.getElementById('edit-block-start-date');
+            const endDateEl = document.getElementById('edit-block-end-date');
+            const startTimeSelect = document.getElementById('edit-block-start-time');
+            const endTimeSelect = document.getElementById('edit-block-end-time');
+            const reasonEl = document.getElementById('edit-block-reason');
+
+            const seat = seatSelect ? seatSelect.value : null;
+            const startDate = startDateEl ? startDateEl.value : null;
+            const endDate = endDateEl ? endDateEl.value : null;
+            const startTime = startTimeSelect ? startTimeSelect.value : null;
+            const endTime = endTimeSelect ? endTimeSelect.value : null;
+            const description = reasonEl ? reasonEl.value.trim() : '';
+
+            if (!seat || !startDate || !endDate || !startTime || !endTime) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            // build ISO strings
+            const fullStart = `${startDate}T${startTime}`;
+            const fullEnd = `${endDate}T${endTime}`;
+
+            if (new Date(fullStart) >= new Date(fullEnd)) {
+                alert('End time must be after start time');
+                return;
+            }
+
+            // check conflicts for the room/date
+            try {
+                const roomDate = startDate; // YYYY-MM-DD
+                const resp = await fetch(`/api/common_routes/reservations_per_day/${room}/${roomDate}`);
+                const data = await resp.json();
+                const reservations = data.reservations || [];
+
+                const newSeatID = `${room}-${seat}`;
+                const newStart = new Date(fullStart);
+                const newEnd = new Date(fullEnd);
+
+                const conflict = reservations.some(r => {
+                    // ignore the reservation being edited
+                    if (r._id === currentReservation._id) return false;
+                    // only consider same seat (or blocked entries on same seat)
+                    if (r.seatID !== newSeatID) return false;
+                    const rStart = new Date(r.startTime);
+                    const rEnd = new Date(r.endTime);
+                    return (newStart < rEnd && newEnd > rStart);
+                });
+
+                if (conflict) {
+                    alert('Selected time/seat conflicts with an existing reservation or block');
+                    return;
+                }
+
+                // send update to server
+                const updateResp = await fetch(`/api/technician/update_reservation/${currentReservation._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ seatID: newSeatID, startTime: fullStart, endTime: fullEnd, description })
+                });
+
+                if (updateResp.ok) {
+                    alert('Reservation updated');
+                    editBlockModal.classList.add('hidden');
+                    updateDateDisplay();
+                    currentReservation = null;
+                } else {
+                    const err = await updateResp.json().catch(() => ({}));
+                    alert('Error: ' + (err.message || 'Failed to update reservation'));
+                }
+            } catch (error) {
+                console.error('Error updating reservation:', error);
+                alert('Failed to update reservation');
+            }
         });
     }
     if (editCancel && editBlockModal) {
@@ -696,10 +849,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Clicking the seat info card goes to the technician student profile page
+    // keep clicks on the seat info card local (do not navigate away)
     var seatInfoCardNav = document.getElementById('seat-info-card');
     if (seatInfoCardNav) {
-        seatInfoCardNav.addEventListener('click', function () {
-            window.location.href = "./techstudentprof.html";
+        seatInfoCardNav.addEventListener('click', function (e) {
+            // prevent bubbling navigation; do nothing so edit button opens the in-page modal
+            e.stopPropagation();
         });
     }
 

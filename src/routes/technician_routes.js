@@ -107,6 +107,49 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
     }
 });
 
+// update reservation
+router.put('/update_reservation/:id', verifyToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { seatID, startTime, endTime, description } = req.body;
+
+        if (!seatID || !startTime || !endTime) {
+            return res.status(400).json({ success: false, message: 'seatID, startTime and endTime are required' });
+        }
+
+        const reservation = await model.reservationModel.findById(id);
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found' });
+
+        // check for conflicts on the target seat
+        const newStart = new Date(startTime);
+        const newEnd = new Date(endTime);
+
+        const conflict = await model.reservationModel.findOne({
+            seatID: seatID,
+            _id: { $ne: id },
+            $and: [
+                { startTime: { $lt: newEnd } },
+                { endTime: { $gt: newStart } }
+            ]
+        });
+
+        if (conflict) {
+            return res.status(409).json({ success: false, message: 'Time slot conflicts with existing reservation' });
+        }
+
+        reservation.seatID = seatID;
+        reservation.startTime = newStart;
+        reservation.endTime = newEnd;
+        if (description !== undefined) reservation.description = description;
+
+        const saved = await reservation.save();
+        res.json({ success: true, reservation: saved });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // block room
 
 /* insert code */
