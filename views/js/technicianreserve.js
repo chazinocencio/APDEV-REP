@@ -7,34 +7,103 @@ const g305 = document.getElementById('G305')
 const g306 = document.getElementById('G306')
 const reservations = document.getElementById('reservations')
 
-studentprofile.addEventListener('click', function(){
-    window.location.href = "../technician.html";
-})
+document.addEventListener("DOMContentLoaded", async function() {
 
-reservations.addEventListener('click', function(){
-    window.location.href = "../reservations.html";
-})
+    const token = localStorage.getItem("token");
 
-g301.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G301";
-})
+    const response = await fetch('/api/student/all_reservations', {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    const allReservations = await response.json();
 
-if (g302) g302.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G302";
-})
+    const today = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
 
-if (g303) g303.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G303";
-})
+    const roomCounts = {
+        "g301": 0,
+        "g302": 0,
+        "g303": 0,
+        "g304": 0,
+        "g305": 0,
+        "g306": 0
+    };
 
-if (g304) g304.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G304";
-})
+    function countSlots(startTime, endTime) {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const diffMinutes = (end - start) / (1000 * 60); 
+    return Math.round(diffMinutes / 30);
+}
 
-if (g305) g305.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G305";
-})
+    allReservations.forEach(reservation => {
+        const reservationDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
 
-if (g306) g306.addEventListener('click', function(){
-    window.location.href = "./technician_rooms.html?room=G306";
+
+        if (reservationDate !== today) return;
+
+    
+        const room = reservation.seatID.split('-')[0].toLowerCase();
+        if (roomCounts[room] !== undefined) {
+            const slots = countSlots(reservation.startTime, reservation.endTime);
+            roomCounts[room] += slots;
+        }
+    });
+
+
+    for (var i = 1; i < 7; i++){
+    
+        var percentage = (roomCounts["g30"+ i] / 432) * 100;
+        percentage = Math.round(percentage);
+        
+        document.getElementById("G30" + i).innerHTML = `
+                    <div class="roomheader">
+                        <img src="assets/images/roompic.png" alt="Room Thumbnail">
+                        <div class="roomlabel">
+                            <h3>Room G30`+ i + `</h3>
+                        </div>
+                    </div>
+                    <div class="vacancyinfo">
+                        <span>Slots filled today:</span>
+                        <span>`+percentage+`%</span>
+                    </div>
+                    <div class="progressbar">
+                        <div class="progressfill" style="width: `+percentage+`%;"></div>
+                    </div>`
+
+    }
+
+    studentprofile.addEventListener('click', function(){
+        window.location.href = "../technician.html";
+    })
+
+    reservations.addEventListener('click', function(){
+        window.location.href = "../reservations.html";
+    })
+
+    g301.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G301";
+    })
+
+    if (g302) g302.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G302";
+    })
+
+    if (g303) g303.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G303";
+    })
+
+    if (g304) g304.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G304";
+    })
+
+    if (g305) g305.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G305";
+    })
+
+    if (g306) g306.addEventListener('click', function(){
+        window.location.href = "./technician_rooms.html?room=G306";
+    })
 })

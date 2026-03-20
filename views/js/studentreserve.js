@@ -29,6 +29,13 @@ document.addEventListener("DOMContentLoaded", async function() {
         "g306": 0
     };
 
+    function countSlots(startTime, endTime) {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const diffMinutes = (end - start) / (1000 * 60); 
+    return Math.round(diffMinutes / 30);
+}
+
     allReservations.forEach(reservation => {
         const reservationDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -40,27 +47,34 @@ document.addEventListener("DOMContentLoaded", async function() {
     
         const room = reservation.seatID.split('-')[0].toLowerCase();
         if (roomCounts[room] !== undefined) {
-            roomCounts[room]++;
+            const slots = countSlots(reservation.startTime, reservation.endTime);
+            roomCounts[room] += slots;
         }
     });
 
-    var percentage = (roomCounts["g301"] / 432) * 100;
-    percentage = Math.round(percentage);
+
+    for (var i = 1; i < 7; i++){
     
-    document.getElementById("G301").innerHTML = `
+        var percentage = (roomCounts["g30"+ i] / 432) * 100;
+        percentage = Math.round(percentage);
+        
+        document.getElementById("G30" + i).innerHTML = `
                     <div class="roomheader">
                         <img src="assets/images/roompic.png" alt="Room Thumbnail">
                         <div class="roomlabel">
-                            <h3>Room G301</h3>
+                            <h3>Room G30`+ i + `</h3>
                         </div>
                     </div>
                     <div class="vacancyinfo">
-                        <span>Vacancy:</span>
+                        <span>Slots filled today:</span>
                         <span>`+percentage+`%</span>
                     </div>
                     <div class="progressbar">
                         <div class="progressfill" style="width: `+percentage+`%;"></div>
                     </div>`
+
+    }
+    
 
     studentprofile.addEventListener('click', function(){
         window.location.href = "../student.html";
