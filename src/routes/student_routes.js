@@ -344,9 +344,36 @@ router.put('/deactivate', verifyToken, async (req, res) => {
 });
 
 
-//update reservation
+//check conflict reservation
 
-//Viewing reservations of a room per day (table graphic)
+router.get('/reservations/conflict/:seatID', async (req, res) => {
+    try {
+        const { seatID } = req.params;
+        const { startTime, endTime, idNumber } = req.query;
+
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+
+        const conflict = await model.reservationModel.findOne({
+            seatID: { $regex: new RegExp(`^${seatID}$`, 'i') },
+            ...(idNumber && { idNumber: { $ne: idNumber } }),
+            $or: [
+                { startTime: { $gte: start, $lt: end } },
+                { endTime: { $gt: start, $lte: end } },
+                { startTime: { $lte: start }, endTime: { $gte: end } }
+            ]
+        });
+
+        if (conflict) {
+            return res.status(200).json({ hasConflict: true, reservation: conflict });
+        }
+        return res.status(404).json({ hasConflict: false });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 
 

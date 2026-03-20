@@ -233,33 +233,26 @@ document.addEventListener("DOMContentLoaded", async function() {
             errormess.textContent = "Invalid, end time must be after start time.";
             errormess.classList.remove("hidden");
             return;
-        }
-
-        if (endMinutes - startMinutes !== 30) {
-            errormess.textContent = "Invalid, time slot must be exactly 30 minutes apart.";
-            errormess.classList.remove("hidden");
-            return;
-        }
+        }   
 
         errormess.classList.add("hidden");
 
         const startFullDate = date + " " + startTime;
         const endFullDate = date + " " + endTime;
 
-        const getReservation = await fetch(`/api/student/reservations/key/${seatID}?startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`, {
-            method: "GET",
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
             headers: { "Authorization": `Bearer ${token}` }
-        });
+            });
 
-        if (getReservation.ok) {
-            //slot taken
-            errormess.textContent = "Invalid, there is already a reservation for this slot.";
+        if (conflictResponse.ok) {
+            
+            const conflictData = await conflictResponse.json();
+            console.log("Conflict found:", conflictData.reservation);
+            errormess.textContent = "Invalid, this time slot conflicts with an existing reservation.";
             errormess.classList.remove("hidden");
             return;
         }
-
-        //slot free 
-        if (currentReservation) {
+       
             const deleteResponse = await fetch(`/api/student/delete_reservation/${currentReservation.seatID}`, {
                 method: "DELETE",
                 headers: {
@@ -271,10 +264,6 @@ document.addEventListener("DOMContentLoaded", async function() {
                     endTime: currentReservation.endTime
                 })
             });
-
-            const deleteText = await deleteResponse.text();
-            const deleteResult = deleteText ? JSON.parse(deleteText) : {};
-        }
 
         const newReservation = {
             idNumber: studentProfile.idNumber,
