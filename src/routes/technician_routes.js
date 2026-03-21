@@ -96,6 +96,7 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
 
         const savedRecord = await newRecord.save();
         res.status(201).json({
+            success: true,
             message: `${seatID} blocked successfully`,
             reservation: savedRecord
         });
