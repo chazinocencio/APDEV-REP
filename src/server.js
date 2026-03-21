@@ -13,7 +13,7 @@ import commonRoutes from './routes/common_routes.js'
 import authRoutes from './routes/authRoutes.js'
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 connectDB();
 

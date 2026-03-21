@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 } else {
                     errormess.style.opacity = 1;
-                    errormess.innerHTML = "Invalid username or password.";
+                    errormess.innerHTML = "Invalid email or password.";
                 }
 
             } catch (error) {

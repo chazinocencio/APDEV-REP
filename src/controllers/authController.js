@@ -68,18 +68,23 @@ export async function register(req, res) {
 
 export async function login(req, res) {
   try {
-    const { email, password } = req.body;
+    const { email, password} = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
+    const path = req.path.includes('/student');
+    let user;
+    let role;
 
     // try student
-    let user = await model.studentModel.findOne({ email: email });
-    let role = 'student';
+    if (path){
+      user = await model.studentModel.findOne({ email: email });
+      role = 'student'
 
-    if (!user) {
-      user = await model.technicianModel.findOne({ email: email });
-      role = 'technician';
     }
-
+    else {
+      user = await model.technicianModel.findOne({ email: email });
+      role = 'technician'
+    }
+    
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     if (user.passwordHash !== password) return res.status(401).json({ message: 'Invalid credentials' });
