@@ -257,7 +257,7 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
               // verify ownership by matching student's idNumber
               const student = await model.studentModel.findOne({ email: requester.email });
               if (!student) return res.status(404).json({ message: 'Student not found' });
-              if (student.idNumber !== reservation.idNumber) { //<-- lowkirkenuinely not sure if this will ever even happen (i forgor front end)
+              if (student.idNumber !== reservation.idNumber) { 
                   return res.status(403).json({ message: 'Not authorized to cancel this reservation' });
               }
           } else if (requester.role === 'technician') {
