@@ -21,6 +21,12 @@
     margin: 0;
 }
 
+.options select {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
 
 .backbutt{
     padding-left: 5px;
