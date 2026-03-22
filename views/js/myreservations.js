@@ -32,38 +32,10 @@ function populateDropdowns() {
         d.setDate(today.getDate() + i);
         const formatted = weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
         const option = document.createElement("option");
-        option.value = `${d.getFullYear}-${d.getMonth}-${d.getDate}`;
+        option.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getDate()}`;
         option.textContent = formatted;
         dateSelect.appendChild(option);
     }
-/*
-    const times = [];
-    for (let hour = 8; hour <= 16; hour++) {
-        ["00", "30"].forEach(min => {
-            const period = hour < 12 ? "AM" : "PM";
-            const displayHour = hour > 12 ? hour - 12 : hour;
-            times.push(`${displayHour}:${min} ${period}`);
-        });
-    }
-    times.push("5:00 PM");
-
-    const timestart = document.getElementById("timestart");
-    const timeend = document.getElementById("timeend");
-    timestart.innerHTML = '<option value="">Select Start Time</option>';
-    timeend.innerHTML = '<option value="">Select End Time</option>';
-
-    times.forEach(time => {
-        const opt1 = document.createElement("option");
-        opt1.value = time;
-        opt1.textContent = time;
-        timestart.appendChild(opt1);
-
-        const opt2 = document.createElement("option");
-        opt2.value = time;
-        opt2.textContent = time;
-        timeend.appendChild(opt2);
-    });
-    */
 }
 
 
@@ -114,20 +86,20 @@ async function repaintDisplay(reservations, token, card) {
             document.getElementById("room").value = seatData.roomID || "";
             const seatNumber = reservation.seatID.split('-').pop();
             document.getElementById("seat").value = seatNumber || "";
-            const resDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-            });
+            const resDate = new Date(reservation.startTime).toLocaleDateString('en-CA');
             document.getElementById("date").value = resDate;
-            /*
-            const resStartTime = new Date(reservation.startTime).toLocaleTimeString('en-US', {
-                hour: 'numeric', minute: '2-digit', hour12: true
-            });
-            */
-            let tempStart = new Date(reservation.startTime)
-            const resStartTime = `${tempStart.getHours()}:${tempStart.getMinutes()}`;
-            const resEndTime = new Date(reservation.endTime).toLocaleTimeString('en-US', {
-                hour: 'numeric', minute: '2-digit', hour12: true
-            });
+            
+            let tempTime = new Date(reservation.startTime);
+            let tempHours = String(tempTime.getHours()).padStart(2, '0')
+            let tempMinutes = String(tempTime.getMinutes()).padStart(2, '0');
+
+            const resStartTime = `${tempHours}:${tempMinutes}`;
+
+            tempTime = new Date(reservation.endTime);
+            tempHours = String(tempTime.getHours()).padStart(2, '0')
+            tempMinutes = String(tempTime.getMinutes()).padStart(2, '0');
+
+            const resEndTime = `${tempHours}:${tempMinutes}`
             document.getElementById("timestart").value = resStartTime;
             document.getElementById("timeend").value = resEndTime;
         });
@@ -246,11 +218,10 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         console.log(startFullDate, endFullDate)
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`);
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`);
+        const conflictData = await conflictResponse.json();
 
-        if (conflictResponse.hasConflict) {
-            
-            const conflictData = await conflictResponse.json();
+        if (conflictData.hasConflict) {
             console.log("Conflict found:", conflictData.reservation);
             errormess.textContent = "Invalid, this time slot conflicts with an existing reservation.";
             errormess.classList.remove("hidden");
