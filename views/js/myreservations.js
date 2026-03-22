@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         console.log(startFullDate, endFullDate)
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`);
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`);
         const conflictData = await conflictResponse.json();
 
         if (conflictData.hasConflict) {

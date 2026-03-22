@@ -349,9 +349,7 @@ router.put('/deactivate', verifyToken, async (req, res) => {
 router.get('/reservations/conflict/:seatID', async (req, res) => {
     try {
         const { seatID } = req.params;
-        const { startTime, endTime} = req.query;
-
-        console.log(seatID, startTime, endTime)
+        const { startTime, endTime, idNumber } = req.query;
 
         const start = new Date(startTime);
         const end = new Date(endTime);
@@ -366,7 +364,6 @@ router.get('/reservations/conflict/:seatID', async (req, res) => {
         });
 
         if (conflict.length > 1) {
-            console.log(conflict)
             return res.status(200).json({ hasConflict: true, reservation: conflict });
         }
         console.log('no conflict')
