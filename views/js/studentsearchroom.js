@@ -1,3 +1,35 @@
+function formatDate(date){
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${month} ${day}, ${year}`;
+}
+
+function loadDates(){
+    var currentDate = new Date();
+    const dateInput = document.querySelector('#dateinput select');
+    dateInput.innerHTML = `
+        <option value="">Select</option>
+        <option value="${currentDate.toLocaleDateString('en-CA')}">
+            ${formatDate(currentDate)}
+        </option>
+    `
+    
+    for(let i = 1; i < 7; i++){
+        let newDate = new Date(currentDate)
+        newDate.setDate(newDate.getDate() + i)
+        dateInput.innerHTML += `
+            <option value="${newDate.toLocaleDateString('en-CA')}">
+                ${formatDate(newDate)}
+            </option>
+        `
+    }
+    
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const user = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("token");
@@ -6,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-
+    loadDates();
     const dateInput = document.getElementById('date');
     const timeStart = document.getElementById('timestart');
     const timeEnd = document.getElementById('timeend');
