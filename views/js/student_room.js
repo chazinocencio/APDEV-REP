@@ -150,6 +150,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if(reserveButton){
         reserveButton.addEventListener("click", async function () {
+            const res = await fetch(`/api/student/view_profile/${user.username}`)
+            const requester = await res.json()
+
+            if(!requester.canReserve){
+                alert("Your account has been blocked from making reservations. Contact support for assistance.");
+                updateDateDisplay()
+                reserveButton.classList.add("hidden");
+                return;
+            } 
+
             const selectedCells = document.querySelectorAll(".date-grid-cell.chosen");
             const row = selectedCells[0].closest(".date-grid-row");
             const cellsInRow = row.querySelectorAll('.date-grid-cell');

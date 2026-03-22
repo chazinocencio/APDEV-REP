@@ -8,10 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     const dateInput = document.getElementById('date');
-    const hourStart = document.getElementById('hourstart');
-    const minuteStart = document.getElementById('minutestart');
-    const hourEnd = document.getElementById('hourend');
-    const minuteEnd = document.getElementById('minuteend');
+    const timeStart = document.getElementById('timestart');
+    const timeEnd = document.getElementById('timeend');
     const errorMess = document.getElementById('errormess');
     const search = document.getElementById('searchbutt');
     const results = document.getElementById('card');
@@ -21,15 +19,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     search.addEventListener('click', async function() {
         
-        if (dateInput.value === "" || hourStart.value === "" || minuteStart.value === "" || hourEnd.value === "" || minuteEnd.value === "") {
+        if (dateInput.value === "" || timeStart.value === "" || timeEnd.value === "") {
             errorMess.style.display = 'block';
             errorMess.textContent = 'Please enter all fields.';
             errorMess.style.color = 'red';  
             return;
         }
 
-        const startTime = `${dateInput.value}T${hourStart.value}:${minuteStart.value}:00`;
-        const endTime = `${dateInput.value}T${hourEnd.value}:${minuteEnd.value}:00`;
+        const startTime = `${dateInput.value}T${timeStart.value}:00`;
+        const endTime = `${dateInput.value}T${timeEnd.value}:00`;
 
         const startDateTime = new Date(startTime);
         const endDateTime = new Date(endTime);
@@ -82,6 +80,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             document.querySelectorAll('.results .butt').forEach(reserveButton => {
                 reserveButton.addEventListener('click', async function() {
+                    const res = await fetch(`/api/student/view_profile/${user.username}`)
+                    const requester = await res.json()
+
+                    if(!requester.canReserve){
+                        alert("Your account has been blocked from making reservations. Contact support for assistance.");
+                        return;
+                    } 
+                    
                     const selectedSeatId = this.getAttribute('data-seatid');
                     
                     const response = await fetch(`/api/student/create_reservation/${user.username}`, {
