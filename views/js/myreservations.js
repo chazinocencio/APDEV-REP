@@ -27,20 +27,19 @@ function populateDropdowns() {
     const today = new Date();
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 7; i++) {
         const d = new Date();
         d.setDate(today.getDate() + i);
         const formatted = weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
         const option = document.createElement("option");
-        option.value = formatted;
+        option.value = `${d.getFullYear}-${d.getMonth}-${d.getDate}`;
         option.textContent = formatted;
         dateSelect.appendChild(option);
     }
-
+/*
     const times = [];
     for (let hour = 8; hour <= 16; hour++) {
         ["00", "30"].forEach(min => {
-            if (hour === 16 && min === "30") return;
             const period = hour < 12 ? "AM" : "PM";
             const displayHour = hour > 12 ? hour - 12 : hour;
             times.push(`${displayHour}:${min} ${period}`);
@@ -64,6 +63,7 @@ function populateDropdowns() {
         opt2.textContent = time;
         timeend.appendChild(opt2);
     });
+    */
 }
 
 
@@ -118,9 +118,13 @@ async function repaintDisplay(reservations, token, card) {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
             document.getElementById("date").value = resDate;
+            /*
             const resStartTime = new Date(reservation.startTime).toLocaleTimeString('en-US', {
                 hour: 'numeric', minute: '2-digit', hour12: true
             });
+            */
+            let tempStart = new Date(reservation.startTime)
+            const resStartTime = `${tempStart.getHours()}:${tempStart.getMinutes()}`;
             const resEndTime = new Date(reservation.endTime).toLocaleTimeString('en-US', {
                 hour: 'numeric', minute: '2-digit', hour12: true
             });
@@ -173,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
     const studentProfile = await profileResponse.json();
 
-    const dataResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
+    const dataResponse = await fetch(`/api/student/reservations/${studentProfile.idNumber}`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     let reservations = await dataResponse.json();
@@ -237,14 +241,14 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         errormess.classList.add("hidden");
 
-        const startFullDate = date + " " + startTime;
-        const endFullDate = date + " " + endTime;
+        const startFullDate = date + "T" + startTime;
+        const endFullDate = date + "T" + endTime;
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-            });
+        console.log(startFullDate, endFullDate)
 
-        if (conflictResponse.ok) {
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`);
+
+        if (conflictResponse.hasConflict) {
             
             const conflictData = await conflictResponse.json();
             console.log("Conflict found:", conflictData.reservation);
