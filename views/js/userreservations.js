@@ -88,6 +88,9 @@ document.addEventListener('DOMContentLoaded', async function(){
                 </div>
             `;
             reservationsList.appendChild(el);
+            // ensure cancel button respects 10-minute rule
+            const cbtn = el.querySelector('.cancel-button');
+            if (cbtn) updateCancelButtonState(cbtn, new Date(r.startTime).toISOString());
         })
 
     } catch (err){
@@ -100,6 +103,36 @@ document.addEventListener('DOMContentLoaded', async function(){
         rows.forEach((p, index) => {
             p.textContent = (index + 1).toString();
         });
+    }
+
+    // disable cancel buttons until 10 minutes after reservation start
+    function updateCancelButtonState(btn, startISO){
+        if (!btn || !startISO) return;
+        const start = new Date(startISO);
+        const enableAt = new Date(start.getTime() + 10 * 60 * 1000);
+        const now = new Date();
+
+        function enable(){
+            btn.classList.remove('cancel-disabled');
+            btn.removeAttribute('aria-disabled');
+            btn.title = '';
+        }
+
+        if (now >= enableAt){
+            enable();
+            return;
+        }
+
+        // disable until enableAt
+        btn.classList.add('cancel-disabled');
+        btn.setAttribute('aria-disabled','true');
+        btn.title = 'Cancel disabled until ' + enableAt.toLocaleString();
+
+        // schedule enabling
+        const ms = enableAt.getTime() - now.getTime();
+        setTimeout(() => {
+            try { enable(); } catch (e) { /* ignore */ }
+        }, ms + 50);
     }
 
     reservationsList.addEventListener('click', async function(e){
@@ -125,6 +158,10 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
 
         if (cancelBtn){
+            if (cancelBtn.getAttribute('aria-disabled') === 'true'){
+                alert('Cancel is not available yet for this reservation.');
+                return;
+            }
             const seatID = cancelBtn.getAttribute('data-seat');
             const startTime = cancelBtn.getAttribute('data-start');
             const endTime = cancelBtn.getAttribute('data-end');

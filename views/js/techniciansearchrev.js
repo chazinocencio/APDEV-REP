@@ -178,6 +178,32 @@ function createResultElement(reservation, index) {
     return resultDiv;
 }
 
+// disable cancel buttons until 10 minutes after reservation start
+function updateCancelButtonState(btn, startISO){
+    if (!btn || !startISO) return;
+    const start = new Date(startISO);
+    const enableAt = new Date(start.getTime() + 10 * 60 * 1000);
+    const now = new Date();
+
+    function enable(){
+        btn.classList.remove('cancel-disabled');
+        btn.removeAttribute('aria-disabled');
+        btn.title = '';
+    }
+
+    if (now >= enableAt){
+        enable();
+        return;
+    }
+
+    btn.classList.add('cancel-disabled');
+    btn.setAttribute('aria-disabled','true');
+    btn.title = 'Cancel disabled until ' + enableAt.toLocaleString();
+
+    const ms = enableAt.getTime() - now.getTime();
+    setTimeout(() => { try { enable(); } catch (e) {} }, ms + 50);
+}
+
 // Search button functionality
 searchBtn.addEventListener('click', function(){
     applyFilters();
@@ -200,6 +226,8 @@ clearBtn.addEventListener('click', function(){
     reservations.forEach((reservation, index) => {
         const resultElement = createResultElement(reservation, index + 1);
         resultsContainer.appendChild(resultElement);
+        const cb = resultElement.querySelector('.cancel-button');
+        if (cb) updateCancelButtonState(cb, reservation.rawStart);
     });
 });
 
@@ -270,6 +298,8 @@ async function fetchReservations() {
             reservations.forEach((reservation, index) => {
                 const resultElement = createResultElement(reservation, index + 1);
                 resultsContainer.appendChild(resultElement);
+                const cb = resultElement.querySelector('.cancel-button');
+                if (cb) updateCancelButtonState(cb, reservation.rawStart);
             });
         }
     } catch (error) {
@@ -292,6 +322,10 @@ resultsContainer.addEventListener('click', function (e) {
     }
 
     if (cancelBtn) {
+        if (cancelBtn.getAttribute('aria-disabled') === 'true'){
+            alert('Cancel is not available yet for this reservation.');
+            return;
+        }
         const id = cancelBtn.getAttribute('data-id');
         const seat = cancelBtn.getAttribute('data-seat');
         const start = cancelBtn.getAttribute('data-start');

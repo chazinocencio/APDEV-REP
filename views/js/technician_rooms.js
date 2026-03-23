@@ -568,6 +568,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     seatInfoCard.classList.remove('disabled');
                     // save the reservation for edit operations
                     currentReservation = reservation;
+                    // update cancel button state immediately when reservation changes
+                    try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
                 } catch (error) {
                     console.error("Error fetching seat info:", error);
                     hideSeatInfo();
@@ -576,6 +578,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function hideSeatInfo() {
                 seatInfoCard.classList.add("hidden");
+                // reservation may be cleared when hiding info; refresh cancel state
+                try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
             }
 
             gridWrap.addEventListener("mouseover", function (e) {
@@ -832,11 +836,16 @@ document.addEventListener("DOMContentLoaded", function () {
     var revcancel = document.getElementById('revcancel');
     var confirmCancelBtn = document.getElementById('confirmcancel');
     var cancelCancelBtn = document.getElementById('cancelcancel');
+    var cancelRevTimer = null;
 
     if (cancelRevOpen && revcancel) {
         cancelRevOpen.addEventListener('click', function () {
             if (!currentReservation || !currentReservation._id) {
                 alert('No reservation selected to cancel');
+                return;
+            }
+            if (cancelRevOpen.getAttribute('aria-disabled') === 'true'){
+                alert('Cancel is not available yet for this reservation.');
                 return;
             }
             revcancel.classList.remove('hidden');
@@ -869,6 +878,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert('Reservation cancelled');
                     revcancel.classList.add('hidden');
                     currentReservation = null;
+                    try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
                     updateDateDisplay();
                     hideSeatInfo();
                 } else {
@@ -887,6 +897,46 @@ document.addEventListener("DOMContentLoaded", function () {
             revcancel.classList.add('hidden');
         });
     }
+
+    // update visual state of the cancel button (disable until 10 minutes after start)
+    function updateCancelRevOpenState(){
+        if (!cancelRevOpen) return;
+            if (!currentReservation || !currentReservation.startTime){
+                cancelRevOpen.classList.remove('cancel-disabled');
+                cancelRevOpen.removeAttribute('aria-disabled');
+                cancelRevOpen.title = '';
+                return;
+            }
+
+        const start = new Date(currentReservation.startTime);
+        const enableAt = new Date(start.getTime() + 10 * 60 * 1000); //adds 10 minutes to the start time to determine when cancel should be enabled
+        const now = new Date();
+
+
+        function enable(){
+            cancelRevOpen.classList.remove('cancel-disabled');
+            cancelRevOpen.removeAttribute('aria-disabled');
+            cancelRevOpen.title = '';
+        }
+
+        if (now >= enableAt){
+            enable();
+            return;
+        }
+
+        // disable until enableAt
+        cancelRevOpen.classList.add('cancel-disabled');
+        cancelRevOpen.setAttribute('aria-disabled','true');
+        cancelRevOpen.title = 'Cancel disabled until ' + enableAt.toLocaleString();
+
+        if (cancelRevTimer) clearTimeout(cancelRevTimer);
+        const ms = enableAt.getTime() - now.getTime();
+        cancelRevTimer = setTimeout(() => { try { enable(); } catch (e){} }, ms + 50);
+    }
+
+    // keep the cancel button state updated (in case currentReservation changes)
+    setInterval(updateCancelRevOpenState, 0);
+    updateCancelRevOpenState();
 
     // Clicking the seat info card goes to the technician student profile page
     // keep clicks on the seat info card local (do not navigate away)

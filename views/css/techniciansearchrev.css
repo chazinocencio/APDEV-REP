@@ -305,6 +305,17 @@
     margin: 0;
 }
 
+/* Disabled cancel button state (used by JS: add/remove `cancel-disabled`) */
+.cancel-disabled{
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.cancel-disabled:hover{
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+}
+
 /* Modal styles copied from technician_rooms.css to support edit modal */
 .block-modal{
     position: fixed;
