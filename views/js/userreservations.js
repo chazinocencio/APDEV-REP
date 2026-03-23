@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     const editrev = document.getElementById('editrev');
     const saveBtn = document.getElementById('save');
     const editCancelBtn = document.getElementById('editcancel');
+    const token = localStorage.getItem('token');
 
     if (back) back.addEventListener('click', () => window.location.href = "../technician.html");
 
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                     <div class="butt edit-button" id="edit" data-id="${r._id}">
                         <h3>Edit</h3>
                     </div>
-                    <div class="canbutt cancel-button" id="cancel" data-id="${r._id}">
+                    <div class="canbutt cancel-button" id="cancel" data-id="${r._id}" data-seat="${r.seatID}" data-start="${new Date(r.startTime).toISOString()}" data-end="${new Date(r.endTime).toISOString()}">
                         <h3>Cancel</h3>
                     </div>
                 </div>
@@ -94,7 +95,14 @@ document.addEventListener('DOMContentLoaded', async function(){
         reservationsList.innerHTML = '<h3>Error loading reservations.</h3>';
     }
 
-    reservationsList.addEventListener('click', function(e){
+    function renumberReservations(){
+        const rows = reservationsList.querySelectorAll('.results .resultdeets p:first-child');
+        rows.forEach((p, index) => {
+            p.textContent = (index + 1).toString();
+        });
+    }
+
+    reservationsList.addEventListener('click', async function(e){
         const editBtn = e.target.closest('.edit-button');
         const cancelBtn = e.target.closest('.cancel-button');
 
@@ -117,9 +125,45 @@ document.addEventListener('DOMContentLoaded', async function(){
         }
 
         if (cancelBtn){
+            const seatID = cancelBtn.getAttribute('data-seat');
+            const startTime = cancelBtn.getAttribute('data-start');
+            const endTime = cancelBtn.getAttribute('data-end');
             const confirmed = confirm('Are you sure you want to cancel this reservation?');
-            if (confirmed){
-                alert('Cancellation requires authentication; perform delete via server API with credentials.');
+
+            if (!confirmed) return;
+
+            if (!token) {
+                alert('Missing authentication token. Please login again.');
+                return;
+            }
+
+            try {
+                const delResp = await fetch(`/api/technician/delete_reservation/${encodeURIComponent(seatID)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ startTime, endTime })
+                });
+
+                if (!delResp.ok) {
+                    const err = await delResp.json().catch(() => ({}));
+                    throw new Error(err.message || 'Failed to cancel reservation');
+                }
+
+                const reservationCard = cancelBtn.closest('.results');
+                if (reservationCard) reservationCard.remove();
+                renumberReservations();
+
+                if (!reservationsList.querySelector('.results')) {
+                    reservationsList.innerHTML = '<h3>No reservations found for this student.</h3>';
+                }
+
+                alert('Reservation cancelled successfully.');
+            } catch (error) {
+                console.error('Error cancelling reservation:', error);
+                alert(error.message || 'Failed to cancel reservation');
             }
         }
     })
