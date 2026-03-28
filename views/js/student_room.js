@@ -2,6 +2,9 @@ var currentDate = new Date();
 let room = null;
 const sundayIndex = 0;
 
+let activeRow = null;
+let dayCounter = 0;
+
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -13,6 +16,11 @@ function formatDate(d) {
 function updateDateDisplay() {
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
+    document.getElementById('rev').classList.add("hidden");
+    activeRow = null;
+    document.querySelectorAll(".date-grid-row").forEach(r => {
+        r.classList.remove("disabled");
+    });
     fetchReservations(room);
 }
 
@@ -114,8 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     updateDateDisplay();
-    let activeRow = null;
-    let dayCounter = 0;
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
@@ -197,9 +203,20 @@ document.addEventListener("DOMContentLoaded", function () {
             var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
 
             const reserveDate = currentDate.toLocaleDateString('en-CA');
-
             const startTime = reserveDate + "T" + getTimeRangeStringFromIndex(startCellIndex).start;
             const endTime = reserveDate + "T" + getTimeRangeStringFromIndex(endCellIndex).end;
+
+            // check if reservation was made at least 30 mins before start time
+            const currentTimeTemp = new Date()
+            const startTimeTemp = new Date(startTime)
+            
+            console.log(currentTimeTemp);
+            console.log(startTimeTemp);
+
+            if((startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000 < 30) {
+                alert('Reservation must be made at least 30 minutes before intended start time.');
+                return;
+            }
 
             const reservation = {
                 seatID: room + '-' + seatNumber,
