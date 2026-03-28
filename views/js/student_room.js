@@ -1,5 +1,6 @@
 var currentDate = new Date();
 let room = null;
+const sundayIndex = 0;
 
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -106,6 +107,12 @@ document.addEventListener("DOMContentLoaded", function () {
     room = params.get("room");
 
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
+
+    // check Sunday
+    if(currentDate.getDay() === sundayIndex) {
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
     updateDateDisplay();
     let activeRow = null;
     let dayCounter = 0;
@@ -114,13 +121,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (dateback) {
         dateback.classList.add("disabled");
         dateback.addEventListener("click", function () {
+            // can view next days
             if (dayCounter === 6) {
                 datego.classList.remove("disabled");
             }
+            // go to previous day
             if (dayCounter > 0) {
                 currentDate.setDate(currentDate.getDate() - 1);
+                // check if sunday
+                if(currentDate.getDay() === sundayIndex) {
+                    currentDate.setDate(currentDate.getDate() - 1);
+                }
                 updateDateDisplay();
                 dayCounter--;
+                // cannot view past days
                 if (dayCounter === 0) {
                     dateback.classList.add("disabled");
                 }
@@ -131,13 +145,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var datego = document.getElementById("datego");
     if (datego) {
         datego.addEventListener("click", function () {
+            // can view previous days
             if (dayCounter === 0) {
                 dateback.classList.remove("disabled");
             }
+            // go to next day
             if (dayCounter < 6) {
                 currentDate.setDate(currentDate.getDate() + 1);
+                // check if sunday
+                if(currentDate.getDay() === sundayIndex) {
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
                 updateDateDisplay();
                 dayCounter++;
+                // cannot view more than 7 days
                 if (dayCounter === 6) {
                     datego.classList.add("disabled");
                 }
