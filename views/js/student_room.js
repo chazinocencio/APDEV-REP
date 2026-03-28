@@ -209,11 +209,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // check if reservation was made at least 30 mins before start time
             const currentTimeTemp = new Date()
             const startTimeTemp = new Date(startTime)
-            
-            console.log(currentTimeTemp);
-            console.log(startTimeTemp);
+            const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
 
-            if((startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000 < 30) {
+            if(minuteDiff < 30) {
                 alert('Reservation must be made at least 30 minutes before intended start time.');
                 return;
             }
