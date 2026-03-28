@@ -89,7 +89,22 @@ async function repaintDisplay(reservations, token, card) {
         `;
         card.appendChild(div);
 
-        div.querySelector('.butt').addEventListener('click', function() {
+        div.querySelector('.butt').addEventListener('click', async function() {
+            const user = JSON.parse(localStorage.getItem('user'))
+
+            if (!user) {
+                window.location.href = "../index.html";
+                return;
+            }
+
+            const res = await fetch(`/api/student/view_profile/${user.username}`)
+            const requester = await res.json()
+
+            if(!requester.canReserve){
+                alert("Your account has been blocked. Reservations cannot be edited at this time.");
+                return;
+            } 
+
             editrev.classList.remove('hidden');
             document.getElementById("number_reservation").innerHTML = "Reservation #" + (index + 1);
             document.querySelector('.errormess').classList.add('hidden');
