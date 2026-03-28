@@ -21,6 +21,10 @@
     margin: 0;
 }
 
+.errormess {
+    color: red;
+}
+
 .options select {
     font-family: inherit;
     font-size: 14px;

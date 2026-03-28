@@ -53,6 +53,11 @@ async function repaintDisplay(reservations, token, card) {
     card.querySelectorAll(".results").forEach(el => el.remove());
 
     for (const [index, reservation] of reservations.entries()) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (new Date(reservation.startTime) < today) continue;
+
         const seatResponse = await fetch(`/api/student/search_seat/${reservation.seatID}`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -87,6 +92,7 @@ async function repaintDisplay(reservations, token, card) {
         div.querySelector('.butt').addEventListener('click', function() {
             editrev.classList.remove('hidden');
             document.getElementById("number_reservation").innerHTML = "Reservation #" + (index + 1);
+            document.querySelector('.errormess').classList.add('hidden');
             currentReservation = reservation; 
             populateDropdowns();
 
@@ -198,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     
         if (!room || !seat || !date || !startTime || !endTime) {
-            errormess.textContent = "Invalid, please fill all forms.";
+            errormess.textContent = "Invalid, please fill all values.";
             errormess.classList.remove("hidden");
             return;
         }
@@ -225,7 +231,15 @@ document.addEventListener("DOMContentLoaded", async function() {
         const startFullDate = date + "T" + startTime;
         const endFullDate = date + "T" + endTime;
 
-        console.log(startFullDate, endFullDate)
+        const currentTimeTemp = new Date()
+        const startTimeTemp = new Date(startFullDate)
+        const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
+
+        if(minuteDiff < 30) {
+            errormess.textContent = "Edit  can only be made at least 30 mins. before intended start time.";
+            errormess.classList.remove("hidden");
+            return;
+        }
 
         const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`);
         const conflictData = await conflictResponse.json();
