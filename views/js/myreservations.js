@@ -27,12 +27,19 @@ function populateDropdowns() {
     const today = new Date();
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 8; i++) {
         const d = new Date();
         d.setDate(today.getDate() + i);
+        
+        // skip sunday
+        if(d.getDay() === 0){ 
+            continue;
+        }
+        
         const formatted = weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
         const option = document.createElement("option");
-        option.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getDate()}`;
+        
+        option.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         option.textContent = formatted;
         dateSelect.appendChild(option);
     }
@@ -105,6 +112,8 @@ async function repaintDisplay(reservations, token, card) {
         });
 
         div.querySelector('.canbutt').addEventListener('click', async function() {
+            if(!confirm('Are you sure you want to cancel this reservation?')) return;
+            
             try {
                 const deleteResponse = await fetch(`/api/student/delete_reservation/${reservation.seatID}`, {
                     method: "DELETE",
