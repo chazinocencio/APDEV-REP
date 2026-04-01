@@ -49,19 +49,19 @@ export async function register(req, res) {
 		if (existsTech) return res.status(409).json({ message: 'Email already registered' });
 
 		const newTech = new model.technicianModel({
-		userName: body.userName || body.username,
-		email: body.email,
-		passwordHash: passwordHash,
-		lastName: body.last_name || body.lastName,
-		firstName: body.first_name || body.firstName,
-		middleName: body.middle_name || body.middleName,
-		profilePicture: body.profilePicture || 'null',
-		bio: body.bio || '',
-		isActive: true,
-		employeeID: body.employeeID || '',
-		department: body.department || '',
-		role: body.role || ''
-		});
+			userName: body.userName || body.username,
+			email: body.email,
+			passwordHash: passwordHash,
+			lastName: body.last_name || body.lastName,
+			firstName: body.first_name || body.firstName,
+			middleName: body.middle_name || body.middleName,
+			profilePicture: body.profilePicture || 'null',
+			bio: body.bio || '',
+			isActive: true,
+			employeeID: body.employeeID || '',
+			department: body.department || '',
+			role: body.role || ''
+			});
 
 		await newTech.save();
 		res.status(201).json({ message: 'Registered successfully', user: sanitizeUser(newTech) });

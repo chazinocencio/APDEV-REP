@@ -4,16 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        var username = document.getElementById('username');
+        var email = document.getElementById('email');
         var password = document.getElementById('password');
         var errormess = document.getElementById('errormess');
 
         var all_fields = true;
-        username.style.borderColor = "var(--midgrey-green)";
+        email.style.borderColor = "var(--midgrey-green)";
         password.style.borderColor = "var(--midgrey-green)";
-        if (username.value == ""){
+        if (email.value == ""){
             all_fields = false;
-            username.style.borderColor = "red";
+            email.style.borderColor = "red";
         }
         if (password.value  == ""){
             all_fields = false;
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email: username.value,
+                        email: email.value,
                         password: password.value
                     })
                 });
