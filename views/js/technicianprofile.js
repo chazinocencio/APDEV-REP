@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", async function(){
     const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
 
-    if (!user) {
-        window.location.href = "../index.html";
+    if (!user || !token) {
+		window.location.href = "../index.html"
         return;
     }
 
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     if (progEl) progEl.innerText = technicianProfile.role || '';
     if (bioEl) bioEl.innerText = technicianProfile.bio || '';
 
-    const studentprofile = document.getElementById('back')
+    const technicianprofile = document.getElementById('back')
     const edit = document.getElementById('edit')
     const save = document.getElementById('save')
     const cancel = document.getElementById('cancel')
@@ -43,6 +44,12 @@ document.addEventListener("DOMContentLoaded", async function(){
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
 
+    const oldPass = document.getElementById("oldpass");
+    const newPass = document.getElementById("newpass");
+    const confirmPass = document.getElementById("conpass");
+    const errorMess = document.getElementById("errormess");
+    const oldPassError = document.getElementById("oldpasserror");
+
     const editUsername = document.getElementById('editusername');
     const editBio = document.getElementById('editbio');
 
@@ -50,16 +57,92 @@ document.addEventListener("DOMContentLoaded", async function(){
     if (editUsername) editUsername.value = technicianProfile.username || '';
     if (editBio) editBio.value = technicianProfile.bio || '';
 
-    studentprofile.addEventListener('click', function(){
+    function hasStrongPassword(value) {
+        if (!value) return false;
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return strongPasswordRegex.test(value);
+    }
+
+    async function oldPasswordValid(value) {
+        const response = await fetch(`api/technician/check_password/${user.employeeID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ password: value })
+        });
+        const data = await response.json();
+        return data.success;
+    }
+
+    technicianprofile.addEventListener('click', function(){
         window.location.href = "technician.html";
     }) 
 
     cancelpass && cancelpass.addEventListener('click', function(){
+        oldPass.value = '';
+        newPass.value = '';
+        confirmPass.value = '';
         editpass.classList.add('hidden');
     }) 
 
-    savepass && savepass.addEventListener('click', function(){
-        editpass.classList.add('hidden');
+    savepass && savepass.addEventListener('click', async function(){
+        var valid = true;
+
+        if(oldPass.value === '' || newPass.value === '' || confirmPass.value === ''){   
+            errorMess.classList.remove('hidden');
+            errorMess.innerHTML = "Please fill out all fields.";
+            valid = false;
+            return;
+        } else {
+            errorMess.classList.add('hidden');
+            oldPassError.classList.add('hidden');
+            if(!(await oldPasswordValid(oldPass.value))){
+                valid = false;
+                oldPassError.classList.remove('hidden');
+                oldPassError.innerHTML = "Old password is incorrect.";
+                return;
+            }
+            if(!hasStrongPassword(newPass.value)){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password must be at least 8 characters long, include uppercase letters, lowercase letters, numbers, and special characters.";
+                return;
+            }
+            if(newPass.value === oldPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "New password cannot be the same as the old password.";
+                return;
+            }
+            if(newPass.value !== confirmPass.value){
+                valid = false;
+                errorMess.classList.remove('hidden');
+                errorMess.innerHTML = "Password does not match.";
+                return;
+            }
+        }
+
+        if(valid){
+            const response = await fetch(`api/technician/change_password/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    oldPassword: oldPass.value,
+                    newPassword: newPass.value
+                })
+            });
+            
+            oldPass.value = '';
+            newPass.value = '';
+            confirmPass.value = '';
+            editpass.classList.add('hidden');
+        }
     }) 
 
     canceldeact && canceldeact.addEventListener('click', function(){

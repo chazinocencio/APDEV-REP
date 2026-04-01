@@ -316,7 +316,7 @@ router.post('/check_password/:idNumber', verifyToken, async (req, res) => {
         const { idNumber } = req.params;
         const { password } = req.body;
 
-        const student = await model.studentModel.findOne({ idNumber });
+        const student = await model.studentModel.findOne({ idNumber: idNumber });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
         // check password

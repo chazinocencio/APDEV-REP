@@ -298,6 +298,25 @@ router.put('/change_password', verifyToken, async (req, res) => {
     }
 });
 
+router.post('/check_password/:employeeID', verifyToken, async (req, res) => {
+    try {
+        const { employeeID } = req.params;
+        const { password } = req.body;
+
+        const technician = await model.technicianModel.findOne({ employeeID: employeeID });
+        if (!technician) return res.status(404).json({ message: 'Technician not found' });
+
+        // check password
+        var match = await bcrypt.compare(password, technician.passwordHash)
+        if (!match) return res.status(401).json({ success: false, message: 'Password is incorrect' });
+
+        res.json({ success: true, message: 'Password is correct' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // deactivate profile (set isActive to false) for logged-in technician
 router.put('/deactivate', verifyToken, async (req, res) => {
     try {
