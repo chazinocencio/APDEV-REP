@@ -97,8 +97,10 @@ export async function login(req, res) {
 
 		if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
+		const duration = rememberMe ? '21d' : '1h';
+		
 		const payload = { id: user._id, role, email: user.email };
-		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: rememberMe ? '21d' : '1h' });
+		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
 
 		res.json({ success: true, token, user: sanitizeUser(user) });
 	} catch (error) {
