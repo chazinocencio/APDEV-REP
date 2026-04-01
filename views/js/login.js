@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         var email = document.getElementById('email');
         var password = document.getElementById('password');
+        var rememberMe = document.getElementById('rememberme')
         var errormess = document.getElementById('errormess');
 
         var all_fields = true;
@@ -38,7 +39,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     },
                     body: JSON.stringify({
                         email: email.value,
-                        password: password.value
+                        password: password.value,
+                        rememberMe: rememberMe.checked
                     })
                 });
 

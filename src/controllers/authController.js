@@ -73,7 +73,7 @@ export async function register(req, res) {
 
 export async function login(req, res) {
 	try {
-		const { email, password} = req.body;
+		const { email, password, rememberMe } = req.body;
 		if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 		const path = req.path.includes('/student');
 		let user;
@@ -98,7 +98,7 @@ export async function login(req, res) {
 		if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
 		const payload = { id: user._id, role, email: user.email };
-		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
+		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: rememberMe ? '21d' : '1h' });
 
 		res.json({ success: true, token, user: sanitizeUser(user) });
 	} catch (error) {
