@@ -1,20 +1,24 @@
 # CCAPDEV-MCO
 
+### How to initialize
+```
+npm init -y
+```
+
 ### Packages Needed
 ```
-npm install express mongoose cors
+npm install express mongoose cors jsonwebtoken multer bcrypt
 ```
 ```
 npm install nodemon --save-dev
-```
-```
-npm install jsonwebtoken
-```
-```
-npm install multer
 ```
 
 ### How to run
 ```
 npm run dev
+```
+
+### How to populate database
+```
+npm src\scripts\seed_db.js
 ```
