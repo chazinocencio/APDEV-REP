@@ -50,6 +50,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     const errorMess = document.getElementById("errormess");
     const oldPassError = document.getElementById("oldpasserror");
 
+    const deactPass = document.getElementById("deactpass");
+    const deactErrorMess = document.getElementById("deac-error-mess");
+
     const editUsername = document.getElementById('editusername');
     const editBio = document.getElementById('editbio');
 
@@ -146,10 +149,41 @@ document.addEventListener("DOMContentLoaded", async function(){
     }) 
 
     canceldeact && canceldeact.addEventListener('click', function(){
+        deactPass.value = '';
         deact.classList.add('hidden');
+        deactErrorMess.classList.add('hidden');
     }) 
 
-    confirmdeact && confirmdeact.addEventListener('click', function(){
+    confirmdeact && confirmdeact.addEventListener('click', async function(){
+        deactErrorMess.classList.add('hidden');
+        if(deactPass.value === ''){
+            deactErrorMess.classList.remove('hidden');
+            deactErrorMess.innerHTML = "Please enter your password.";
+            return;
+        } else {
+            const response = await fetch(`api/technician/deactivate/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user: user,
+                    password: deactPass.value
+                })
+            });
+
+            const data = await response.json();
+            if(data.success){
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "../index.html";
+            } else {
+                deactErrorMess.classList.remove('hidden');
+                deactErrorMess.innerHTML = data.message || "An error occurred. Please try again.";
+                return;
+            }
+        }
         deact.classList.add('hidden');
     }) 
 

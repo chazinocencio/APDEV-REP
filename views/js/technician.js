@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 
         // load user from localStorage and populate welcome message
         const user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
+        const token = localStorage.getItem("token");
+        if (!user || !token) {
                 // not logged in, redirect to technician login
                 window.location.href = "technician_login.html";
                 return;

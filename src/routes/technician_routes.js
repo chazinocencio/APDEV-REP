@@ -320,11 +320,14 @@ router.post('/check_password/:employeeID', verifyToken, async (req, res) => {
 // deactivate profile (set isActive to false) for logged-in technician
 router.put('/deactivate', verifyToken, async (req, res) => {
     try {
-        const requester = req.user;
-        if (requester.role !== 'technician') return res.status(403).json({ message: 'Only technicians can deactivate their profile' });
+        const { user, password } = req.body;
 
-        const technician = await model.technicianModel.findOne({ email: requester.email });
-        if (!technician) return res.status(404).json({ message: 'technician not found' });
+        const technician = await model.technicianModel.findOne({ email: user.email });
+        if (!technician) return res.status(404).json({ message: 'Technician not found' });
+
+        // check password
+        var match = await bcrypt.compare(password, technician.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Password is incorrect' });
 
         technician.isActive = false;
         await technician.save();

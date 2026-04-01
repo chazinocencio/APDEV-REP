@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function(){
 	const user = JSON.parse(localStorage.getItem("user"));
+	const token = localStorage.getItem("token");
 
-    if (!user) {
+    if (!user || !token) {
         window.location.href = "student_login.html";
         return;
     }
