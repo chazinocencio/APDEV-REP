@@ -2,9 +2,10 @@ import { Router } from "express";
 import * as model from "../model/model.js";
 import upload from '../middleware/upload.js';
 import { verifyToken } from "../middleware/auth.js";
+import bcrypt from 'bcrypt';
 
 const router = Router()
-
+var countSalt = 10; // salt value for password hashing
 
 //view all reservations of student
 // /api/student/reservations/:id
@@ -294,9 +295,13 @@ router.put('/change_password', verifyToken, async (req, res) => {
         const student = await model.studentModel.findOne({ email: requester.email });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+        // check old password
+        var match = await bcrypt.compare(oldPassword, student.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Old password is incorrect' });
 
-        student.passwordHash = newPassword;
+        // change to new password
+        const saltRounds = countSalt;
+        student.passwordHash = await bcrypt.hash(newPassword, saltRounds);
         await student.save();
 
         res.json({ success: true, message: 'Password changed successfully' });
@@ -314,7 +319,9 @@ router.post('/check_password/:idNumber', verifyToken, async (req, res) => {
         const student = await model.studentModel.findOne({ idNumber });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== password) return res.status(401).json({ success: false, message: 'Password is incorrect' });
+        // check password
+        var match = await bcrypt.compare(password, student.passwordHash)
+        if (!match) return res.status(401).json({ success: false, message: 'Password is incorrect' });
 
         res.json({ success: true, message: 'Password is correct' });
     } catch (error) {
@@ -331,7 +338,9 @@ router.put('/deactivate', verifyToken, async (req, res) => {
         const student = await model.studentModel.findOne({ email: user.email });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== password) return res.status(401).json({ message: 'Password is incorrect' });
+        // check password
+        var match = await bcrypt.compare(password, student.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Password is incorrect' });
 
         student.isActive = false;
         await student.save();

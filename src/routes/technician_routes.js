@@ -2,8 +2,10 @@ import { Router } from "express";
 import * as model from "../model/model.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from '../middleware/upload.js';
+import bcrypt from "bcrypt"
 
 const router = Router()
+var countSalt = 10; // salt value for password hashing
 
 router.get('/getTechnicians', async (req, res) => {
     try {
@@ -280,9 +282,13 @@ router.put('/change_password', verifyToken, async (req, res) => {
         const technician = await model.technicianModel.findOne({ email: requester.email });
         if (!technician) return res.status(404).json({ message: 'Technician not found' });
 
-        if (technician.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+        //check old password
+        var match = await bcrypt.compare(oldPassword, technician.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Old password is incorrect' });
 
-        technician.passwordHash = newPassword;
+        // change to new password
+        const saltRounds = countSalt;
+        technician.passwordHash = await bcrypt.hash(newPassword, saltRounds);
         await technician.save();
 
         res.json({ success: true, message: 'Password changed successfully' });

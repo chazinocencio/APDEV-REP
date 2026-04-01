@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import * as model from '../model/model.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secretkey';
+var countSalt = 10; // salt value for password hashing
 
 function sanitizeUser(user) {
   const obj = user.toObject ? user.toObject() : { ...user };
@@ -14,6 +16,9 @@ export async function register(req, res) {
     const isStudent = req.path.includes('/student');
     const body = req.body;
 
+    const saltRounds = countSalt;
+    const passwordHash = await bcrypt.hash(body.password, saltRounds)
+
     if (isStudent) {
       const exists = await model.studentModel.findOne({ email: body.email });
       if (exists) return res.status(409).json({ message: 'Email already registered' });
@@ -22,7 +27,7 @@ export async function register(req, res) {
         username: body.username,
         idNumber: body.IDnumber || body.idNumber,
         email: body.email,
-        passwordHash: body.password,
+        passwordHash: passwordHash,
         lastName: body.last_name || body.lastName,
         firstName: body.first_name || body.firstName,
         middleName: body.middle_name || body.middleName,
@@ -46,7 +51,7 @@ export async function register(req, res) {
     const newTech = new model.technicianModel({
       userName: body.userName || body.username,
       email: body.email,
-      passwordHash: body.password,
+      passwordHash: passwordHash,
       lastName: body.last_name || body.lastName,
       firstName: body.first_name || body.firstName,
       middleName: body.middle_name || body.middleName,
@@ -87,7 +92,9 @@ export async function login(req, res) {
     
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (user.passwordHash !== password) return res.status(401).json({ message: 'Invalid credentials' });
+    var match = await bcrypt.compare(password, user.passwordHash);
+
+    if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
     const payload = { id: user._id, role, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
