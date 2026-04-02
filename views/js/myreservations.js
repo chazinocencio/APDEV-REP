@@ -71,7 +71,7 @@ async function repaintDisplay(user, reservations, card) {
         div.classList.add("results");
         div.innerHTML = `
             <div class="resultdeets">
-                <p>${index + 1}</p>
+                <p>${reservation.reservationID}</p>
                 <p>${seatData.roomID}</p>
                 <p>${getSeat}</p>
                 <p>${new Date(reservation.startTime).toLocaleDateString()}</p>
@@ -102,7 +102,7 @@ async function repaintDisplay(user, reservations, card) {
             } 
 
             editrev.classList.remove('hidden');
-            document.getElementById("number_reservation").innerHTML = "Reservation #" + (index + 1);
+            document.getElementById("number_reservation").innerHTML = reservation.reservationID;
             document.querySelector('.errormess').classList.add('hidden');
             currentReservation = reservation; 
             populateDropdowns();
@@ -218,6 +218,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         room = room.toLowerCase();
         var seat = document.getElementById("seat").value;
         const seatID = room + "-" + seat;
+        const reservationID = document.getElementById('number_reservation').innerHTML;
         const date = document.getElementById("date").value;
         const startTime = document.getElementById("timestart").value;
         const endTime = document.getElementById("timeend").value;
@@ -262,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
             credentials: 'include'
         });
         const conflictData = await conflictResponse.json();
