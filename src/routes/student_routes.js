@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
 import upload from '../middleware/upload.js';
-import { verifyToken } from "../middleware/auth.js";
+import { verifyToken, JWT_SECRET } from "../middleware/auth.js";
 import bcrypt from 'bcrypt';
 
 const router = Router()
@@ -166,9 +166,30 @@ router.put('/edit_profile/:idNumber', verifyToken, upload.single('profilePicture
 
         const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { returnDocument: 'after', runValidators: true });
         if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
-        res.json({ success: true, data: user });
+                
+        const payload = { 
+            id: user._id, 
+            role: req.user.role, 
+            email: user.email,
+            username: user.username, 
+            rememberMe: req.user.rememberMe 
+        };
+        
+        const duration = req.user.rememberMe ? '21d' : '1h';
+        const newToken = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
+
+        res.cookie("token", newToken, {
+            httpOnly: true,
+            secure: true, // set to false if not using HTTPS locally
+            sameSite: "strict",
+            maxAge: req.user.rememberMe 
+                ? 1000 * 60 * 60 * 24 * 21 // 3 weeks
+                : undefined // session cookie
+        });
+
+        res.json({ success: true, data: payload });
     } 
     catch (error) {  
         res.status(400).json({ success: false, message: error.message });
