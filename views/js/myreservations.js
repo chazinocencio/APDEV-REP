@@ -48,7 +48,7 @@ function populateDropdowns() {
 
 let currentReservation = null;
 
-async function repaintDisplay(reservations, token, card) {
+async function repaintDisplay(user, reservations, token, card) {
 
     card.querySelectorAll(".results").forEach(el => el.remove());
 
@@ -90,12 +90,6 @@ async function repaintDisplay(reservations, token, card) {
         card.appendChild(div);
 
         div.querySelector('.butt').addEventListener('click', async function() {
-            const user = JSON.parse(localStorage.getItem('user'))
-
-            if (!user) {
-                window.location.href = "../index.html";
-                return;
-            }
 
             const res = await fetch(`/api/student/view_profile/${user.username}`)
             const requester = await res.json()
@@ -166,13 +160,23 @@ async function repaintDisplay(reservations, token, card) {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    let user = null;
 
-    if (!user) {
-        window.location.href = "../index.html";
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const profileResponse = await fetch(`/api/student/view_profile/${user.username}`, {
         headers: { "Authorization": `Bearer ${token}` }
@@ -201,7 +205,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         </div>
     `;
 
-    await repaintDisplay(reservations, token, card);
+    await repaintDisplay(user, reservations, token, card);
 
     studentprofile.addEventListener('click', function() {
         window.location.href = "../student.html";
@@ -307,7 +311,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             reservations = await refreshResponse.json();
-            await repaintDisplay(reservations, token, card);
+            await repaintDisplay(user, reservations, token, card);
 
         } else {
             console.warn("Post failed:", postResult);

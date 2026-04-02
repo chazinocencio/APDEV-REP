@@ -8,15 +8,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 	if(res.ok){
 		const data = await res.json();
 		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
 	} else {
 		window.location.href = "student_login.html";
 		return;
 	}
-
-    if (!user) {
-        window.location.href = "student_login.html";
-		return;
-    }
 
 	const response = await fetch(`api/student/view_profile/${user.username}`);
     const data = await response.json();
@@ -57,10 +56,15 @@ document.addEventListener("DOMContentLoaded", async function(){
 		window.location.href = "../studentsearchroom.html"
 	})
 
-	logout.addEventListener('click', function(){
-  		localStorage.removeItem("token");
-		localStorage.removeItem("user");
-		window.location.href = "../index.html"
+	logout.addEventListener('click', async function(){
+		const response = await fetch('/api/auth/logout', {
+			method: 'POST',
+			credentials: 'include'
+		})
+		const data = await response.json();
+
+		if(data.success)
+			window.location.href = "../index.html"
 	})
 
 	search.addEventListener('click', function(e){

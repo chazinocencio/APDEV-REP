@@ -89,13 +89,13 @@ export async function login(req, res) {
 			role = 'technician'
 		}
 		
+		if (!user) return res.status(404).json({ message: 'User not found.' });
 		user = user.toObject()
 		user.role = role;
-		if (!user) return res.status(404).json({ message: 'User not found' });
 
 		var match = await bcrypt.compare(password, user.passwordHash);
 
-		if (!match) return res.status(401).json({ message: 'Invalid credentials' });
+		if (!match) return res.status(401).json({ message: 'Email or Password is incorrect.' });
 
 		const duration = rememberMe ? '21d' : '1h';
 		
@@ -121,6 +121,61 @@ export async function login(req, res) {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: error.message });
+	}
+}
+
+export async function logout(req, res) {
+	try {
+		res.clearCookie("token", {
+			httpOnly: true,
+			secure: true,
+			sameSite: "strict"
+		});
+
+		res.json({ success: true });
+	} catch (err) {
+		res.status(500).json({message: err.message});
+	}
+}
+
+export async function checkAuth(req, res){
+	const token = req.cookies.token;
+
+	if(token) {
+		try {
+			const decoded = jwt.verify(token, JWT_SECRET);
+			console.log(decoded);
+			req.user = decoded;
+			res.json({
+				success: true,
+				user: req.user,
+				message: 'Cookie found'
+			})
+			if (decoded.rememberMe) {
+				const { exp, iat, ...cleanPayload } = decoded;
+				const newToken = jwt.sign(
+					cleanPayload,
+					JWT_SECRET,
+					{ expiresIn: "21d" }
+				);
+	
+				res.cookie("token", newToken, {
+					httpOnly: true,
+					secure: true,
+					sameSite: "strict",
+					maxAge: 21 * 24 * 60 * 60 * 1000
+				});
+			}
+
+		} catch(err) {
+			res.json({
+				message: 'Token expired'
+			})
+		}
+	} else {
+		res.json({
+			message: 'No cookie found'
+		})
 	}
 }
 

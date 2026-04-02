@@ -52,10 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         errormess.innerHTML = "This account has been deactivated. Contact support for assistance.";
                     }
                     else {
-                        // store token for authenticated requests
-                        //localStorage.setItem("token", data.token);
-                        // optional: store user info
-                        //localStorage.setItem("user", JSON.stringify(data.user));
                         // redirect to appropriate dashboard (use the form action path)
                         // ensure we don't accidentally redirect to an external URL
                         const redirectPath = formAction || (isTechnician ? "technician.html" : "student.html");
@@ -64,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 } else {
                     errormess.style.opacity = 1;
-                    errormess.innerHTML = "Invalid email or password.";
+                    errormess.innerHTML = data.message;
                 }
 
             } catch (error) {

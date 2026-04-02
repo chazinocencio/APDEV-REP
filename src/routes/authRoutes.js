@@ -12,9 +12,13 @@ router.post('/student/login', authController.login);
 router.post('/technician/register', authController.register);
 router.post('/technician/login', authController.login);
 
+router.post('/logout', authController.logout);
+
 router.get("/me", verifyToken, (req,res) =>{
     res.json({user: req.user});
 })
+
+router.get("/checkAuth", authController.checkAuth)
 
 // Protected verify endpoint
 router.get('/verify', verifyToken, authController.verifyTokenEndpoint);

@@ -22,20 +22,21 @@ export function verifyToken(req, res, next) {
 		const decoded = jwt.verify(token, JWT_SECRET);
 		req.user = decoded;
 
-		if (decoded.rememberMe) {
-			const newToken = jwt.sign(
-				decoded,
-				JWT_SECRET,
-				{ expiresIn: "21d" }
-			);
+		// if (decoded.rememberMe) {
+		// 	const { exp, iat, ...cleanPayload } = decoded;
+		// 	const newToken = jwt.sign(
+		// 		cleanPayload,
+		// 		JWT_SECRET,
+		// 		{ expiresIn: "21d" }
+		// 	);
 
-			res.cookie("token", newToken, {
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				maxAge: 21 * 24 * 60 * 60 * 1000
-			});
-		}
+		// 	res.cookie("token", newToken, {
+		// 		httpOnly: true,
+		// 		secure: true,
+		// 		sameSite: "strict",
+		// 		maxAge: 21 * 24 * 60 * 60 * 1000
+		// 	});
+		// }
 
 		next();
 	} catch (err) {

@@ -100,16 +100,24 @@ function validateSelectedCells(selectedCells, row){
     return (endCellIndex - startCellIndex + 1) === selectedCells.length;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded", async function () {
+    let user = null;
 
-    
-    if (!user || !token) {
-        window.location.href = "./index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
 
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const params = new URLSearchParams(window.location.search);
     room = params.get("room");
