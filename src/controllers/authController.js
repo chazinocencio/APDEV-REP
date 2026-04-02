@@ -103,9 +103,13 @@ export async function login(req, res) {
 			id: user._id, 
 			role: role, 
 			email: user.email,
-			username: user.username, 
+			username: user.username,
 			rememberMe: rememberMe 
 		};
+
+		if (role === 'student') payload.idNumber = user.idNumber
+		else payload.employeeID = user.employeeID
+
 		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
 
 		res.cookie("token", token, {

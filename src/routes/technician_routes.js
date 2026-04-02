@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import jwt from 'jsonwebtoken';
 import { verifyToken, JWT_SECRET } from "../middleware/auth.js";
 import upload from '../middleware/upload.js';
 import bcrypt from "bcrypt"
@@ -268,6 +269,7 @@ router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePictu
             role: req.user.role, 
             email: user.email,
             username: user.username, 
+            employeeID: employeeID,
             rememberMe: req.user.rememberMe 
         };
         

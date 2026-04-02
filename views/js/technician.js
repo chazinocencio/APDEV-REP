@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', async function(){
 		window.location.href = "technician_login.html";
 		return;
 	}
+
+	const response = await fetch(`api/technician/view_profile/${user.username}`, {
+		credentials: 'include'
+	});
+    const data = await response.json();
+    const technicianProf = data;
 	
 	const technicianprofile = document.getElementById('technicianprofile')
 	const technicianreserve = document.getElementById('technicianreserve')
@@ -29,12 +35,12 @@ document.addEventListener('DOMContentLoaded', async function(){
 	const usernameFull = document.getElementById('username-fullname');
 	const userImg = document.querySelector('.user img');
 
-	const fullName = `${user.lastName || ''}, ${user.firstName || ''}${user.middleName ? ' ' + (user.middleName[0] + '.') : ''}`;
-	const displayName = user.username ? `@${user.username}` : fullName;
+	const fullName = `${technicianProf.lastName || ''}, ${technicianProf.firstName || ''}${technicianProf.middleName ? ' ' + (usertechnicianProf.middleName[0] + '.') : ''}`;
+	const displayName = technicianProf.username ? `@${technicianProf.username}` : fullName;
 
 	if (headUsername) headUsername.innerHTML = fullName;
 	if (usernameFull) usernameFull.innerHTML = displayName;
-	if (userImg && user.profilePicture) userImg.src = user.profilePicture;
+	if (userImg && technicianProf.profilePicture) userImg.src = technicianProf.profilePicture;
 
 	searchprof.addEventListener('click', function(){
 		window.location.href = "../techniciansearchprof.html"
