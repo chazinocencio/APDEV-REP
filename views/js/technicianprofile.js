@@ -258,13 +258,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 return;
             }
             const updatedUser = await response2.json();
-
-            // update localStorage and UI
-            const storedUser = JSON.parse(localStorage.getItem('user')) || {};
-            storedUser.username = updatedUser.data.username;
-            storedUser.bio = updatedUser.data.bio;
-            storedUser.profilePicture = updatedUser.data.profilePicture;
-            localStorage.setItem('user', JSON.stringify(storedUser));
+            console.log(updatedUser);
 
             location.reload();
         } else {

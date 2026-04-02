@@ -259,11 +259,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 return;
             }
             const updatedUser = await response2.json();
-            user.username = updatedUser.data.username;
-            user.bio = updatedUser.data.bio;
-            user.profilePicture = updatedUser.data.profilePicture;
-
-            //localStorage.setItem("user", JSON.stringify(user));
+            console.log(updatedUser);
 
             location.reload();
         } else {
