@@ -412,7 +412,6 @@ router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
         if (conflict.length > 0) {
             return res.status(200).json({ hasConflict: true, reservation: conflict });
         }
-        console.log('no conflict')
         return res.status(200).json({ hasConflict: false });
 
     } catch (error) {

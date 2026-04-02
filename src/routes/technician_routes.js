@@ -79,14 +79,27 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
 
 router.post('/block_seat', verifyToken, async(req, res) =>{
     try {
-        const {seatID, startTime, endTime, description} = req.body;
+        const {reservationID, seatID, startTime, endTime, description} = req.body;
 
         const seat = await model.seatModel.findOne({ seatID: seatID });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        let newID = null;
+        let existing = null
+        if(!reservationID){
+            const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
+            const type = 'RES';
+            do {
+                const random4Digit = Math.floor(Math.random() * 9000) + 1000;
+                newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
+                existing = await model.reservationModel.findOne({ reservationID: newID });
+            } while (existing)
+        }
+
         const newRecord = new model.reservationModel({
+            reservationID: reservationID || newID,
             seatID: seatID,
             idNumber: null,
             startTime: new Date(startTime),

@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
             credentials: 'include'
         });
         const conflictData = await conflictResponse.json();
@@ -288,6 +288,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             });
 
         const newReservation = {
+            reservationID: reservationID,
             idNumber: studentProfile.idNumber,
             seatID: seatID,
             startTime: startFullDate,
