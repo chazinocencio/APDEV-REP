@@ -25,7 +25,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     searchButton.addEventListener('click', async function(){
         searchResults.innerHTML = ''; // clear previous search results
         if (searchBar.value != ''){
-            const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`);
+            const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`, {
+                credentials: 'include'
+            });
             const data = await response.json();
             const profiles = data.data;
             

@@ -255,7 +255,9 @@ window.addEventListener('load', function(){
 // Fetch reservations from API
 async function fetchReservations() {
     try {
-        const response = await fetch('/api/technician/all_reservations');
+        const response = await fetch('/api/technician/all_reservations', {
+            credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -356,8 +358,8 @@ resultsContainer.addEventListener('click', function (e) {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ startTime: start, endTime: end })
                 });
 
@@ -460,7 +462,9 @@ function openEditModal(reservation) {
 
             try {
                 const roomDate = startDate; // YYYY-MM-DD
-                const resp = await fetch(`/api/common_routes/reservations_per_day/${editingReservation.room}/${roomDate}`);
+                const resp = await fetch(`/api/common_routes/reservations_per_day/${editingReservation.room}/${roomDate}`, {
+                    credentials: 'include'
+                });
                 const data = await resp.json();
                 const existing = data.reservations || [];
 
@@ -481,8 +485,8 @@ function openEditModal(reservation) {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ seatID: newSeatID, startTime: fullStart, endTime: fullEnd, description })
                 });
 

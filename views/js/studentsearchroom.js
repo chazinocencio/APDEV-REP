@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 startTime: startTime,
                 endTime: endTime
@@ -123,7 +124,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
             document.querySelectorAll('.results .butt').forEach(reserveButton => {
                 reserveButton.addEventListener('click', async function() {
-                    const res = await fetch(`/api/student/view_profile/${user.username}`)
+                    const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                        credentials: 'include'
+                    })
                     const requester = await res.json()
 
                     if(!requester.canReserve){
@@ -137,9 +140,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}` 
                         },
-                        
+                        credentials: 'include',
                         body: JSON.stringify({
                             seatID: selectedSeatId,
                             startTime: startTime,

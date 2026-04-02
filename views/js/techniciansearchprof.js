@@ -34,7 +34,9 @@ document.addEventListener("DOMContentLoaded", async function(){
             searchResults.innerHTML = '';
             if (searchBar && searchBar.value != ''){
                 try {
-                    const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`);
+                    const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`, {
+                        credentials: 'include'
+                    });
                     const data = await response.json();
                     const profiles = data.data;
 

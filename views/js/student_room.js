@@ -57,7 +57,9 @@ async function fetchReservations(room) {
     var dateGrid = document.querySelector(".date-grid");
     if (!dateGrid) return;
 
-    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`);
+    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const reservations = data.reservations;
 
@@ -185,7 +187,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if(reserveButton){
         reserveButton.addEventListener("click", async function () {
-            const res = await fetch(`/api/student/view_profile/${user.username}`)
+            const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                credentials: 'include'
+            })
             const requester = await res.json()
 
             if(!requester.canReserve){
@@ -236,8 +240,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify(reservation)
                 });
 
@@ -331,11 +335,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
                     method: "GET",
+                    credentials: 'include'
                 });
                 const reservation = await getResponse.json();
 
                 const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
                     method: "GET",
+                    credentials: 'include'
                 });
 
                 const studentProfile = await getStudent.json();

@@ -52,7 +52,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     }
 
     try{
-        const res = await fetch(`api/student/reservations/${id}`);
+        const res = await fetch(`api/student/reservations/${id}`, {
+            credentials: 'include'
+        });
         if (!res.ok) throw new Error('Failed to fetch reservations');
         const reservations = await res.json();
 
@@ -196,8 +198,8 @@ document.addEventListener('DOMContentLoaded', async function(){
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ startTime, endTime })
                 });
 

@@ -80,7 +80,7 @@ router.get('/specific_reservation/:id', verifyToken, async (req, res) => {
 });
 
 //view profile
-router.get('/view_profile/:username', verifyToken, async (req, res) => {
+router.get('/view_profile/:username', async (req, res) => {
     try {
         const { username } = req.params;
         const studentProfile = await model.studentModel.findOne({username: username});
@@ -105,7 +105,7 @@ router.get('/get_profile/:id', verifyToken, async (req, res) => {
 
 
 //search profile
-router.get('/search_profile/:value', verifyToken, async (req, res) => {
+router.get('/search_profile/:value', async (req, res) => {
     try {
         const { value } = req.params;
         const studentProfiles = await model.studentModel.find({
@@ -127,7 +127,7 @@ router.get('/search_profile/:value', verifyToken, async (req, res) => {
 });
 
 //search profile by email 
-router.get('/search_email/:email', verifyToken, async (req, res) => {
+router.get('/search_email/:email', async (req, res) => {
     try {
         const { email } = req.params;
         const studentProfile = await model.studentModel.findOne({email: email});
@@ -139,7 +139,7 @@ router.get('/search_email/:email', verifyToken, async (req, res) => {
 });
 
 //search profile by idNumber 
-router.get('/search_idNumber/:idNumber', verifyToken, async (req, res) => {
+router.get('/search_idNumber/:idNumber', async (req, res) => {
     try {
         const { idNumber } = req.params;
         const studentProfile = await model.studentModel.findOne({idNumber: parseInt(idNumber)});
@@ -176,7 +176,7 @@ router.put('/edit_profile/:idNumber', verifyToken, upload.single('profilePicture
 });
 
 //search seat
-router.get('/search_seat/:seatID', verifyToken, async (req, res) => {
+router.get('/search_seat/:seatID', async (req, res) => {
     try {
         const{seatID} = req.params;
         const seats = await model.seatModel.findOne({seatID: seatID});

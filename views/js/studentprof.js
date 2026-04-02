@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    const response = await fetch(`api/student/view_profile/${studentUsername}`);
+    const response = await fetch(`api/student/view_profile/${studentUsername}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const studentProfile = data;
 

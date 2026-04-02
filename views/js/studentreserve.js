@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 	}
 
     const response = await fetch('/api/student/all_reservations', {
-        headers: { "Authorization": `Bearer ${token}` }
+        credentials: 'include'
     });
     const allReservations = await response.json();
 

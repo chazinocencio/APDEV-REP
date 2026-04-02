@@ -59,7 +59,7 @@ async function repaintDisplay(user, reservations, token, card) {
         if (new Date(reservation.startTime) < today) continue;
 
         const seatResponse = await fetch(`/api/student/search_seat/${reservation.seatID}`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: 'include'
         });
         const seatData = await seatResponse.json();
         const div = document.createElement("div");
@@ -91,7 +91,9 @@ async function repaintDisplay(user, reservations, token, card) {
 
         div.querySelector('.butt').addEventListener('click', async function() {
 
-            const res = await fetch(`/api/student/view_profile/${user.username}`)
+            const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                credentials: 'include'
+            })
             const requester = await res.json()
 
             if(!requester.canReserve){
@@ -134,8 +136,8 @@ async function repaintDisplay(user, reservations, token, card) {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         startTime: reservation.startTime,
                         endTime: reservation.endTime
@@ -179,12 +181,12 @@ document.addEventListener("DOMContentLoaded", async function() {
 	}
 
     const profileResponse = await fetch(`/api/student/view_profile/${user.username}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        credentials: 'include'
     });
     const studentProfile = await profileResponse.json();
 
     const dataResponse = await fetch(`/api/student/reservations/${studentProfile.idNumber}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        credentials: 'include'
     });
     let reservations = await dataResponse.json();
 
@@ -260,7 +262,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`);
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
+            credentials: 'include'
+        });
         const conflictData = await conflictResponse.json();
 
         if (conflictData.hasConflict) {
@@ -274,8 +278,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     startTime: currentReservation.startTime,
                     endTime: currentReservation.endTime
@@ -296,8 +300,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
             },
+            credentials: 'include',
             body: JSON.stringify(newReservation)
         });
 
@@ -308,7 +312,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             editrev.classList.add('hidden');
 
             const refreshResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
-                headers: { "Authorization": `Bearer ${token}` }
+                credentials: 'include'
             });
             reservations = await refreshResponse.json();
             await repaintDisplay(user, reservations, token, card);

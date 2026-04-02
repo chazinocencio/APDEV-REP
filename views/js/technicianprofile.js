@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 		return;
 	}
 
-    const response = await fetch(`api/technician/view_profile/${user.username}`);
+    const response = await fetch(`api/technician/view_profile/${user.username}`, {
+        credentials: 'include'
+    });
     const technicianProfile = await response.json();
 
     const profilePicEl = document.getElementById('profilepic');
@@ -81,8 +83,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
+            credentials: 'include',
             body: JSON.stringify({ password: value })
         });
         const data = await response.json();
@@ -142,8 +144,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     oldPassword: oldPass.value,
@@ -175,8 +177,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     password: deactPass.value
@@ -225,7 +227,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     save && save.addEventListener('click', async function(){
         // check username uniqueness if changed
         if(editUsername && editUsername.value !== ''){
-            const respCheck = await fetch(`api/technician/view_profile/${editUsername.value}`);
+            const respCheck = await fetch(`api/technician/view_profile/${editUsername.value}`, {
+                credentials: 'include'
+            });
             const dataCheck = await respCheck.json();
             if(dataCheck && dataCheck.username !== technicianProfile.username){
                 const err = document.querySelector('.errormess');
@@ -244,6 +248,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const response2 = await fetch(`api/technician/edit_profile/${technicianProfile.employeeID}`, {
                 method: 'PUT',
+                credentials: 'include',
                 body: formData
             });
 

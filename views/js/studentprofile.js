@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 		return;
 	}
 
-    const response = await fetch(`api/student/view_profile/${user.username}`);
+    const response = await fetch(`api/student/view_profile/${user.username}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const studentProfile = data;
 
@@ -82,8 +84,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
+            credentials: 'include',
             body: JSON.stringify({ password: value })
         });
         const data = await response.json();
@@ -143,8 +145,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     oldPassword: oldPass.value,
@@ -176,8 +178,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     password: deactPass.value
@@ -224,7 +226,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     save.addEventListener('click', async function(){
         if(editUsername.value !== ''){
-            const response = await fetch(`api/student/view_profile/${editUsername.value}`);
+            const response = await fetch(`api/student/view_profile/${editUsername.value}`, {
+                credentials: 'include'
+            });
             const data = await response.json();
 
             if(data){
@@ -245,6 +249,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const response2 = await fetch(`api/student/edit_profile/${user.idNumber}`, {
                 method: 'PUT',
+                credentials: 'include',
                 body: formData
             });
             
