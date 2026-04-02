@@ -36,7 +36,23 @@ const clearBtn = document.getElementById('clearbutt');
 const resultsContainer = document.getElementById('resultsContainer');
 const noResultsMessage = document.getElementById('noResultsMessage');
 // auth token for API calls
-const token = localStorage.getItem('token');
+let user = null;
+
+const res = await fetch('api/auth/me', {
+    credentials: 'include'
+})
+
+if(res.ok){
+    const data = await res.json();
+    user = data.user
+    if (!user) {
+        window.location.href = "technician_login.html";
+        return;
+    }
+} else {
+    window.location.href = "technician_login.html";
+    return;
+}
 
 // Back button functionality
 technicianBack.addEventListener('click', function(){

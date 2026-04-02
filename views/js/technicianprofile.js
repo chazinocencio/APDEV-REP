@@ -1,11 +1,21 @@
 document.addEventListener("DOMContentLoaded", async function(){
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    let user = null;
 
-    if (!user || !token) {
-		window.location.href = "../index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "technician_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "technician_login.html";
+		return;
+	}
 
     const response = await fetch(`api/technician/view_profile/${user.username}`);
     const technicianProfile = await response.json();
@@ -175,9 +185,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const data = await response.json();
             if(data.success){
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                window.location.href = "../index.html";
+                const logoutrResponse = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                const logoutData = await logoutrResponse.json();
+
+                if(logoutData.success)
+                    window.location.href = "../index.html"
             } else {
                 deactErrorMess.classList.remove('hidden');
                 deactErrorMess.innerHTML = data.message || "An error occurred. Please try again.";

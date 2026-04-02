@@ -30,13 +30,24 @@ function loadDates(){
     
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
-    if (!user || !token) {
-        window.location.href = "../index.html"
-        return;
-    }
+document.addEventListener('DOMContentLoaded', async function() {
+    let user = null;
+
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     loadDates();
     const dateInput = document.getElementById('date');

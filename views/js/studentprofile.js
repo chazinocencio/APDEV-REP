@@ -258,6 +258,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             user.bio = updatedUser.data.bio;
             user.profilePicture = updatedUser.data.profilePicture;
 
+            //localStorage.setItem("user", JSON.stringify(user));
+
             location.reload();
         } else {
             usernameError.classList.remove('hidden');

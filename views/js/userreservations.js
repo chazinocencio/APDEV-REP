@@ -4,7 +4,24 @@ document.addEventListener('DOMContentLoaded', async function(){
     const editrev = document.getElementById('editrev');
     const saveBtn = document.getElementById('save');
     const editCancelBtn = document.getElementById('editcancel');
-    const token = localStorage.getItem('token');
+    
+    let user = null;
+
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "technician_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "technician_login.html";
+		return;
+	}
 
     if (back) back.addEventListener('click', () => window.location.href = "../technician.html");
 
