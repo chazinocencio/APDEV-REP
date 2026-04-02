@@ -48,7 +48,7 @@ function populateDropdowns() {
 
 let currentReservation = null;
 
-async function repaintDisplay(user, reservations, token, card) {
+async function repaintDisplay(user, reservations, card) {
 
     card.querySelectorAll(".results").forEach(el => el.remove());
 
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         </div>
     `;
 
-    await repaintDisplay(user, reservations, token, card);
+    await repaintDisplay(user, reservations, card);
 
     studentprofile.addEventListener('click', function() {
         window.location.href = "../student.html";
@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 credentials: 'include'
             });
             reservations = await refreshResponse.json();
-            await repaintDisplay(user, reservations, token, card);
+            await repaintDisplay(user, reservations, card);
 
         } else {
             console.warn("Post failed:", postResult);
