@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         email: email.value,
                         password: password.value,
@@ -52,9 +53,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     else {
                         // store token for authenticated requests
-                        localStorage.setItem("token", data.token);
+                        //localStorage.setItem("token", data.token);
                         // optional: store user info
-                        localStorage.setItem("user", JSON.stringify(data.user));
+                        //localStorage.setItem("user", JSON.stringify(data.user));
                         // redirect to appropriate dashboard (use the form action path)
                         // ensure we don't accidentally redirect to an external URL
                         const redirectPath = formAction || (isTechnician ? "technician.html" : "student.html");

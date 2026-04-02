@@ -99,10 +99,25 @@ export async function login(req, res) {
 
 		const duration = rememberMe ? '21d' : '1h';
 		
-		const payload = { id: user._id, role, email: user.email };
+		const payload = { 
+			id: user._id, 
+			role: role, 
+			email: user.email,
+			username: user.username, 
+			rememberMe: rememberMe 
+		};
 		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
 
-		res.json({ success: true, token, user: sanitizeUser(user) });
+		res.cookie("token", token, {
+			httpOnly: true,
+			secure: true, // set to false if not using HTTPS locally
+			sameSite: "strict",
+			maxAge: rememberMe 
+				? 1000 * 60 * 60 * 24 * 21 // 3 weeks
+				: undefined // session cookie
+		});
+
+		res.json({ success: true, user: sanitizeUser(user) });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: error.message });
