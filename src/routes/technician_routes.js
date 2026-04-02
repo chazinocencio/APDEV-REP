@@ -36,7 +36,7 @@ router.get('/view_profile/:username', verifyToken, async (req, res) => {
 
 router.post('/reserve_for_student', verifyToken, async (req, res) => {
      try {
-        const {seatID, startTime, endTime, isAnonymous, description, idNumber} = req.body;
+        const {reservationID, seatID, startTime, endTime, isAnonymous, description, idNumber} = req.body;
 
         const student = await model.studentModel.findOne({ idNumber: idNumber });
          
@@ -53,7 +53,20 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        let newID = null;
+        let existing = null
+        if(!reservationID){
+            const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
+            const type = 'RES';
+            do {
+                const random4Digit = Math.floor(Math.random() * 9000) + 1000;
+                newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
+                existing = await model.reservationModel.findOne({ reservationID: newID });
+            } while (existing)
+        }
+
         const newReservation = new model.reservationModel({
+            reservationID: reservationID || newID,
             seatID: seatID,
             idNumber: student.idNumber,
             startTime: new Date(startTime),
@@ -90,7 +103,7 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
         let existing = null
         if(!reservationID){
             const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
-            const type = 'RES';
+            const type = 'BLK';
             do {
                 const random4Digit = Math.floor(Math.random() * 9000) + 1000;
                 newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
@@ -210,9 +223,6 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
     }
 });
 
-// block room
-
-/* insert code */
 
 // view all reservations
 
