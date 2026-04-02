@@ -10,7 +10,7 @@ var countSalt = 10; // salt value for password hashing
 //view all reservations of student
 // /api/student/reservations/:id
 
-router.get('/reservations/:id', async (req, res) => {
+router.get('/reservations/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -30,7 +30,7 @@ router.get('/reservations/:id', async (req, res) => {
 
 //all reservations
 
-router.get('/all_reservations', async (req, res) => {
+router.get('/all_reservations', verifyToken, async (req, res) => {
     try {
         const reservations = await model.reservationModel.find();
         res.json(reservations);
@@ -42,7 +42,7 @@ router.get('/all_reservations', async (req, res) => {
 
 //get student who reserved through reservation key
 
-router.get('/reservations/key/:seat_id', async (req, res) => {
+router.get('/reservations/key/:seat_id', verifyToken, async (req, res) => {
     try {
         const { seat_id } = req.params;
         const { start, end } = req.query;
@@ -67,7 +67,7 @@ router.get('/reservations/key/:seat_id', async (req, res) => {
 
 //view specific reservation
 
-router.get('/specific_reservation/:id', async (req, res) => {
+router.get('/specific_reservation/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -80,7 +80,7 @@ router.get('/specific_reservation/:id', async (req, res) => {
 });
 
 //view profile
-router.get('/view_profile/:username', async (req, res) => {
+router.get('/view_profile/:username', verifyToken, async (req, res) => {
     try {
         const { username } = req.params;
         const studentProfile = await model.studentModel.findOne({username: username});
@@ -92,7 +92,7 @@ router.get('/view_profile/:username', async (req, res) => {
 });
 
 //get student
-router.get('/get_profile/:id', async (req, res) => {
+router.get('/get_profile/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const studentProfile = await model.studentModel.findOne({idNumber: id});
@@ -105,7 +105,7 @@ router.get('/get_profile/:id', async (req, res) => {
 
 
 //search profile
-router.get('/search_profile/:value', async (req, res) => {
+router.get('/search_profile/:value', verifyToken, async (req, res) => {
     try {
         const { value } = req.params;
         const studentProfiles = await model.studentModel.find({
@@ -127,7 +127,7 @@ router.get('/search_profile/:value', async (req, res) => {
 });
 
 //search profile by email 
-router.get('/search_email/:email', async (req, res) => {
+router.get('/search_email/:email', verifyToken, async (req, res) => {
     try {
         const { email } = req.params;
         const studentProfile = await model.studentModel.findOne({email: email});
@@ -139,7 +139,7 @@ router.get('/search_email/:email', async (req, res) => {
 });
 
 //search profile by idNumber 
-router.get('/search_idNumber/:idNumber', async (req, res) => {
+router.get('/search_idNumber/:idNumber', verifyToken, async (req, res) => {
     try {
         const { idNumber } = req.params;
         const studentProfile = await model.studentModel.findOne({idNumber: parseInt(idNumber)});
@@ -152,7 +152,7 @@ router.get('/search_idNumber/:idNumber', async (req, res) => {
 
 //edit profile
 
-router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (req, res) =>{ 
+router.put('/edit_profile/:idNumber', verifyToken, upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { idNumber } = req.params; 
         const { username, bio } = req.body;
@@ -176,7 +176,7 @@ router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (re
 });
 
 //search seat
-router.get('/search_seat/:seatID', async (req, res) => {
+router.get('/search_seat/:seatID', verifyToken, async (req, res) => {
     try {
         const{seatID} = req.params;
         const seats = await model.seatModel.findOne({seatID: seatID});
@@ -355,7 +355,7 @@ router.put('/deactivate', verifyToken, async (req, res) => {
 
 //check conflict reservation
 
-router.get('/reservations/conflict/:seatID', async (req, res) => {
+router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
     try {
         const { seatID } = req.params;
         const { startTime, endTime, idNumber } = req.query;
@@ -383,10 +383,5 @@ router.get('/reservations/conflict/:seatID', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-
-
-
-
 
 export default router;

@@ -7,7 +7,7 @@ import bcrypt from "bcrypt"
 const router = Router()
 var countSalt = 10; // salt value for password hashing
 
-router.get('/getTechnicians', async (req, res) => {
+router.get('/getTechnicians', verifyToken, async (req, res) => {
     try {
         const technicians = await model.technicianModel.find();
         res.json(technicians);
@@ -18,7 +18,7 @@ router.get('/getTechnicians', async (req, res) => {
 });
 
 // view technician profile
-router.get('/view_profile/:username', async (req, res) => {
+router.get('/view_profile/:username', verifyToken, async (req, res) => {
     try {
         const { username } = req.params;
         const techProfile = await model.technicianModel.findOne({ username: username });
@@ -202,7 +202,7 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
 
 // view all reservations
 
-router.get('/all_reservations', async(req, res) => {
+router.get('/all_reservations', verifyToken, async(req, res) => {
     try {
         const reservations = await model.reservationModel.find();
         res.json(reservations);
@@ -214,7 +214,7 @@ router.get('/all_reservations', async(req, res) => {
 
 // block student
 
-router.put('/block_student/:id', async(req, res) =>{
+router.put('/block_student/:id', verifyToken, async(req, res) =>{
     try{
         const { id } = req.params;
         const idNumber = parseInt(id);
@@ -231,7 +231,7 @@ router.put('/block_student/:id', async(req, res) =>{
 
 // unblock student
 
-router.put('/unblock_student/:id', async(req, res) =>{
+router.put('/unblock_student/:id', verifyToken, async(req, res) =>{
     try{
         const { id } = req.params;
         const idNumber = parseInt(id);
@@ -248,7 +248,7 @@ router.put('/unblock_student/:id', async(req, res) =>{
 
 // edit profile
 
-router.put('/edit_profile/:employeeID', upload.single('profilePicture'), async (req, res) =>{ 
+router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { employeeID } = req.params; 
         const { bio, username } = req.body;

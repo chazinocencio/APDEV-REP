@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', async function(){
+   let user = null;
+
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "technician_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "technician_login.html";
+		return;
+	}
+   
    const techprofile = document.getElementById('back')
    const viewrev = document.getElementById('viewrev')
     const blockbutt = document.getElementById('blockbutt')
