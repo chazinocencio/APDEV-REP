@@ -10,7 +10,7 @@ import commonRoutes from './routes/common_routes.js'
 import authRoutes from './routes/authRoutes.js'
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 connectDB();
 
@@ -29,6 +29,6 @@ app.use("/api/common_routes", commonRoutes);
 app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
     console.log('Ctrl + C to stop server.');
 });
