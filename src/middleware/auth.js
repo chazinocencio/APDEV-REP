@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
+export function getJWTSecret(){
+	const JWT_SECRET = process.env.JWT_SECRET;
+	return JWT_SECRET
+}
 
 export function verifyToken(req, res, next) {
 	let token;
@@ -19,24 +22,8 @@ export function verifyToken(req, res, next) {
 	
 	
 	try {
-		const decoded = jwt.verify(token, JWT_SECRET);
+		const decoded = jwt.verify(token, getJWTSecret());
 		req.user = decoded;
-
-		// if (decoded.rememberMe) {
-		// 	const { exp, iat, ...cleanPayload } = decoded;
-		// 	const newToken = jwt.sign(
-		// 		cleanPayload,
-		// 		JWT_SECRET,
-		// 		{ expiresIn: "21d" }
-		// 	);
-
-		// 	res.cookie("token", newToken, {
-		// 		httpOnly: true,
-		// 		secure: true,
-		// 		sameSite: "strict",
-		// 		maxAge: 21 * 24 * 60 * 60 * 1000
-		// 	});
-		// }
 
 		next();
 	} catch (err) {

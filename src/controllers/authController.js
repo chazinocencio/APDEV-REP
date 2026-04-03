@@ -2,7 +2,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import * as model from '../model/model.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
+export function getJWTSecret(){
+	const JWT_SECRET = process.env.JWT_SECRET;
+	return JWT_SECRET
+}
 var countSalt = 10; // salt value for password hashing
 
 function sanitizeUser(user) {
@@ -110,7 +113,7 @@ export async function login(req, res) {
 		if (role === 'student') payload.idNumber = user.idNumber
 		else payload.employeeID = user.employeeID
 
-		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
+		const token = jwt.sign(payload, getJWTSecret(), { expiresIn: duration });
 
 		res.cookie("token", token, {
 			httpOnly: true,
@@ -147,14 +150,14 @@ export async function checkAuth(req, res){
 
 	if(token) {
 		try {
-			const decoded = jwt.verify(token, JWT_SECRET);
+			const decoded = jwt.verify(token, getJWTSecret());
 			req.user = decoded;
 
 			if (decoded.rememberMe) {
 				const { exp, iat, ...cleanPayload } = decoded;
 				const newToken = jwt.sign(
 					cleanPayload,
-					JWT_SECRET,
+					getJWTSecret(),
 					{ expiresIn: "21d" }
 				);
 	

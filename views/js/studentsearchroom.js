@@ -116,9 +116,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <p>${seat.roomID}</p>
                             <p>${seatNo}</p>
                         </div>
-                            <div class="butt" id="reserve" data-seatid="${seat.seatID}">
-                                <h3>Reserve</h3>
-                            </div>
+                        <div class="butt" id="reserve" data-seatid="${seat.seatID}">
+                            <h3>Reserve</h3>
+                        </div>
                     </div>
                 `;
             });
@@ -132,7 +132,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if(!requester.canReserve){
                         alert("Your account has been blocked from making reservations. Contact support for assistance.");
                         return;
-                    } 
+                    }
+
+                    // check if reservation was made at least 30 mins before start time
+                    const currentTimeTemp = new Date()
+                    const startTimeTemp = new Date(startTime)
+                    const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
+
+                    if(minuteDiff < 30) {
+                        alert('Reservation must be made at least 30 minutes before intended start time.');
+                        return;
+                    }
                     
                     const selectedSeatId = this.getAttribute('data-seatid');
                     
