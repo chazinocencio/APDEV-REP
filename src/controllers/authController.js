@@ -149,11 +149,7 @@ export async function checkAuth(req, res){
 		try {
 			const decoded = jwt.verify(token, JWT_SECRET);
 			req.user = decoded;
-			res.json({
-				success: true,
-				user: req.user,
-				message: 'Cookie found'
-			})
+
 			if (decoded.rememberMe) {
 				const { exp, iat, ...cleanPayload } = decoded;
 				const newToken = jwt.sign(
@@ -170,6 +166,11 @@ export async function checkAuth(req, res){
 				});
 			}
 
+			res.json({
+				success: true,
+				user: req.user,
+				message: 'Cookie found'
+			})
 		} catch(err) {
 			res.json({
 				message: 'Token expired'
