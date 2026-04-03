@@ -232,6 +232,22 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        const conflict = await model.reservationModel.find({
+            seatID: { $regex: seatID, $options: 'i' },
+            $or: [
+                { startTime: { $gte: startTime, $lt: endTime } },
+                { endTime: { $gt: startTime, $lte: endTime } },
+                { startTime: { $lte: startTime }, endTime: { $gte: endTime } }
+            ]
+        });
+        
+        if (conflict.length > 0) {
+            return res.status(200).json({ 
+                reservation: conflict, 
+                message: 'Your request is conflicting with another reservation' 
+            });
+        }
+
         let newID = null;
         let existing = null
         if(!reservationID){
@@ -243,6 +259,7 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
                 existing = await model.reservationModel.findOne({ reservationID: newID });
             } while (existing)
         }
+        
 
         const newReservation = new model.reservationModel({
             reservationID: reservationID || newID,

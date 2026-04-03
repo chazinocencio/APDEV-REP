@@ -188,11 +188,6 @@ document.addEventListener('DOMContentLoaded', async function(){
 
             if (!confirmed) return;
 
-            if (!token) {
-                alert('Missing authentication token. Please login again.');
-                return;
-            }
-
             try {
                 const delResp = await fetch(`/api/technician/delete_reservation/${encodeURIComponent(seatID)}`, {
                     method: 'DELETE',

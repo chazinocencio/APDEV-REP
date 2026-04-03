@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
     
     updateDateDisplay();
+    // Refresh every 60 seconds
+    setInterval(updateDateDisplay, 1000 * 60);
 
     let dayCounter = 0;
     let selectedAction = null; // Track which action is in progress

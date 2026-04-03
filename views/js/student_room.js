@@ -132,6 +132,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     updateDateDisplay();
+    // Refresh every 60 seconds
+    setInterval(updateDateDisplay, 1000 * 60);
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
@@ -259,6 +261,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     })
                     reserveButton.classList.add("hidden");
                 } else {
+                    alert(result.message);
                     console.warn("Server returned an error:", result);
                 }
             } catch (error) {
