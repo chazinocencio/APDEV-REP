@@ -243,7 +243,7 @@ router.put('/block_student/:id', verifyToken, async(req, res) =>{
         const { id } = req.params;
         const idNumber = parseInt(id);
 
-        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: false}, {new: true, runValidators: true});
+        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: false}, {returnDocument: 'after', runValidators: true});
         if(!student)
             return res.status(404).json({success: false, message: 'Student not found'});
         
@@ -260,7 +260,7 @@ router.put('/unblock_student/:id', verifyToken, async(req, res) =>{
         const { id } = req.params;
         const idNumber = parseInt(id);
 
-        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: true}, {new: true, runValidators: true});
+        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: true}, {returnDocument: 'after', runValidators: true});
         if(!student)
             return res.status(404).json({success: false, message: 'Student not found'});
         
@@ -282,7 +282,7 @@ router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePictu
             if (username !== undefined) updateFields.username = username;
             if (req.file) updateFields.profilePicture = `/uploads/profilepics/${req.file.filename}`;
 
-        const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { new: true, runValidators: true });
+        const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { returnDocument: 'after', runValidators: true });
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
