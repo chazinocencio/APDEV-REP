@@ -1,11 +1,12 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import { verifyToken } from '../middleware/auth.js';
 
 const router = Router()
 
 // viewing reservations on the table graphic
 
-router.get('/reservations_per_day/:roomID/:date', async(req, res) => {
+router.get('/reservations_per_day/:roomID/:date', verifyToken, async(req, res) => {
     try {
         const { roomID, date } = req.params;
 
@@ -36,7 +37,7 @@ router.get('/reservations_per_day/:roomID/:date', async(req, res) => {
 })
 
 // view who reserved
-router.get('/specific_reservation/:id', async (req, res) => {
+router.get('/specific_reservation/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -49,7 +50,7 @@ router.get('/specific_reservation/:id', async (req, res) => {
 });
 
 //search profile
-router.get('/search_profile/:value', async (req, res) => {
+router.get('/search_profile/:value', verifyToken, async (req, res) => {
     try {
         const { value } = req.params;
         const studentProfiles = await model.studentModel.find({
@@ -71,7 +72,7 @@ router.get('/search_profile/:value', async (req, res) => {
 });
 
 //search time slot *NOT COMPLETE
-router.post('/search_timeslot', async (req, res) => {
+router.post('/search_timeslot', verifyToken, async (req, res) => {
     try {
         const { startTime, endTime } = req.body;
         const requestedStart = new Date(startTime);

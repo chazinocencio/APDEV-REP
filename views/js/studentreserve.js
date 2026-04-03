@@ -8,11 +8,26 @@ const g306 = document.getElementById('G306')
 const reservations = document.getElementById('reservations')
 
 document.addEventListener("DOMContentLoaded", async function() {
+    let user = null;
 
-    const token = localStorage.getItem("token");
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const response = await fetch('/api/student/all_reservations', {
-        headers: { "Authorization": `Bearer ${token}` }
+        credentials: 'include'
     });
     const allReservations = await response.json();
 

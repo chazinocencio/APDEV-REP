@@ -1,17 +1,58 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
-    if (!user || !token) {
-        window.location.href = "../index.html"
-        return;
+function formatDate(date){
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${month} ${day}, ${year}`;
+}
+
+function loadDates(){
+    var currentDate = new Date();
+    const dateInput = document.querySelector('#dateinput select');
+    dateInput.innerHTML = `
+        <option value="">Select</option>
+        <option value="${currentDate.toLocaleDateString('en-CA')}">
+            ${formatDate(currentDate)}
+        </option>
+    `
+    
+    for(let i = 1; i < 7; i++){
+        let newDate = new Date(currentDate)
+        newDate.setDate(newDate.getDate() + i)
+        dateInput.innerHTML += `
+            <option value="${newDate.toLocaleDateString('en-CA')}">
+                ${formatDate(newDate)}
+            </option>
+        `
     }
+    
+}
 
+document.addEventListener('DOMContentLoaded', async function() {
+    let user = null;
 
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
+
+    loadDates();
     const dateInput = document.getElementById('date');
-    const hourStart = document.getElementById('hourstart');
-    const minuteStart = document.getElementById('minutestart');
-    const hourEnd = document.getElementById('hourend');
-    const minuteEnd = document.getElementById('minuteend');
+    const timeStart = document.getElementById('timestart');
+    const timeEnd = document.getElementById('timeend');
     const errorMess = document.getElementById('errormess');
     const search = document.getElementById('searchbutt');
     const results = document.getElementById('card');
@@ -21,15 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     search.addEventListener('click', async function() {
         
-        if (dateInput.value === "" || hourStart.value === "" || minuteStart.value === "" || hourEnd.value === "" || minuteEnd.value === "") {
+        if (dateInput.value === "" || timeStart.value === "" || timeEnd.value === "") {
             errorMess.style.display = 'block';
             errorMess.textContent = 'Please enter all fields.';
             errorMess.style.color = 'red';  
             return;
         }
 
-        const startTime = `${dateInput.value}T${hourStart.value}:${minuteStart.value}:00`;
-        const endTime = `${dateInput.value}T${hourEnd.value}:${minuteEnd.value}:00`;
+        const startTime = `${dateInput.value}T${timeStart.value}:00`;
+        const endTime = `${dateInput.value}T${timeEnd.value}:00`;
 
         const startDateTime = new Date(startTime);
         const endDateTime = new Date(endTime);
@@ -47,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 startTime: startTime,
                 endTime: endTime
@@ -82,15 +124,24 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             document.querySelectorAll('.results .butt').forEach(reserveButton => {
                 reserveButton.addEventListener('click', async function() {
+                    const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                        credentials: 'include'
+                    })
+                    const requester = await res.json()
+
+                    if(!requester.canReserve){
+                        alert("Your account has been blocked from making reservations. Contact support for assistance.");
+                        return;
+                    } 
+                    
                     const selectedSeatId = this.getAttribute('data-seatid');
                     
                     const response = await fetch(`/api/student/create_reservation/${user.username}`, {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}` 
                         },
-                        
+                        credentials: 'include',
                         body: JSON.stringify({
                             seatID: selectedSeatId,
                             startTime: startTime,

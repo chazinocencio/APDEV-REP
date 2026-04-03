@@ -4,16 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        var username = document.getElementById('username');
+        var email = document.getElementById('email');
         var password = document.getElementById('password');
+        var rememberMe = document.getElementById('rememberme')
         var errormess = document.getElementById('errormess');
 
         var all_fields = true;
-        username.style.borderColor = "var(--midgrey-green)";
+        email.style.borderColor = "var(--midgrey-green)";
         password.style.borderColor = "var(--midgrey-green)";
-        if (username.value == ""){
+        if (email.value == ""){
             all_fields = false;
-            username.style.borderColor = "red";
+            email.style.borderColor = "red";
         }
         if (password.value  == ""){
             all_fields = false;
@@ -36,9 +37,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
-                        email: username.value,
-                        password: password.value
+                        email: email.value,
+                        password: password.value,
+                        rememberMe: rememberMe.checked
                     })
                 });
 
@@ -49,10 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         errormess.innerHTML = "This account has been deactivated. Contact support for assistance.";
                     }
                     else {
-                        // store token for authenticated requests
-                        localStorage.setItem("token", data.token);
-                        // optional: store user info
-                        localStorage.setItem("user", JSON.stringify(data.user));
                         // redirect to appropriate dashboard (use the form action path)
                         // ensure we don't accidentally redirect to an external URL
                         const redirectPath = formAction || (isTechnician ? "technician.html" : "student.html");
@@ -61,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 } else {
                     errormess.style.opacity = 1;
-                    errormess.innerHTML = "Invalid email or password.";
+                    errormess.innerHTML = data.message;
                 }
 
             } catch (error) {

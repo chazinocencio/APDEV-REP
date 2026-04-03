@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', async function(){
+   let user = null;
+
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "technician_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "technician_login.html";
+		return;
+	}
+   
    const techprofile = document.getElementById('back')
    const viewrev = document.getElementById('viewrev')
     const blockbutt = document.getElementById('blockbutt')
@@ -22,7 +40,10 @@ document.addEventListener('DOMContentLoaded', async function(){
                (async () => {
                   if (!window.__studentIdNumber) return;
                   try {
-                     const resp = await fetch(`/api/technician/unblock_student/${window.__studentIdNumber}`, { method: 'PUT' });
+                     const resp = await fetch(`/api/technician/unblock_student/${window.__studentIdNumber}`, { 
+                        method: 'PUT',
+                        credentials: 'include' 
+                     });
                      if (!resp.ok) throw new Error('Failed to unblock student');
                      window.__studentBlocked = false;
                      blockbutt.querySelector('h3').textContent = 'Block Student';
@@ -42,7 +63,10 @@ document.addEventListener('DOMContentLoaded', async function(){
              document.getElementById('blockroom1').classList.add('hidden');
              if (!studentIdNumber) return;
              try {
-                const resp = await fetch(`/api/technician/block_student/${studentIdNumber}`, { method: 'PUT' });
+                const resp = await fetch(`/api/technician/block_student/${studentIdNumber}`, { 
+                  method: 'PUT',
+                  credentials: 'include' 
+               });
                 if (!resp.ok) throw new Error('Failed to block student');
                 window.__studentBlocked = true;
                 window.__studentIdNumber = studentIdNumber;
@@ -63,7 +87,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!username) return; // nothing to load
 
     try {
-        const res = await fetch(`api/student/view_profile/${username}`);
+         const res = await fetch(`api/student/view_profile/${username}`,{
+            credentials: 'include'
+         });
         if (!res.ok) throw new Error('Failed to fetch profile');
         const profile = await res.json();
 

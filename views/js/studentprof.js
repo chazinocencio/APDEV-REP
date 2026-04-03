@@ -1,10 +1,21 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    let user = null;
 
-    if (!user) {
-		window.location.href = "../index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const params = new URLSearchParams(window.location.search);
     const studentUsername = params.get("id");
@@ -14,7 +25,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    const response = await fetch(`api/student/view_profile/${studentUsername}`);
+    const response = await fetch(`api/student/view_profile/${studentUsername}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const studentProfile = data;
 

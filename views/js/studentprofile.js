@@ -1,13 +1,25 @@
 document.addEventListener("DOMContentLoaded", async function(){
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    let user = null;
 
-    if (!user || !token) {
-		window.location.href = "../index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
 
-    const response = await fetch(`api/student/view_profile/${user.username}`);
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
+
+    const response = await fetch(`api/student/view_profile/${user.username}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const studentProfile = data;
 
@@ -72,8 +84,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
+            credentials: 'include',
             body: JSON.stringify({ password: value })
         });
         const data = await response.json();
@@ -133,8 +145,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     oldPassword: oldPass.value,
@@ -166,8 +178,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     user: user,
                     password: deactPass.value
@@ -176,9 +188,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const data = await response.json();
             if(data.success){
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                window.location.href = "../index.html";
+                const logoutrResponse = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                const logoutData = await logoutrResponse.json();
+
+                if(logoutData.success)
+                    window.location.href = "../index.html"
             } else {
                 deactErrorMess.classList.remove('hidden');
                 deactErrorMess.innerHTML = data.message || "An error occurred. Please try again.";
@@ -209,7 +226,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     save.addEventListener('click', async function(){
         if(editUsername.value !== ''){
-            const response = await fetch(`api/student/view_profile/${editUsername.value}`);
+            const response = await fetch(`api/student/view_profile/${editUsername.value}`, {
+                credentials: 'include'
+            });
             const data = await response.json();
 
             if(data){
@@ -230,6 +249,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const response2 = await fetch(`api/student/edit_profile/${user.idNumber}`, {
                 method: 'PUT',
+                credentials: 'include',
                 body: formData
             });
             
@@ -239,11 +259,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 return;
             }
             const updatedUser = await response2.json();
-            user.username = updatedUser.data.username;
-            user.bio = updatedUser.data.bio;
-            user.profilePicture = updatedUser.data.profilePicture;
-
-            localStorage.setItem("user", JSON.stringify(user));
+            console.log(updatedUser);
 
             location.reload();
         } else {

@@ -14,6 +14,15 @@
     color: var(--ls-white);
     width: 150px;
     height: 40px;
+.cancel-disabled{
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.cancel-disabled:hover{
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+}
     border-radius: 5px;
     font-weight: 600;
 }
@@ -78,6 +87,7 @@
     font-size: 1.4rem;
     white-space: nowrap;
     overflow: visible;
+    color: var(--ls-green);
 }
 
 /* Small adjustments for layout */
@@ -266,8 +276,7 @@
 
 .date-grid-cell.unavailable {
     background-color: var(--room-unavailable);
-    pointer-events: none;
-    cursor: default;
+    cursor: pointer;
 }
 
 .date-grid-cell.chosen {

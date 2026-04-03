@@ -40,6 +40,7 @@ export const TechnicianSchema = new mongoose.Schema({
 export const technicianModel = mongoose.model("technicians", TechnicianSchema);
 
 export const ReservationSchema = new mongoose.Schema({
+    reservationID: String,
     status: {
         type: String,
         enum: {

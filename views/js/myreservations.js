@@ -27,55 +27,39 @@ function populateDropdowns() {
     const today = new Date();
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 8; i++) {
         const d = new Date();
         d.setDate(today.getDate() + i);
+        
+        // skip sunday
+        if(d.getDay() === 0){ 
+            continue;
+        }
+        
         const formatted = weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
         const option = document.createElement("option");
-        option.value = formatted;
+        
+        option.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         option.textContent = formatted;
         dateSelect.appendChild(option);
     }
-
-    const times = [];
-    for (let hour = 8; hour <= 16; hour++) {
-        ["00", "30"].forEach(min => {
-            if (hour === 16 && min === "30") return;
-            const period = hour < 12 ? "AM" : "PM";
-            const displayHour = hour > 12 ? hour - 12 : hour;
-            times.push(`${displayHour}:${min} ${period}`);
-        });
-    }
-    times.push("5:00 PM");
-
-    const timestart = document.getElementById("timestart");
-    const timeend = document.getElementById("timeend");
-    timestart.innerHTML = '<option value="">Select Start Time</option>';
-    timeend.innerHTML = '<option value="">Select End Time</option>';
-
-    times.forEach(time => {
-        const opt1 = document.createElement("option");
-        opt1.value = time;
-        opt1.textContent = time;
-        timestart.appendChild(opt1);
-
-        const opt2 = document.createElement("option");
-        opt2.value = time;
-        opt2.textContent = time;
-        timeend.appendChild(opt2);
-    });
 }
 
 
 let currentReservation = null;
 
-async function repaintDisplay(reservations, token, card) {
+async function repaintDisplay(user, reservations, card) {
 
     card.querySelectorAll(".results").forEach(el => el.remove());
 
     for (const [index, reservation] of reservations.entries()) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (new Date(reservation.startTime) < today) continue;
+
         const seatResponse = await fetch(`/api/student/search_seat/${reservation.seatID}`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            credentials: 'include'
         });
         const seatData = await seatResponse.json();
         const div = document.createElement("div");
@@ -87,7 +71,7 @@ async function repaintDisplay(reservations, token, card) {
         div.classList.add("results");
         div.innerHTML = `
             <div class="resultdeets">
-                <p>${index + 1}</p>
+                <p>${reservation.reservationID}</p>
                 <p>${seatData.roomID}</p>
                 <p>${getSeat}</p>
                 <p>${new Date(reservation.startTime).toLocaleDateString()}</p>
@@ -105,37 +89,55 @@ async function repaintDisplay(reservations, token, card) {
         `;
         card.appendChild(div);
 
-        div.querySelector('.butt').addEventListener('click', function() {
+        div.querySelector('.butt').addEventListener('click', async function() {
+
+            const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                credentials: 'include'
+            })
+            const requester = await res.json()
+
+            if(!requester.canReserve){
+                alert("Your account has been blocked. Reservations cannot be edited at this time.");
+                return;
+            } 
+
             editrev.classList.remove('hidden');
-            document.getElementById("number_reservation").innerHTML = "Reservation #" + (index + 1);
+            document.getElementById("number_reservation").innerHTML = reservation.reservationID;
+            document.querySelector('.errormess').classList.add('hidden');
             currentReservation = reservation; 
             populateDropdowns();
 
             document.getElementById("room").value = seatData.roomID || "";
             const seatNumber = reservation.seatID.split('-').pop();
             document.getElementById("seat").value = seatNumber || "";
-            const resDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-            });
+            const resDate = new Date(reservation.startTime).toLocaleDateString('en-CA');
             document.getElementById("date").value = resDate;
-            const resStartTime = new Date(reservation.startTime).toLocaleTimeString('en-US', {
-                hour: 'numeric', minute: '2-digit', hour12: true
-            });
-            const resEndTime = new Date(reservation.endTime).toLocaleTimeString('en-US', {
-                hour: 'numeric', minute: '2-digit', hour12: true
-            });
+            
+            let tempTime = new Date(reservation.startTime);
+            let tempHours = String(tempTime.getHours()).padStart(2, '0')
+            let tempMinutes = String(tempTime.getMinutes()).padStart(2, '0');
+
+            const resStartTime = `${tempHours}:${tempMinutes}`;
+
+            tempTime = new Date(reservation.endTime);
+            tempHours = String(tempTime.getHours()).padStart(2, '0')
+            tempMinutes = String(tempTime.getMinutes()).padStart(2, '0');
+
+            const resEndTime = `${tempHours}:${tempMinutes}`
             document.getElementById("timestart").value = resStartTime;
             document.getElementById("timeend").value = resEndTime;
         });
 
         div.querySelector('.canbutt').addEventListener('click', async function() {
+            if(!confirm('Are you sure you want to cancel this reservation?')) return;
+            
             try {
                 const deleteResponse = await fetch(`/api/student/delete_reservation/${reservation.seatID}`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         startTime: reservation.startTime,
                         endTime: reservation.endTime
@@ -160,21 +162,31 @@ async function repaintDisplay(reservations, token, card) {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    let user = null;
 
-    if (!user) {
-        window.location.href = "../index.html";
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const profileResponse = await fetch(`/api/student/view_profile/${user.username}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        credentials: 'include'
     });
     const studentProfile = await profileResponse.json();
 
-    const dataResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+    const dataResponse = await fetch(`/api/student/reservations/${studentProfile.idNumber}`, {
+        credentials: 'include'
     });
     let reservations = await dataResponse.json();
 
@@ -195,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         </div>
     `;
 
-    await repaintDisplay(reservations, token, card);
+    await repaintDisplay(user, reservations, card);
 
     studentprofile.addEventListener('click', function() {
         window.location.href = "../student.html";
@@ -206,6 +218,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         room = room.toLowerCase();
         var seat = document.getElementById("seat").value;
         const seatID = room + "-" + seat;
+        const reservationID = document.getElementById('number_reservation').innerHTML;
         const date = document.getElementById("date").value;
         const startTime = document.getElementById("timestart").value;
         const endTime = document.getElementById("timeend").value;
@@ -213,7 +226,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     
         if (!room || !seat || !date || !startTime || !endTime) {
-            errormess.textContent = "Invalid, please fill all forms.";
+            errormess.textContent = "Invalid, please fill all values.";
             errormess.classList.remove("hidden");
             return;
         }
@@ -237,16 +250,25 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         errormess.classList.add("hidden");
 
-        const startFullDate = date + " " + startTime;
-        const endFullDate = date + " " + endTime;
+        const startFullDate = date + "T" + startTime;
+        const endFullDate = date + "T" + endTime;
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-            });
+        const currentTimeTemp = new Date()
+        const startTimeTemp = new Date(startFullDate)
+        const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
 
-        if (conflictResponse.ok) {
-            
-            const conflictData = await conflictResponse.json();
+        if(minuteDiff < 30) {
+            errormess.textContent = "Edit  can only be made at least 30 mins. before intended start time.";
+            errormess.classList.remove("hidden");
+            return;
+        }
+
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
+            credentials: 'include'
+        });
+        const conflictData = await conflictResponse.json();
+
+        if (conflictData.hasConflict) {
             console.log("Conflict found:", conflictData.reservation);
             errormess.textContent = "Invalid, this time slot conflicts with an existing reservation.";
             errormess.classList.remove("hidden");
@@ -257,8 +279,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     startTime: currentReservation.startTime,
                     endTime: currentReservation.endTime
@@ -266,6 +288,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             });
 
         const newReservation = {
+            reservationID: reservationID,
             idNumber: studentProfile.idNumber,
             seatID: seatID,
             startTime: startFullDate,
@@ -279,8 +302,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
             },
+            credentials: 'include',
             body: JSON.stringify(newReservation)
         });
 
@@ -291,10 +314,10 @@ document.addEventListener("DOMContentLoaded", async function() {
             editrev.classList.add('hidden');
 
             const refreshResponse = await fetch(`/api/student/specific_reservation/${studentProfile.idNumber}`, {
-                headers: { "Authorization": `Bearer ${token}` }
+                credentials: 'include'
             });
             reservations = await refreshResponse.json();
-            await repaintDisplay(reservations, token, card);
+            await repaintDisplay(user, reservations, card);
 
         } else {
             console.warn("Post failed:", postResult);

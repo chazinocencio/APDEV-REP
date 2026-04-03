@@ -1,5 +1,6 @@
 var currentDate = new Date();
 let room = null;
+let activeRow = null;
 
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -13,6 +14,10 @@ function formatDate(d) {
 function updateDateDisplay() {
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
+    activeRow = null;
+    document.querySelectorAll(".date-grid-row").forEach(r => {
+        r.classList.remove("disabled");
+    });
     fetchReservations(room);
 }
 
@@ -49,7 +54,9 @@ async function fetchReservations(room) {
     var dateGrid = document.querySelector(".date-grid");
     if (!dateGrid) return;
 
-    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`);
+    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const reservations = data.reservations;
 
@@ -86,14 +93,24 @@ async function fetchReservations(room) {
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded", async function () {
+    let user = null;
 
-    if (!user || !token) {
-        window.location.href = "./index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "technician_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "technician_login.html";
+		return;
+	}
 
     const params = new URLSearchParams(window.location.search);
     room = params.get("room") || "G301";
@@ -101,8 +118,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
     
     updateDateDisplay();
+    // Refresh every 60 seconds
+    setInterval(updateDateDisplay, 1000 * 60);
 
-    let activeRow = null;
     let dayCounter = 0;
     let selectedAction = null; // Track which action is in progress
     let currentReservation = null; // holds reservation being viewed/edited
@@ -229,8 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify(reservation)
                 });
 
@@ -294,16 +312,14 @@ document.addEventListener("DOMContentLoaded", function () {
               // populate block modal fields (match IDs in HTML)
               const brRoom = document.getElementById('block-room');
               const brStartDate = document.getElementById('block-start-date');
-              const brEndDate = document.getElementById('block-end-date');
               const brStartTime = document.getElementById('block-start-time');
               const brEndTime = document.getElementById('block-end-time');
               const brReason = document.getElementById('block-reason');
 
-              if (brRoom) brRoom.textContent = room;
-              if (brStartDate) brStartDate.value = reserveDate;
-              if (brEndDate) brEndDate.value = reserveDate;
-              if (brStartTime) brStartTime.value = startTime;
-              if (brEndTime) brEndTime.value = endTime;
+              if (brRoom) brRoom.textContent = room + '-' + seatNumber;
+              if (brStartDate) brStartDate.textContent = reserveDate;
+              if (brStartTime) brStartTime.textContent = startTime;
+              if (brEndTime) brEndTime.textContent = endTime;
               if (brReason) brReason.value = "";
             blockTimeModal.classList.remove("hidden");
         });
@@ -335,8 +351,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify(reservation)
                 });
 
@@ -406,7 +422,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check for conflicts with existing reservations
             try {
-                const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${reserveDate}`);
+                const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${reserveDate}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 const reservations = data.reservations;
 
@@ -441,8 +459,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
                             },
+                            credentials: 'include',
                             body: JSON.stringify(reservation)
                         })
                     );
@@ -517,7 +535,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         var seatInfoCard = document.getElementById("seat-info-card");
-        if (seatInfoCard) {
+        var blockSeatCard = document.getElementById("blockseat-info-card");
+        if (seatInfoCard && blockSeatCard) {
             var pinnedCell = null;
 
             function isInfoCell(cell) {
@@ -526,7 +545,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             async function showSeatInfo(cell) {
-                seatInfoCard.classList.remove("hidden");
                 var reservationDate = currentDate.toLocaleDateString('en-CA');
 
                 var row = cell.closest('.date-grid-row');
@@ -543,16 +561,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
                         method: "GET",
+                        credentials: 'include'
                     });
                     const reservation = await getResponse.json();
 
-                    if (!reservation || !reservation.idNumber) {
+                    if (!reservation) {
                         hideSeatInfo();
+                        return;
+                    }
+
+                    if(cell.classList.contains('unavailable')){
+                        blockSeatCard.classList.remove('hidden');
+                        blockSeatCard.querySelector('#blocked-seat-reason').innerHTML = 'Reason: ' + reservation.description;
                         return;
                     }
 
                     const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
                         method: "GET",
+                        credentials: 'include'
                     });
 
                     const studentProfile = await getStudent.json();
@@ -565,9 +591,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     const card = document.getElementById("seat-info-card");
                     card.querySelector(".seat-info-avatar").src = picture || './assets/images/student.png';
                     card.querySelector(".seat-info-username").textContent = "@" + (username || 'unknown');
+                    card.querySelector(".seat-info-avatar").addEventListener('click', () => {
+                        window.location.href = `./techstudentprof.html?id=${username}`;
+                    })
+                    card.querySelector(".seat-info-username").addEventListener('click', () => {
+                        window.location.href = `./techstudentprof.html?id=${username}`;
+                    })
                     seatInfoCard.classList.remove('disabled');
                     // save the reservation for edit operations
                     currentReservation = reservation;
+                    // update cancel button state immediately when reservation changes
+                    seatInfoCard.classList.remove("hidden");
+                    try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
                 } catch (error) {
                     console.error("Error fetching seat info:", error);
                     hideSeatInfo();
@@ -576,6 +611,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function hideSeatInfo() {
                 seatInfoCard.classList.add("hidden");
+                // reservation may be cleared when hiding info; refresh cancel state
+                try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
+            }
+
+            function hideBlockInfo(){
+                blockSeatCard.classList.add('hidden');
             }
 
             gridWrap.addEventListener("mouseover", function (e) {
@@ -591,6 +632,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!isInfoCell(cell)) return;
                 if (!pinnedCell) {
                     hideSeatInfo();
+                    hideBlockInfo();
                 }
             });
 
@@ -628,6 +670,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var seatmap = document.getElementById('seatmap');
     if (seatmap) {
         seatmap.addEventListener("click", function () {
+            
+            console.log(seatmap, map)
             map.classList.remove('hidden');
         });
     }
@@ -758,7 +802,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // check conflicts for the room/date
             try {
                 const roomDate = startDate; // YYYY-MM-DD
-                const resp = await fetch(`/api/common_routes/reservations_per_day/${room}/${roomDate}`);
+                const resp = await fetch(`/api/common_routes/reservations_per_day/${room}/${roomDate}`, {
+                    credentials: 'include'
+                });
                 const data = await resp.json();
                 const reservations = data.reservations || [];
 
@@ -786,8 +832,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ seatID: newSeatID, startTime: fullStart, endTime: fullEnd, description })
                 });
 
@@ -832,11 +878,16 @@ document.addEventListener("DOMContentLoaded", function () {
     var revcancel = document.getElementById('revcancel');
     var confirmCancelBtn = document.getElementById('confirmcancel');
     var cancelCancelBtn = document.getElementById('cancelcancel');
+    var cancelRevTimer = null;
 
     if (cancelRevOpen && revcancel) {
         cancelRevOpen.addEventListener('click', function () {
             if (!currentReservation || !currentReservation._id) {
                 alert('No reservation selected to cancel');
+                return;
+            }
+            if (cancelRevOpen.getAttribute('aria-disabled') === 'true'){
+                alert('Cancel is not available yet for this reservation.');
                 return;
             }
             revcancel.classList.remove('hidden');
@@ -860,8 +911,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ startTime, endTime })
                 });
 
@@ -869,6 +920,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert('Reservation cancelled');
                     revcancel.classList.add('hidden');
                     currentReservation = null;
+                    try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
                     updateDateDisplay();
                     hideSeatInfo();
                 } else {
@@ -887,6 +939,46 @@ document.addEventListener("DOMContentLoaded", function () {
             revcancel.classList.add('hidden');
         });
     }
+
+    // update visual state of the cancel button (disable until 10 minutes after start)
+    function updateCancelRevOpenState(){
+        if (!cancelRevOpen) return;
+            if (!currentReservation || !currentReservation.startTime){
+                cancelRevOpen.classList.remove('cancel-disabled');
+                cancelRevOpen.removeAttribute('aria-disabled');
+                cancelRevOpen.title = '';
+                return;
+            }
+
+        const start = new Date(currentReservation.startTime);
+        const enableAt = new Date(start.getTime() + 10 * 60 * 1000); //adds 10 minutes to the start time to determine when cancel should be enabled
+        const now = new Date();
+
+
+        function enable(){
+            cancelRevOpen.classList.remove('cancel-disabled');
+            cancelRevOpen.removeAttribute('aria-disabled');
+            cancelRevOpen.title = '';
+        }
+
+        if (now >= enableAt){
+            enable();
+            return;
+        }
+
+        // disable until enableAt
+        cancelRevOpen.classList.add('cancel-disabled');
+        cancelRevOpen.setAttribute('aria-disabled','true');
+        cancelRevOpen.title = 'Cancel disabled until ' + enableAt.toLocaleString();
+
+        if (cancelRevTimer) clearTimeout(cancelRevTimer);
+        const ms = enableAt.getTime() - now.getTime();
+        cancelRevTimer = setTimeout(() => { try { enable(); } catch (e){} }, ms + 50);
+    }
+
+    // keep the cancel button state updated (in case currentReservation changes)
+    setInterval(updateCancelRevOpenState, 0);
+    updateCancelRevOpenState();
 
     // Clicking the seat info card goes to the technician student profile page
     // keep clicks on the seat info card local (do not navigate away)

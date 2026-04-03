@@ -254,7 +254,6 @@
 
 .date-grid-cell.unavailable {
     background-color: var(--room-unavailable);
-    pointer-events: none;
     cursor: default;
 }
 

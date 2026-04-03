@@ -35,8 +35,6 @@ const searchBtn = document.getElementById('searchbutt');
 const clearBtn = document.getElementById('clearbutt');
 const resultsContainer = document.getElementById('resultsContainer');
 const noResultsMessage = document.getElementById('noResultsMessage');
-// auth token for API calls
-const token = localStorage.getItem('token');
 
 // Back button functionality
 technicianBack.addEventListener('click', function(){
@@ -85,7 +83,7 @@ function formatDateForComparison(dateString) {
 
 // Apply filters function
 function applyFilters() {
-    const resID = filterResID.value.toLowerCase();
+    const resID = filterResID.value.toUpperCase();
     const room = filterRoom.value.toUpperCase();
     const seat = filterSeat.value.toUpperCase();
     const date = formatDateForComparison(filterDate.value);
@@ -98,7 +96,10 @@ function applyFilters() {
         const displayIndex = index + 1; // Display index is 1-based
 
         // Apply AND logic - all filters must match
-        if (resID && !displayIndex.toString().includes(resID)) {
+        // if (resID && !displayIndex.toString().includes(resID)) {
+        //     matches = false;
+        // }
+        if (resID && !reservation.reservationID.includes(resID)) {
             matches = false;
         }
         if (room && reservation.room.toUpperCase() !== room) {
@@ -158,7 +159,7 @@ function createResultElement(reservation, index) {
     
     resultDiv.innerHTML = `
         <div class="resultdeets">
-            <p>${index}</p>
+            <p>${reservation.reservationID}</p>
             <p>${reservation.room.toUpperCase()}</p>
             <p>${reservation.seat.toUpperCase()}</p>
             <p>${reservation.date}</p>
@@ -176,6 +177,32 @@ function createResultElement(reservation, index) {
     `;
     
     return resultDiv;
+}
+
+// disable cancel buttons until 10 minutes after reservation start
+function updateCancelButtonState(btn, startISO){
+    if (!btn || !startISO) return;
+    const start = new Date(startISO);
+    const enableAt = new Date(start.getTime() + 10 * 60 * 1000);
+    const now = new Date();
+
+    function enable(){
+        btn.classList.remove('cancel-disabled');
+        btn.removeAttribute('aria-disabled');
+        btn.title = '';
+    }
+
+    if (now >= enableAt){
+        enable();
+        return;
+    }
+
+    btn.classList.add('cancel-disabled');
+    btn.setAttribute('aria-disabled','true');
+    btn.title = 'Cancel disabled until ' + enableAt.toLocaleString();
+
+    const ms = enableAt.getTime() - now.getTime();
+    setTimeout(() => { try { enable(); } catch (e) {} }, ms + 50);
 }
 
 // Search button functionality
@@ -200,6 +227,8 @@ clearBtn.addEventListener('click', function(){
     reservations.forEach((reservation, index) => {
         const resultElement = createResultElement(reservation, index + 1);
         resultsContainer.appendChild(resultElement);
+        const cb = resultElement.querySelector('.cancel-button');
+        if (cb && reservation.type === 'Student') updateCancelButtonState(cb, reservation.rawStart);
     });
 });
 
@@ -211,7 +240,9 @@ window.addEventListener('load', function(){
 // Fetch reservations from API
 async function fetchReservations() {
     try {
-        const response = await fetch('/api/technician/all_reservations');
+        const response = await fetch('/api/technician/all_reservations', {
+            credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -219,7 +250,7 @@ async function fetchReservations() {
         
         if (Array.isArray(data)) {
             // keep only student reservations (filter out blocks made by technicians)
-            const studentReservations = data.filter(r => r.reservationType === 'Student');
+            const studentReservations = data;
 
             reservations = studentReservations.map(res => {
                 // Parse seatID to extract room and seat (format: "G301-1" or similar)
@@ -250,7 +281,9 @@ async function fetchReservations() {
                 return {
                     id: res.idNumber || 'N/A',
                     username: res.username || 'Anonymous',
+                    reservationID: res.reservationID,
                     reservationId: res._id || 'N/A',
+                    type: res.reservationType,
                     room: room,
                     seat: seat,
                     date: dateStr,
@@ -270,6 +303,8 @@ async function fetchReservations() {
             reservations.forEach((reservation, index) => {
                 const resultElement = createResultElement(reservation, index + 1);
                 resultsContainer.appendChild(resultElement);
+                const cb = resultElement.querySelector('.cancel-button');
+                if (cb && reservation.type === 'Student') updateCancelButtonState(cb, reservation.rawStart);
             });
         }
     } catch (error) {
@@ -292,6 +327,10 @@ resultsContainer.addEventListener('click', function (e) {
     }
 
     if (cancelBtn) {
+        if (cancelBtn.getAttribute('aria-disabled') === 'true'){
+            alert('Cancel is not available yet for this reservation.');
+            return;
+        }
         const id = cancelBtn.getAttribute('data-id');
         const seat = cancelBtn.getAttribute('data-seat');
         const start = cancelBtn.getAttribute('data-start');
@@ -306,8 +345,8 @@ resultsContainer.addEventListener('click', function (e) {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ startTime: start, endTime: end })
                 });
 
@@ -410,7 +449,9 @@ function openEditModal(reservation) {
 
             try {
                 const roomDate = startDate; // YYYY-MM-DD
-                const resp = await fetch(`/api/common_routes/reservations_per_day/${editingReservation.room}/${roomDate}`);
+                const resp = await fetch(`/api/common_routes/reservations_per_day/${editingReservation.room}/${roomDate}`, {
+                    credentials: 'include'
+                });
                 const data = await resp.json();
                 const existing = data.reservations || [];
 
@@ -431,8 +472,8 @@ function openEditModal(reservation) {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ seatID: newSeatID, startTime: fullStart, endTime: fullEnd, description })
                 });
 

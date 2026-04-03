@@ -1,5 +1,9 @@
 var currentDate = new Date();
 let room = null;
+const sundayIndex = 0;
+
+let activeRow = null;
+let dayCounter = 0;
 
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -12,6 +16,11 @@ function formatDate(d) {
 function updateDateDisplay() {
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
+    document.getElementById('rev').classList.add("hidden");
+    activeRow = null;
+    document.querySelectorAll(".date-grid-row").forEach(r => {
+        r.classList.remove("disabled");
+    });
     fetchReservations(room);
 }
 
@@ -48,7 +57,9 @@ async function fetchReservations(room) {
     var dateGrid = document.querySelector(".date-grid");
     if (!dateGrid) return;
 
-    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`);
+    const response = await fetch(`/api/common_routes/reservations_per_day/${room}/${currentDate.toLocaleDateString('en-CA')}`, {
+        credentials: 'include'
+    });
     const data = await response.json();
     const reservations = data.reservations;
 
@@ -91,36 +102,57 @@ function validateSelectedCells(selectedCells, row){
     return (endCellIndex - startCellIndex + 1) === selectedCells.length;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded", async function () {
+    let user = null;
 
-    
-    if (!user || !token) {
-        window.location.href = "./index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
 
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const params = new URLSearchParams(window.location.search);
     room = params.get("room");
 
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
+
+    // check Sunday
+    if(currentDate.getDay() === sundayIndex) {
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
     updateDateDisplay();
-    let activeRow = null;
-    let dayCounter = 0;
+    // Refresh every 60 seconds
+    setInterval(updateDateDisplay, 1000 * 60);
 
     var dateback = document.getElementById("dateback");
     if (dateback) {
         dateback.classList.add("disabled");
         dateback.addEventListener("click", function () {
+            // can view next days
             if (dayCounter === 6) {
                 datego.classList.remove("disabled");
             }
+            // go to previous day
             if (dayCounter > 0) {
                 currentDate.setDate(currentDate.getDate() - 1);
+                // check if sunday
+                if(currentDate.getDay() === sundayIndex) {
+                    currentDate.setDate(currentDate.getDate() - 1);
+                }
                 updateDateDisplay();
                 dayCounter--;
+                // cannot view past days
                 if (dayCounter === 0) {
                     dateback.classList.add("disabled");
                 }
@@ -131,13 +163,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var datego = document.getElementById("datego");
     if (datego) {
         datego.addEventListener("click", function () {
+            // can view previous days
             if (dayCounter === 0) {
                 dateback.classList.remove("disabled");
             }
+            // go to next day
             if (dayCounter < 6) {
                 currentDate.setDate(currentDate.getDate() + 1);
+                // check if sunday
+                if(currentDate.getDay() === sundayIndex) {
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
                 updateDateDisplay();
                 dayCounter++;
+                // cannot view more than 7 days
                 if (dayCounter === 6) {
                     datego.classList.add("disabled");
                 }
@@ -150,6 +189,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if(reserveButton){
         reserveButton.addEventListener("click", async function () {
+            const res = await fetch(`/api/student/view_profile/${user.username}`, {
+                credentials: 'include'
+            })
+            const requester = await res.json()
+
+            if(!requester.canReserve){
+                alert("Your account has been blocked from making reservations. Contact support for assistance.");
+                updateDateDisplay()
+                reserveButton.classList.add("hidden");
+                return;
+            } 
+
             const selectedCells = document.querySelectorAll(".date-grid-cell.chosen");
             const row = selectedCells[0].closest(".date-grid-row");
             const cellsInRow = row.querySelectorAll('.date-grid-cell');
@@ -166,9 +217,18 @@ document.addEventListener("DOMContentLoaded", function () {
             var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
 
             const reserveDate = currentDate.toLocaleDateString('en-CA');
-
             const startTime = reserveDate + "T" + getTimeRangeStringFromIndex(startCellIndex).start;
             const endTime = reserveDate + "T" + getTimeRangeStringFromIndex(endCellIndex).end;
+
+            // check if reservation was made at least 30 mins before start time
+            const currentTimeTemp = new Date()
+            const startTimeTemp = new Date(startTime)
+            const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
+
+            if(minuteDiff < 30) {
+                alert('Reservation must be made at least 30 minutes before intended start time.');
+                return;
+            }
 
             const reservation = {
                 seatID: room + '-' + seatNumber,
@@ -182,8 +242,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
                     },
+                    credentials: 'include',
                     body: JSON.stringify(reservation)
                 });
 
@@ -201,6 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     })
                     reserveButton.classList.add("hidden");
                 } else {
+                    alert(result.message);
                     console.warn("Server returned an error:", result);
                 }
             } catch (error) {
@@ -257,7 +318,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var pinnedCell = null;
 
             function isInfoCell(cell) {
-                return cell && cell.classList.contains("selected");
+                return cell && (cell.classList.contains("selected") || cell.classList.contains('unavailable'));
             }
 
             async function showSeatInfo(cell) {
@@ -277,11 +338,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
                     method: "GET",
+                    credentials: 'include'
                 });
                 const reservation = await getResponse.json();
 
+                if(cell.classList.contains('unavailable')){
+                    seatInfoCard.innerHTML = `
+                        <h2 class="seat-info-username">Blocked</h2>
+                        <p>Reason: ${reservation.description}</p>
+                    `
+                    seatInfoCard.classList.add('disabled');
+                    return;
+                }
+
                 const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
                     method: "GET",
+                    credentials: 'include'
                 });
 
                 const studentProfile = await getStudent.json();
@@ -289,17 +361,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 const username = studentProfile.username;
 
                 if(!reservation.isAnonymous){
-                    const card = document.getElementById("seat-info-card");
-                    card.querySelector(".seat-info-avatar").src = picture
-                    card.querySelector(".seat-info-username").textContent = "@" + username;
+                    seatInfoCard.innerHTML = `
+                        <img src="${picture}" onerror="this.src='./assets/images/diffusersym.png'" alt="User avatar" class="seat-info-avatar">
+                        <h2 class="seat-info-username">@${username}</h2>
+                    `;
                     seatInfoCard.classList.remove('disabled');
                     seatInfoCard.addEventListener('click', function(){
                         window.location.href = `./studentprof.html?id=${username}`;
                     }); 
                 }   
                 else{
-                    const card = document.getElementById("seat-info-card");
-                    card.innerHTML = `
+                    seatInfoCard.innerHTML = `
                         <img src="./assets/images/diffusersym.png" alt="User avatar" class="seat-info-avatar">
                         <h2 class="seat-info-username">@anonymous</h2>
                     `;

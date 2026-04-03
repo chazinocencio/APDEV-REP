@@ -1,15 +1,17 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
+import jwt from 'jsonwebtoken';
 import upload from '../middleware/upload.js';
-import { verifyToken } from "../middleware/auth.js";
+import { verifyToken, JWT_SECRET } from "../middleware/auth.js";
+import bcrypt from 'bcrypt';
 
 const router = Router()
-
+var countSalt = 10; // salt value for password hashing
 
 //view all reservations of student
 // /api/student/reservations/:id
 
-router.get('/reservations/:id', async (req, res) => {
+router.get('/reservations/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -29,7 +31,7 @@ router.get('/reservations/:id', async (req, res) => {
 
 //all reservations
 
-router.get('/all_reservations', async (req, res) => {
+router.get('/all_reservations', verifyToken, async (req, res) => {
     try {
         const reservations = await model.reservationModel.find();
         res.json(reservations);
@@ -41,7 +43,7 @@ router.get('/all_reservations', async (req, res) => {
 
 //get student who reserved through reservation key
 
-router.get('/reservations/key/:seat_id', async (req, res) => {
+router.get('/reservations/key/:seat_id', verifyToken, async (req, res) => {
     try {
         const { seat_id } = req.params;
         const { start, end } = req.query;
@@ -66,7 +68,7 @@ router.get('/reservations/key/:seat_id', async (req, res) => {
 
 //view specific reservation
 
-router.get('/specific_reservation/:id', async (req, res) => {
+router.get('/specific_reservation/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const idNumber = parseInt(id)
@@ -91,7 +93,7 @@ router.get('/view_profile/:username', async (req, res) => {
 });
 
 //get student
-router.get('/get_profile/:id', async (req, res) => {
+router.get('/get_profile/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
         const studentProfile = await model.studentModel.findOne({idNumber: id});
@@ -151,7 +153,7 @@ router.get('/search_idNumber/:idNumber', async (req, res) => {
 
 //edit profile
 
-router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (req, res) =>{ 
+router.put('/edit_profile/:idNumber', verifyToken, upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { idNumber } = req.params; 
         const { username, bio } = req.body;
@@ -165,9 +167,31 @@ router.put('/edit_profile/:idNumber', upload.single('profilePicture'), async (re
 
         const user = await model.studentModel.findOneAndUpdate( { idNumber: studentId }, updateFields, { returnDocument: 'after', runValidators: true });
         if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
-        res.json({ success: true, data: user });
+                
+        const payload = { 
+            id: user._id, 
+            role: req.user.role, 
+            email: user.email,
+            username: user.username, 
+            idNumber: idNumber,
+            rememberMe: req.user.rememberMe 
+        };
+        
+        const duration = req.user.rememberMe ? '21d' : '1h';
+        const newToken = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
+
+        res.cookie("token", newToken, {
+            httpOnly: true,
+            secure: true, // set to false if not using HTTPS locally
+            sameSite: "strict",
+            maxAge: req.user.rememberMe 
+                ? 1000 * 60 * 60 * 24 * 21 // 3 weeks
+                : undefined // session cookie
+        });
+
+        res.json({ success: true, data: payload });
     } 
     catch (error) {  
         res.status(400).json({ success: false, message: error.message });
@@ -191,9 +215,9 @@ router.get('/search_seat/:seatID', async (req, res) => {
 router.post('/create_reservation/:username', verifyToken, async (req, res) => {
      try {
         const {username} = req.params;
-        const {seatID, startTime, endTime, isAnonymous, description } = req.body;
+        const { reservationID, seatID, startTime, endTime, isAnonymous, description } = req.body;
 
-         const student = await model.studentModel.findOne({ username: username });
+        const student = await model.studentModel.findOne({ username: username });
          
         if (!student) {
             return res.status(404).json({ message: "Student not found" });
@@ -208,7 +232,37 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        const conflict = await model.reservationModel.find({
+            seatID: { $regex: seatID, $options: 'i' },
+            $or: [
+                { startTime: { $gte: startTime, $lt: endTime } },
+                { endTime: { $gt: startTime, $lte: endTime } },
+                { startTime: { $lte: startTime }, endTime: { $gte: endTime } }
+            ]
+        });
+        
+        if (conflict.length > 0) {
+            return res.status(200).json({ 
+                reservation: conflict, 
+                message: 'Your request is conflicting with another reservation' 
+            });
+        }
+
+        let newID = null;
+        let existing = null
+        if(!reservationID){
+            const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
+            const type = 'RES';
+            do {
+                const random4Digit = Math.floor(Math.random() * 9000) + 1000;
+                newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
+                existing = await model.reservationModel.findOne({ reservationID: newID });
+            } while (existing)
+        }
+        
+
         const newReservation = new model.reservationModel({
+            reservationID: reservationID || newID,
             seatID: seatID.toUpperCase(),
             idNumber: student.idNumber,
             startTime: new Date(startTime),
@@ -294,9 +348,13 @@ router.put('/change_password', verifyToken, async (req, res) => {
         const student = await model.studentModel.findOne({ email: requester.email });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+        // check old password
+        var match = await bcrypt.compare(oldPassword, student.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Old password is incorrect' });
 
-        student.passwordHash = newPassword;
+        // change to new password
+        const saltRounds = countSalt;
+        student.passwordHash = await bcrypt.hash(newPassword, saltRounds);
         await student.save();
 
         res.json({ success: true, message: 'Password changed successfully' });
@@ -311,10 +369,12 @@ router.post('/check_password/:idNumber', verifyToken, async (req, res) => {
         const { idNumber } = req.params;
         const { password } = req.body;
 
-        const student = await model.studentModel.findOne({ idNumber });
+        const student = await model.studentModel.findOne({ idNumber: idNumber });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== password) return res.status(401).json({ success: false, message: 'Password is incorrect' });
+        // check password
+        var match = await bcrypt.compare(password, student.passwordHash)
+        if (!match) return res.status(401).json({ success: false, message: 'Password is incorrect' });
 
         res.json({ success: true, message: 'Password is correct' });
     } catch (error) {
@@ -331,7 +391,9 @@ router.put('/deactivate', verifyToken, async (req, res) => {
         const student = await model.studentModel.findOne({ email: user.email });
         if (!student) return res.status(404).json({ message: 'Student not found' });
 
-        if (student.passwordHash !== password) return res.status(401).json({ message: 'Password is incorrect' });
+        // check password
+        var match = await bcrypt.compare(password, student.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Password is incorrect' });
 
         student.isActive = false;
         await student.save();
@@ -346,17 +408,17 @@ router.put('/deactivate', verifyToken, async (req, res) => {
 
 //check conflict reservation
 
-router.get('/reservations/conflict/:seatID', async (req, res) => {
+router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
     try {
         const { seatID } = req.params;
-        const { startTime, endTime, idNumber } = req.query;
+        const { reservationID, startTime, endTime, idNumber } = req.query;
 
         const start = new Date(startTime);
         const end = new Date(endTime);
 
-        const conflict = await model.reservationModel.findOne({
-            seatID: { $regex: new RegExp(`^${seatID}$`, 'i') },
-            ...(idNumber && { idNumber: { $ne: idNumber } }),
+        const conflict = await model.reservationModel.find({
+            reservationID: {$ne: reservationID},
+            seatID: { $regex: seatID, $options: 'i' },
             $or: [
                 { startTime: { $gte: start, $lt: end } },
                 { endTime: { $gt: start, $lte: end } },
@@ -364,20 +426,15 @@ router.get('/reservations/conflict/:seatID', async (req, res) => {
             ]
         });
 
-        if (conflict) {
+        if (conflict.length > 0) {
             return res.status(200).json({ hasConflict: true, reservation: conflict });
         }
-        return res.status(404).json({ hasConflict: false });
+        return res.status(200).json({ hasConflict: false });
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
     }
 });
-
-
-
-
-
 
 export default router;

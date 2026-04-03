@@ -1,10 +1,21 @@
-document.addEventListener("DOMContentLoaded", function(){
-    const user = JSON.parse(localStorage.getItem("user"));
+document.addEventListener("DOMContentLoaded", async function(){
+    let user = null;
 
-    if (!user) {
-		window.location.href = "../index.html"
-        return;
-    }
+	const res = await fetch('api/auth/me', {
+		credentials: 'include'
+	})
+
+	if(res.ok){
+		const data = await res.json();
+		user = data.user
+		if (!user) {
+			window.location.href = "student_login.html";
+			return;
+		}
+	} else {
+		window.location.href = "student_login.html";
+		return;
+	}
 
     const studentprofile = document.getElementById('back');
     const searchBar = document.querySelector('#searchbar');
@@ -14,7 +25,9 @@ document.addEventListener("DOMContentLoaded", function(){
     searchButton.addEventListener('click', async function(){
         searchResults.innerHTML = ''; // clear previous search results
         if (searchBar.value != ''){
-            const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`);
+            const response = await fetch(`api/common_routes/search_profile/${searchBar.value}`, {
+                credentials: 'include'
+            });
             const data = await response.json();
             const profiles = data.data;
             

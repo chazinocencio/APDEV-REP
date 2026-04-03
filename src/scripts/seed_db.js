@@ -1,5 +1,8 @@
 import { connectDB } from '../db.js';
 import * as model from '../model/model.js';
+import bcrypt from 'bcrypt';
+
+const saltRounds = 10;
 
 async function seed() {
     await connectDB();
@@ -16,7 +19,7 @@ async function seed() {
         {
             username: 'marty.mcfly',
             email: 'marty.mcfly@example.com',
-            passwordHash: 'password123',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'McFly',
             firstName: 'Marty',
             middleName: '',
@@ -30,7 +33,7 @@ async function seed() {
         {
             username: 'emmet.brown',
             email: 'emmet.brown@example.com',
-            passwordHash: 'password123',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Brown',
             firstName: 'Emmet',
             middleName: '',
@@ -51,29 +54,29 @@ async function seed() {
             username: 'naomireyes',
             idNumber: 1240001,
             email: 'naomi.reyes@example.com',
-            passwordHash: 'password123',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Reyes',
             firstName: 'Naomi',
             middleName: 'A',
-            profilePicture: '/uploads/profilepics/naomi.png',
+            profilePicture: '/uploads/profilepics/naomi.jpg',
             bio: 'Student of CS.',
             degreeProgram: 'BS Computer Science',
-            college: 'Manila',
+            college: 'College of Computer Studies',
             isActive: true,
             canReserve: true
         },
         {
             username: 'jrsantiago',
-            idNumber: 1240002,
-            email: 'jr.santiago@example.com',
-            passwordHash: 'password123',
+            idNumber: 12414387,
+            email: 'jrsantiago@dlsu.edu.ph',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Santiago',
             firstName: 'JR',
             middleName: 'B',
-            profilePicture: '/uploads/profilepics/jr.png',
+            profilePicture: '/uploads/profilepics/jr.jpg',
             bio: 'Enthusiastic learner.',
-            degreeProgram: 'BS Information Technology',
-            college: 'Manila',
+            degreeProgram: 'BS Computer Science',
+            college: 'College of Computer Studies',
             isActive: true,
             canReserve: true
         },
@@ -81,14 +84,14 @@ async function seed() {
             username: 'adrianbacolod',
             idNumber: 1240003,
             email: 'adrian.bacolod@example.com',
-            passwordHash: 'password123',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Bacolod',
             firstName: 'Adrian',
             middleName: 'C',
-            profilePicture: '/uploads/profilepics/adrian.png',
+            profilePicture: '/uploads/profilepics/adrian.jpg',
             bio: 'Aspiring developer.',
             degreeProgram: 'BS Software Engineering',
-            college: 'Manila',
+            college: 'College of Computer Studies',
             isActive: true,
             canReserve: true
         },
@@ -96,14 +99,14 @@ async function seed() {
             username: 'chazinocencio',
             idNumber: 1240004,
             email: 'chaz.inocencio@example.com',
-            passwordHash: 'password123',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Inocencio',
             firstName: 'Chaz',
             middleName: 'D',
-            profilePicture: '/uploads/profilepics/chaz.png',
+            profilePicture: '/uploads/profilepics/chaz.jpg',
             bio: 'Quiet student.',
             degreeProgram: 'BS Computer Science',
-            college: 'Manila',
+            college: 'College of Computer Studies',
             isActive: true,
             canReserve: true
         }

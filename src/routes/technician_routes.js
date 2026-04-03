@@ -1,11 +1,14 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
-import { verifyToken } from "../middleware/auth.js";
+import jwt from 'jsonwebtoken';
+import { verifyToken, JWT_SECRET } from "../middleware/auth.js";
 import upload from '../middleware/upload.js';
+import bcrypt from "bcrypt"
 
 const router = Router()
+var countSalt = 10; // salt value for password hashing
 
-router.get('/getTechnicians', async (req, res) => {
+router.get('/getTechnicians', verifyToken, async (req, res) => {
     try {
         const technicians = await model.technicianModel.find();
         res.json(technicians);
@@ -16,7 +19,7 @@ router.get('/getTechnicians', async (req, res) => {
 });
 
 // view technician profile
-router.get('/view_profile/:username', async (req, res) => {
+router.get('/view_profile/:username', verifyToken, async (req, res) => {
     try {
         const { username } = req.params;
         const techProfile = await model.technicianModel.findOne({ username: username });
@@ -33,7 +36,7 @@ router.get('/view_profile/:username', async (req, res) => {
 
 router.post('/reserve_for_student', verifyToken, async (req, res) => {
      try {
-        const {seatID, startTime, endTime, isAnonymous, description, idNumber} = req.body;
+        const {reservationID, seatID, startTime, endTime, isAnonymous, description, idNumber} = req.body;
 
         const student = await model.studentModel.findOne({ idNumber: idNumber });
          
@@ -50,7 +53,20 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        let newID = null;
+        let existing = null
+        if(!reservationID){
+            const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
+            const type = 'RES';
+            do {
+                const random4Digit = Math.floor(Math.random() * 9000) + 1000;
+                newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
+                existing = await model.reservationModel.findOne({ reservationID: newID });
+            } while (existing)
+        }
+
         const newReservation = new model.reservationModel({
+            reservationID: reservationID || newID,
             seatID: seatID,
             idNumber: student.idNumber,
             startTime: new Date(startTime),
@@ -76,14 +92,27 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
 
 router.post('/block_seat', verifyToken, async(req, res) =>{
     try {
-        const {seatID, startTime, endTime, description} = req.body;
+        const {reservationID, seatID, startTime, endTime, description} = req.body;
 
         const seat = await model.seatModel.findOne({ seatID: seatID });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
 
+        let newID = null;
+        let existing = null
+        if(!reservationID){
+            const dateRequested = (new Date()).toLocaleDateString('en-CA').slice(2, 10).replace(/-/g, '');
+            const type = 'BLK';
+            do {
+                const random4Digit = Math.floor(Math.random() * 9000) + 1000;
+                newID = `${type}${dateRequested}-${seatID.toUpperCase()}${random4Digit}`
+                existing = await model.reservationModel.findOne({ reservationID: newID });
+            } while (existing)
+        }
+
         const newRecord = new model.reservationModel({
+            reservationID: reservationID || newID,
             seatID: seatID,
             idNumber: null,
             startTime: new Date(startTime),
@@ -194,13 +223,10 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
     }
 });
 
-// block room
-
-/* insert code */
 
 // view all reservations
 
-router.get('/all_reservations', async(req, res) => {
+router.get('/all_reservations', verifyToken, async(req, res) => {
     try {
         const reservations = await model.reservationModel.find();
         res.json(reservations);
@@ -212,12 +238,12 @@ router.get('/all_reservations', async(req, res) => {
 
 // block student
 
-router.put('/block_student/:id', async(req, res) =>{
+router.put('/block_student/:id', verifyToken, async(req, res) =>{
     try{
         const { id } = req.params;
         const idNumber = parseInt(id);
 
-        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: false}, {new: true, runValidators: true});
+        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: false}, {returnDocument: 'after', runValidators: true});
         if(!student)
             return res.status(404).json({success: false, message: 'Student not found'});
         
@@ -229,12 +255,12 @@ router.put('/block_student/:id', async(req, res) =>{
 
 // unblock student
 
-router.put('/unblock_student/:id', async(req, res) =>{
+router.put('/unblock_student/:id', verifyToken, async(req, res) =>{
     try{
         const { id } = req.params;
         const idNumber = parseInt(id);
 
-        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: true}, {new: true, runValidators: true});
+        const student = await model.studentModel.findOneAndUpdate({idNumber: idNumber}, {canReserve: true}, {returnDocument: 'after', runValidators: true});
         if(!student)
             return res.status(404).json({success: false, message: 'Student not found'});
         
@@ -246,7 +272,7 @@ router.put('/unblock_student/:id', async(req, res) =>{
 
 // edit profile
 
-router.put('/edit_profile/:employeeID', upload.single('profilePicture'), async (req, res) =>{ 
+router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePicture'), async (req, res) =>{ 
     try {
         const { employeeID } = req.params; 
         const { bio, username } = req.body;
@@ -256,11 +282,33 @@ router.put('/edit_profile/:employeeID', upload.single('profilePicture'), async (
             if (username !== undefined) updateFields.username = username;
             if (req.file) updateFields.profilePicture = `/uploads/profilepics/${req.file.filename}`;
 
-        const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { new: true, runValidators: true });
+        const user = await model.technicianModel.findOneAndUpdate( { employeeID: employeeID }, updateFields, { returnDocument: 'after', runValidators: true });
         if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
-        res.json({ success: true, data: user });
+
+        const payload = { 
+            id: user._id, 
+            role: req.user.role, 
+            email: user.email,
+            username: user.username, 
+            employeeID: employeeID,
+            rememberMe: req.user.rememberMe 
+        };
+        
+        const duration = req.user.rememberMe ? '21d' : '1h';
+        const newToken = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
+
+        res.cookie("token", newToken, {
+            httpOnly: true,
+            secure: true, // set to false if not using HTTPS locally
+            sameSite: "strict",
+            maxAge: req.user.rememberMe 
+                ? 1000 * 60 * 60 * 24 * 21 // 3 weeks
+                : undefined // session cookie
+        });
+        
+        res.json({ success: true, data: payload });
     } 
     catch (error) {  
         res.status(400).json({ success: false, message: error.message });
@@ -280,9 +328,13 @@ router.put('/change_password', verifyToken, async (req, res) => {
         const technician = await model.technicianModel.findOne({ email: requester.email });
         if (!technician) return res.status(404).json({ message: 'Technician not found' });
 
-        if (technician.passwordHash !== oldPassword) return res.status(401).json({ message: 'Old password is incorrect' });
+        //check old password
+        var match = await bcrypt.compare(oldPassword, technician.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Old password is incorrect' });
 
-        technician.passwordHash = newPassword;
+        // change to new password
+        const saltRounds = countSalt;
+        technician.passwordHash = await bcrypt.hash(newPassword, saltRounds);
         await technician.save();
 
         res.json({ success: true, message: 'Password changed successfully' });
@@ -292,14 +344,36 @@ router.put('/change_password', verifyToken, async (req, res) => {
     }
 });
 
+router.post('/check_password/:employeeID', verifyToken, async (req, res) => {
+    try {
+        const { employeeID } = req.params;
+        const { password } = req.body;
+
+        const technician = await model.technicianModel.findOne({ employeeID: employeeID });
+        if (!technician) return res.status(404).json({ message: 'Technician not found' });
+
+        // check password
+        var match = await bcrypt.compare(password, technician.passwordHash)
+        if (!match) return res.status(401).json({ success: false, message: 'Password is incorrect' });
+
+        res.json({ success: true, message: 'Password is correct' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // deactivate profile (set isActive to false) for logged-in technician
 router.put('/deactivate', verifyToken, async (req, res) => {
     try {
-        const requester = req.user;
-        if (requester.role !== 'technician') return res.status(403).json({ message: 'Only technicians can deactivate their profile' });
+        const { user, password } = req.body;
 
-        const technician = await model.technicianModel.findOne({ email: requester.email });
-        if (!technician) return res.status(404).json({ message: 'technician not found' });
+        const technician = await model.technicianModel.findOne({ email: user.email });
+        if (!technician) return res.status(404).json({ message: 'Technician not found' });
+
+        // check password
+        var match = await bcrypt.compare(password, technician.passwordHash)
+        if (!match) return res.status(401).json({ message: 'Password is incorrect' });
 
         technician.isActive = false;
         await technician.save();
