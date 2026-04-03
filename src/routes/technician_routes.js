@@ -1,7 +1,8 @@
 import { Router } from "express";
 import * as model from "../model/model.js";
 import jwt from 'jsonwebtoken';
-import { verifyToken, JWT_SECRET } from "../middleware/auth.js";
+import { verifyToken } from "../middleware/auth.js";
+import { getJWTSecret } from "../controllers/authController.js";
 import upload from '../middleware/upload.js';
 import bcrypt from "bcrypt"
 
@@ -302,7 +303,7 @@ router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePictu
         };
         
         const duration = req.user.rememberMe ? '21d' : '1h';
-        const newToken = jwt.sign(payload, JWT_SECRET, { expiresIn: duration });
+        const newToken = jwt.sign(payload, getJWTSecret, { expiresIn: duration });
 
         res.cookie("token", newToken, {
             httpOnly: true,
