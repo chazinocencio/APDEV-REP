@@ -228,7 +228,7 @@ clearBtn.addEventListener('click', function(){
         const resultElement = createResultElement(reservation, index + 1);
         resultsContainer.appendChild(resultElement);
         const cb = resultElement.querySelector('.cancel-button');
-        if (cb) updateCancelButtonState(cb, reservation.rawStart);
+        if (cb && reservation.type === 'Student') updateCancelButtonState(cb, reservation.rawStart);
     });
 });
 
