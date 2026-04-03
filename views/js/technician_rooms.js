@@ -1,5 +1,6 @@
 var currentDate = new Date();
 let room = null;
+let activeRow = null;
 
 var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -13,6 +14,10 @@ function formatDate(d) {
 function updateDateDisplay() {
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
+    activeRow = null;
+    document.querySelectorAll(".date-grid-row").forEach(r => {
+        r.classList.remove("disabled");
+    });
     fetchReservations(room);
 }
 
@@ -114,7 +119,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     updateDateDisplay();
 
-    let activeRow = null;
     let dayCounter = 0;
     let selectedAction = null; // Track which action is in progress
     let currentReservation = null; // holds reservation being viewed/edited
@@ -306,16 +310,14 @@ document.addEventListener("DOMContentLoaded", async function () {
               // populate block modal fields (match IDs in HTML)
               const brRoom = document.getElementById('block-room');
               const brStartDate = document.getElementById('block-start-date');
-              const brEndDate = document.getElementById('block-end-date');
               const brStartTime = document.getElementById('block-start-time');
               const brEndTime = document.getElementById('block-end-time');
               const brReason = document.getElementById('block-reason');
 
-              if (brRoom) brRoom.textContent = room;
-              if (brStartDate) brStartDate.value = reserveDate;
-              if (brEndDate) brEndDate.value = reserveDate;
-              if (brStartTime) brStartTime.value = startTime;
-              if (brEndTime) brEndTime.value = endTime;
+              if (brRoom) brRoom.textContent = room + '-' + seatNumber;
+              if (brStartDate) brStartDate.textContent = reserveDate;
+              if (brStartTime) brStartTime.textContent = startTime;
+              if (brEndTime) brEndTime.textContent = endTime;
               if (brReason) brReason.value = "";
             blockTimeModal.classList.remove("hidden");
         });
