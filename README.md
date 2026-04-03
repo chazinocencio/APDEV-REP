@@ -7,7 +7,7 @@ npm init -y
 
 ### Packages Needed
 ```
-npm install express mongoose cors jsonwebtoken multer bcrypt cookie-parser
+npm install express mongoose cors jsonwebtoken multer bcrypt cookie-parser dotenv
 ```
 ```
 npm install nodemon --save-dev
