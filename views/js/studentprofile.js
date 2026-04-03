@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const deact = document.getElementById("deact")
     const confirmdeact = document.getElementById("confirmdeact")
     const canceldeact = document.getElementById("canceldeact")
+    const myreserves = document.getElementById("reservations")
 
     const oldPass = document.getElementById("oldpass");
     const newPass = document.getElementById("newpass");
@@ -336,5 +337,10 @@ document.addEventListener("DOMContentLoaded", async function(){
 
         reader.readAsDataURL(selectedFile);
     });
+
+    myreserves.addEventListener('click', async function(){
+        window.location.href = "../myreservations.html";
+    })
+
 }) 
     

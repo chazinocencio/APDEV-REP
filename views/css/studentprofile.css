@@ -30,6 +30,39 @@
     transition: filter 0.3s ease-in-out;
 }
 
+.revbutt{
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: 200px;
+    height: 40px;
+    border-radius: 5px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
+}
+
+.revbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.revbutt h3{
+    margin: 0;
+}
+
+.revbutt img{
+    margin: 0;
+    height: 40%;
+    width: auto;
+    border-radius: 0;
+}
+
 .backbutt{
     padding-left: 5px;
     padding-right: 5px;
