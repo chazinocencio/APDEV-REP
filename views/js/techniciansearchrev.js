@@ -162,6 +162,8 @@ function createResultElement(reservation, index) {
             <p>${reservation.reservationID}</p>
             <p>${reservation.room.toUpperCase()}</p>
             <p>${reservation.seat.toUpperCase()}</p>
+            <p>${reservation.dateRequested}</p>
+            <p>${reservation.timeRequested}</p>
             <p>${reservation.date}</p>
             <p>${reservation.startTime}</p>
             <p>${reservation.endTime}</p>
@@ -257,14 +259,22 @@ async function fetchReservations() {
                 const parts = res.seatID.split('-');
                 const room = (parts[0] || '').toUpperCase();
                 const seat = (parts[1] || '').toUpperCase();
+
+                const dateReq = new Date(res.dateRequested)
+
+                // formatted date & time requested
+                const dateRequested = dateReq.toLocaleDateString()
+                const timeRequested = dateReq.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                })
                 
                 // Format dates and times
                 const startDate = new Date(res.startTime);
                 const endDate = new Date(res.endTime);
                 
-                const dateStr = (startDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                                startDate.getDate().toString().padStart(2, '0') + '/' + 
-                                startDate.getFullYear();
+                const dateStr = startDate.toLocaleDateString();
                 
                 const startTimeStr = startDate.toLocaleTimeString('en-US', {
                     hour: 'numeric',
@@ -286,6 +296,8 @@ async function fetchReservations() {
                     type: res.reservationType,
                     room: room,
                     seat: seat,
+                    dateRequested: dateRequested,
+                    timeRequested: timeRequested,
                     date: dateStr,
                     startTime: startTimeStr,
                     endTime: endTimeStr,

@@ -70,19 +70,19 @@ async function repaintDisplay(user, reservations, card) {
 
         const dateReq = new Date(reservation.dateRequested).toLocaleDateString();
         const timeReq = new Date(reservation.dateRequested).toLocaleTimeString([], {
-            hour: '2-digit',
+            hour: 'numeric',
             minute: '2-digit',
             hour12: true
         })
 
         const dateReserve = new Date(reservation.startTime).toLocaleDateString();
         const startTime = new Date(reservation.startTime).toLocaleTimeString([], {
-            hour: '2-digit',
+            hour: 'numeric',
             minute: '2-digit',
             hour12: true
         })
         const endTime = new Date(reservation.endTime).toLocaleTimeString([], {
-            hour: '2-digit',
+            hour: 'numeric',
             minute: '2-digit',
             hour12: true
         })
@@ -219,12 +219,12 @@ document.addEventListener("DOMContentLoaded", async function() {
                 <div class="lab">
                     <h3>Reservation #</h3>
                     <h3>Room #</h3>
-                    <h3>Seat #</h3>
+                    <span><h3>Seat #</h3></span>
                 </div>
                 <h3>Request Date</h3>
                 <h3>Request Time</h3>
                 <h3>Date</h3>
-                <h3>Start Time</h3>
+                <div class="st"><h3>Start Time</h3></div>
                 <h3>End Time</h3>
             </div>
         </div>
