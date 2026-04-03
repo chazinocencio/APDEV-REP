@@ -87,6 +87,7 @@
     font-size: 1.4rem;
     white-space: nowrap;
     overflow: visible;
+    color: var(--ls-green);
 }
 
 /* Small adjustments for layout */
@@ -275,8 +276,7 @@
 
 .date-grid-cell.unavailable {
     background-color: var(--room-unavailable);
-    pointer-events: none;
-    cursor: default;
+    cursor: pointer;
 }
 
 .date-grid-cell.chosen {

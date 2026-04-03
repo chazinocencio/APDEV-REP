@@ -585,6 +585,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const card = document.getElementById("seat-info-card");
                     card.querySelector(".seat-info-avatar").src = picture || './assets/images/student.png';
                     card.querySelector(".seat-info-username").textContent = "@" + (username || 'unknown');
+                    card.querySelector(".seat-info-avatar").addEventListener('click', () => {
+                        window.location.href = `./techstudentprof.html?id=${username}`;
+                    })
+                    card.querySelector(".seat-info-username").addEventListener('click', () => {
+                        window.location.href = `./techstudentprof.html?id=${username}`;
+                    })
                     seatInfoCard.classList.remove('disabled');
                     // save the reservation for edit operations
                     currentReservation = reservation;
