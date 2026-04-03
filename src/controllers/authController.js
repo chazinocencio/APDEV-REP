@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import * as model from '../model/model.js';
 
 export function getJWTSecret(){
-	const JWT_SECRET = process.env.JWT_SECRET;
+	const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
 	return JWT_SECRET
 }
 var countSalt = 10; // salt value for password hashing

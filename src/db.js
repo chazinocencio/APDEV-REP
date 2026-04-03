@@ -10,8 +10,10 @@ export const connectDB = async () => {
         await mongoose.connect(URI, {
             dbName: 'ccapdev-lab-reservation'
         });
-        console.log("MongoDB connected!");
-        console.log(URI);
+        if(process.env.MONGO_URI)
+            console.log("MongoDB Atlas(cloud) connected!");
+        else 
+            console.log("MongoDB connected!");
     } catch (error) {
         console.log("Unable to connect to MongoDB.");
         process.exit(1);

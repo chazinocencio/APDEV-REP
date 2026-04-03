@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export function getJWTSecret(){
-	const JWT_SECRET = process.env.JWT_SECRET;
+	const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
 	return JWT_SECRET
 }
 
