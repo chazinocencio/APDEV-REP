@@ -14,6 +14,13 @@ function formatDate(d) {
 }
 
 function updateDateDisplay() {
+
+    //idk if this will help switch page after 5 pm but it makes sense a bit? but not really
+    /*var dateafter5pm = new Date();
+    if (dateafter5pm.getHours() >= 17) {
+        currentDate.setDate(currentDate.getDate() + 1);
+    }*/
+
     var el = document.getElementById("dayanddate");
     if (el) el.textContent = formatDate(currentDate);
     document.getElementById('rev').classList.add("hidden");
