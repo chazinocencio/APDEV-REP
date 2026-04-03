@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             var pinnedCell = null;
 
             function isInfoCell(cell) {
-                return cell && cell.classList.contains("selected");
+                return cell && (cell.classList.contains("selected") || cell.classList.contains('unavailable'));
             }
 
             async function showSeatInfo(cell) {
@@ -342,6 +342,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
                 const reservation = await getResponse.json();
 
+                if(cell.classList.contains('unavailable')){
+                    seatInfoCard.innerHTML = `
+                        <h2 class="seat-info-username">Blocked</h2>
+                        <p>Reason: ${reservation.description}</p>
+                    `
+                    seatInfoCard.classList.add('disabled');
+                    return;
+                }
+
                 const getStudent = await fetch(`/api/student/get_profile/${reservation.idNumber}`, {
                     method: "GET",
                     credentials: 'include'
@@ -352,17 +361,17 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const username = studentProfile.username;
 
                 if(!reservation.isAnonymous){
-                    const card = document.getElementById("seat-info-card");
-                    card.querySelector(".seat-info-avatar").src = picture
-                    card.querySelector(".seat-info-username").textContent = "@" + username;
+                    seatInfoCard.innerHTML = `
+                        <img src="${picture}" onerror="this.src='./assets/images/diffusersym.png'" alt="User avatar" class="seat-info-avatar">
+                        <h2 class="seat-info-username">@${username}</h2>
+                    `;
                     seatInfoCard.classList.remove('disabled');
                     seatInfoCard.addEventListener('click', function(){
                         window.location.href = `./studentprof.html?id=${username}`;
                     }); 
                 }   
                 else{
-                    const card = document.getElementById("seat-info-card");
-                    card.innerHTML = `
+                    seatInfoCard.innerHTML = `
                         <img src="./assets/images/diffusersym.png" alt="User avatar" class="seat-info-avatar">
                         <h2 class="seat-info-username">@anonymous</h2>
                     `;

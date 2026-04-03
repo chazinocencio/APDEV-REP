@@ -535,7 +535,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         var seatInfoCard = document.getElementById("seat-info-card");
-        if (seatInfoCard) {
+        var blockSeatCard = document.getElementById("blockseat-info-card");
+        if (seatInfoCard && blockSeatCard) {
             var pinnedCell = null;
 
             function isInfoCell(cell) {
@@ -544,7 +545,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             async function showSeatInfo(cell) {
-                seatInfoCard.classList.remove("hidden");
                 var reservationDate = currentDate.toLocaleDateString('en-CA');
 
                 var row = cell.closest('.date-grid-row');
@@ -565,8 +565,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                     });
                     const reservation = await getResponse.json();
 
-                    if (!reservation || !reservation.idNumber) {
+                    if (!reservation) {
                         hideSeatInfo();
+                        return;
+                    }
+
+                    if(cell.classList.contains('unavailable')){
+                        blockSeatCard.classList.remove('hidden');
+                        blockSeatCard.querySelector('#blocked-seat-reason').innerHTML = 'Reason: ' + reservation.description;
                         return;
                     }
 
@@ -595,6 +601,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     // save the reservation for edit operations
                     currentReservation = reservation;
                     // update cancel button state immediately when reservation changes
+                    seatInfoCard.classList.remove("hidden");
                     try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
                 } catch (error) {
                     console.error("Error fetching seat info:", error);
@@ -606,6 +613,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 seatInfoCard.classList.add("hidden");
                 // reservation may be cleared when hiding info; refresh cancel state
                 try { updateCancelRevOpenState(); } catch (e) { /* ignore */ }
+            }
+
+            function hideBlockInfo(){
+                blockSeatCard.classList.add('hidden');
             }
 
             gridWrap.addEventListener("mouseover", function (e) {
@@ -621,6 +632,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 if (!isInfoCell(cell)) return;
                 if (!pinnedCell) {
                     hideSeatInfo();
+                    hideBlockInfo();
                 }
             });
 
@@ -658,6 +670,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     var seatmap = document.getElementById('seatmap');
     if (seatmap) {
         seatmap.addEventListener("click", function () {
+            
+            console.log(seatmap, map)
             map.classList.remove('hidden');
         });
     }
