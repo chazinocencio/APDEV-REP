@@ -35,24 +35,6 @@ const searchBtn = document.getElementById('searchbutt');
 const clearBtn = document.getElementById('clearbutt');
 const resultsContainer = document.getElementById('resultsContainer');
 const noResultsMessage = document.getElementById('noResultsMessage');
-// auth token for API calls
-let user = null;
-
-const res = await fetch('api/auth/me', {
-    credentials: 'include'
-})
-
-if(res.ok){
-    const data = await res.json();
-    user = data.user
-    if (!user) {
-        window.location.href = "technician_login.html";
-        return;
-    }
-} else {
-    window.location.href = "technician_login.html";
-    return;
-}
 
 // Back button functionality
 technicianBack.addEventListener('click', function(){
@@ -101,7 +83,7 @@ function formatDateForComparison(dateString) {
 
 // Apply filters function
 function applyFilters() {
-    const resID = filterResID.value.toLowerCase();
+    const resID = filterResID.value.toUpperCase();
     const room = filterRoom.value.toUpperCase();
     const seat = filterSeat.value.toUpperCase();
     const date = formatDateForComparison(filterDate.value);
@@ -114,7 +96,10 @@ function applyFilters() {
         const displayIndex = index + 1; // Display index is 1-based
 
         // Apply AND logic - all filters must match
-        if (resID && !displayIndex.toString().includes(resID)) {
+        // if (resID && !displayIndex.toString().includes(resID)) {
+        //     matches = false;
+        // }
+        if (resID && !reservation.reservationID.includes(resID)) {
             matches = false;
         }
         if (room && reservation.room.toUpperCase() !== room) {
@@ -174,7 +159,7 @@ function createResultElement(reservation, index) {
     
     resultDiv.innerHTML = `
         <div class="resultdeets">
-            <p>${index}</p>
+            <p>${reservation.reservationID}</p>
             <p>${reservation.room.toUpperCase()}</p>
             <p>${reservation.seat.toUpperCase()}</p>
             <p>${reservation.date}</p>
@@ -265,7 +250,7 @@ async function fetchReservations() {
         
         if (Array.isArray(data)) {
             // keep only student reservations (filter out blocks made by technicians)
-            const studentReservations = data.filter(r => r.reservationType === 'Student');
+            const studentReservations = data;
 
             reservations = studentReservations.map(res => {
                 // Parse seatID to extract room and seat (format: "G301-1" or similar)
@@ -296,7 +281,9 @@ async function fetchReservations() {
                 return {
                     id: res.idNumber || 'N/A',
                     username: res.username || 'Anonymous',
+                    reservationID: res.reservationID,
                     reservationId: res._id || 'N/A',
+                    type: res.reservationType,
                     room: room,
                     seat: seat,
                     date: dateStr,
@@ -317,7 +304,7 @@ async function fetchReservations() {
                 const resultElement = createResultElement(reservation, index + 1);
                 resultsContainer.appendChild(resultElement);
                 const cb = resultElement.querySelector('.cancel-button');
-                if (cb) updateCancelButtonState(cb, reservation.rawStart);
+                if (cb && reservation.type === 'Student') updateCancelButtonState(cb, reservation.rawStart);
             });
         }
     } catch (error) {

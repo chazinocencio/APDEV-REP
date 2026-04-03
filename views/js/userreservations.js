@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
             el.innerHTML = `
                 <div class="resultdeets">
-                    <p>${resNumber}</p>
+                    <p>${r.reservationID}</p>
                     <p>${room}</p>
                     <p>${seat}</p>
                     <p>${formatDate(r.startTime)}</p>
