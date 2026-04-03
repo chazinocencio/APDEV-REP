@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'secretkey';
+export const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
 
 export function verifyToken(req, res, next) {
 	let token;

@@ -215,7 +215,7 @@ router.get('/search_seat/:seatID', async (req, res) => {
 router.post('/create_reservation/:username', verifyToken, async (req, res) => {
      try {
         const {username} = req.params;
-        const { reservationID, seatID, startTime, endTime, isAnonymous, description } = req.body;
+        const { reservationID, seatID, dateRequested, startTime, endTime, isAnonymous, description } = req.body;
 
         const student = await model.studentModel.findOne({ username: username });
          
@@ -260,11 +260,14 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             } while (existing)
         }
         
+        let newDateReq = dateRequested ? new Date(dateRequested) : new Date();
+        
 
         const newReservation = new model.reservationModel({
             reservationID: reservationID || newID,
             seatID: seatID.toUpperCase(),
             idNumber: student.idNumber,
+            dateRequested: newDateReq,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
             isAnonymous: isAnonymous || false,

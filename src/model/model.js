@@ -50,6 +50,7 @@ export const ReservationSchema = new mongoose.Schema({
     },
     seatID: String,
     idNumber: Number,
+    dateRequested: Date,
     startTime: Date,
     endTime: Date,
     isAnonymous: Boolean,

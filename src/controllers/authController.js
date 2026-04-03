@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import * as model from '../model/model.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secretkey';
+const JWT_SECRET = process.env.JWT_SECRET || 'ArcherLabsSecretKey';
 var countSalt = 10; // salt value for password hashing
 
 function sanitizeUser(user) {

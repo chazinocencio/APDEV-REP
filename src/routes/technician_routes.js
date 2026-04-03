@@ -36,7 +36,7 @@ router.get('/view_profile/:username', verifyToken, async (req, res) => {
 
 router.post('/reserve_for_student', verifyToken, async (req, res) => {
      try {
-        const {reservationID, seatID, startTime, endTime, isAnonymous, description, idNumber} = req.body;
+        const {reservationID, seatID, dateRequested, startTime, endTime, isAnonymous, description, idNumber} = req.body;
 
         const student = await model.studentModel.findOne({ idNumber: idNumber });
          
@@ -64,11 +64,14 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
                 existing = await model.reservationModel.findOne({ reservationID: newID });
             } while (existing)
         }
+        
+        let newDateReq = dateRequested ? new Date(dateRequested) : new Date();
 
         const newReservation = new model.reservationModel({
             reservationID: reservationID || newID,
             seatID: seatID,
             idNumber: student.idNumber,
+            dateRequested: newDateReq,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
             isAnonymous: isAnonymous || false,
@@ -92,7 +95,7 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
 
 router.post('/block_seat', verifyToken, async(req, res) =>{
     try {
-        const {reservationID, seatID, startTime, endTime, description} = req.body;
+        const {reservationID, seatID, dateRequested, startTime, endTime, description} = req.body;
 
         const seat = await model.seatModel.findOne({ seatID: seatID });
         if (!seat) {
@@ -111,6 +114,8 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
             } while (existing)
         }
 
+        let newDateReq = dateRequested ? new Date(dateRequested) : new Date();
+        
         const newRecord = new model.reservationModel({
             reservationID: reservationID || newID,
             seatID: seatID,

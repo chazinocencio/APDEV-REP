@@ -86,16 +86,35 @@ document.addEventListener('DOMContentLoaded', async function(){
                 }
             }
 
-            const resNumber = idx + 1;
+            const dateReq = new Date(r.dateRequested).toLocaleDateString();
+            const timeReq = new Date(r.dateRequested).toLocaleTimeString([], {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            })
+
+            const dateReserve = new Date(r.startTime).toLocaleDateString();
+            const startTime = new Date(r.startTime).toLocaleTimeString([], {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            })
+            const endTime = new Date(r.endTime).toLocaleTimeString([], {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            })
 
             el.innerHTML = `
                 <div class="resultdeets">
                     <p>${r.reservationID}</p>
                     <p>${room}</p>
                     <p>${seat}</p>
-                    <p>${formatDate(r.startTime)}</p>
-                    <p>${formatTime(r.startTime)}</p>
-                    <p>${formatTime(r.endTime)}</p>
+                    <p>${dateReq}</p>
+                    <p>${timeReq}</p>
+                    <p>${dateReserve}</p>
+                    <p>${startTime}</p>
+                    <p>${endTime}</p>
                 </div>
                 <div class="butts">
                     <div class="butt edit-button" id="edit" data-id="${r._id}">

@@ -68,15 +68,36 @@ async function repaintDisplay(user, reservations, card) {
         const extractSeat = seat.split('-');
         const getSeat = extractSeat.pop();
 
+        const dateReq = new Date(reservation.dateRequested).toLocaleDateString();
+        const timeReq = new Date(reservation.dateRequested).toLocaleTimeString([], {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        })
+
+        const dateReserve = new Date(reservation.startTime).toLocaleDateString();
+        const startTime = new Date(reservation.startTime).toLocaleTimeString([], {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        })
+        const endTime = new Date(reservation.endTime).toLocaleTimeString([], {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        })
+
         div.classList.add("results");
         div.innerHTML = `
             <div class="resultdeets">
                 <p>${reservation.reservationID}</p>
                 <p>${seatData.roomID}</p>
                 <p>${getSeat}</p>
-                <p>${new Date(reservation.startTime).toLocaleDateString()}</p>
-                <p>${new Date(reservation.startTime).toLocaleTimeString()}</p>
-                <p>${new Date(reservation.endTime).toLocaleTimeString()}</p>
+                <p>${dateReq}</p>
+                <p>${timeReq}</p>
+                <p>${dateReserve}</p>
+                <p>${startTime}</p>
+                <p>${endTime}</p>
             </div>
             <div class="butts"> 
                 <div class="butt" data-id="${reservation._id}">
@@ -198,10 +219,12 @@ document.addEventListener("DOMContentLoaded", async function() {
                 <div class="lab">
                     <h3>Reservation #</h3>
                     <h3>Room #</h3>
-                    <h3>Seat #</h3>
+                    <span><h3>Seat #</h3></span>
                 </div>
+                <h3>Request Date</h3>
+                <h3>Request Time</h3>
                 <h3>Date</h3>
-                <h3>Start Time</h3>
+                <div class="st"><h3>Start Time</h3></div>
                 <h3>End Time</h3>
             </div>
         </div>
@@ -291,6 +314,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             reservationID: reservationID,
             idNumber: studentProfile.idNumber,
             seatID: seatID,
+            dateRequested: currentReservation.dateRequested,
             startTime: startFullDate,
             endTime: endFullDate,
             date: date,
