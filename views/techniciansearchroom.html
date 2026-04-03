@@ -27,43 +27,69 @@
                         <div class="searchdeets">
                             <h3>Date</h3>
 
-                            <div class="options">
-                                <div class="search">
-                                        <input type="text" placeholder="Search date" name="searchbar" id="date">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
-                                </div>
+                            <div class="options" id="dateinput">
+                                <select id="date" class="search"></select>
                             </div>
                         </div>
                         <div class="searchdeets">
                             <h3>Time Start</h3>
 
                             <div class="options">
-                                <div class="search">
-                                        <input type="text" placeholder="Search start time" name="searchbar" id="timestart">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
-                                </div>
+                                <select id="timestart" class="search">
+                                    <option value="">Select</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="08:30">08:30</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="09:30">09:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                </select>
                             </div>
                         </div>
                         <div class="searchdeets">
                             <h3>Time End</h3>
 
                             <div class="options">
-                                <div class="search">
-                                        <input type="text" placeholder="Search end time" name="searchbar" id="timeend">
-                                    <div class="searchlogo">
-                                        <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                    </div>
-                                </div>
+                                <select id="timeend" class="search">
+                                    <option value="">Select</option>
+                                    <option value="08:30">08:30</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="09:30">09:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="17:00">17:00</option>
+                                </select>
                             </div>
                         </div>
                         
                     </div>
                     
 
+                    <p class="errormess" id="errormess">Please enter all fields.</p>
                     <div class="butt" id="searchbutt">
                         <h3>Search</h3>
                     </div>
@@ -94,6 +120,80 @@
                 </div>
         </div>
     </div>
+
+    <!-- Reserve modal (copied from technician_rooms) -->
+    <div class="reserve-modal hidden" id="reserve-modal">
+        <div class="reserve-card">
+            <h2 class="reserve-title">Reserve for Student</h2>
+            <div class="reserve-details">
+                <div class="reserve-labels">
+                    <p>Room #:</p>
+                    <p>Seat #:</p>
+                    <p>Date:</p>
+                    <p>Start Time:</p>
+                    <p>End Time:</p>
+                    <p>Enter Student ID #:</p>
+                </div>
+                <div class="reserve-values">
+                    <p id="reserve-room">G302</p>
+                    <p id="reserve-seat">Seat</p>
+                    <p id="reserve-date">Feb 4, 2026</p>
+                    <p id="reserve-start">1:00 PM</p>
+                    <p id="reserve-end">2:00 PM</p>
+                    <div class="reserve-input-wrap">
+                        <input type="text" id="reserve-student-id" class="reserve-input">
+                    </div>
+                </div>
+            </div>
+            <div class="reserve-anon-row">
+                <label class="reserve-anon">
+                    <input type="checkbox" id="reserve-anon">
+                    <span>Anonymous</span>
+                </label>
+            </div>
+            <div class="reserve-actions">
+                <div class="reserve-primary" id="reserve-confirm">
+                    <h3>Reserve</h3>
+                </div>
+                <div class="reserve-cancel" id="reserve-cancel">
+                    <h3>Cancel</h3>
+                </div>
+            </div>
+        </div>
+   </div>
+
+    <!-- Block modal (copied from technician_rooms) -->
+    <div class="block-modal hidden" id="block-modal">
+        <div class="block-card">
+            <h2 class="block-title">Block Time Slot</h2>
+            <div class="block-details">
+                <div class="block-labels">
+                    <p>Room #:</p>
+                    <p>Date:</p>
+                    <p>Start Time:</p>
+                    <p>End Time:</p>
+                    <p>Seat #:</p>
+                    <p>Reason:</p>
+                </div>
+                <div class="block-values">
+                    <p id="block-room">G302</p>
+                    <p id="block-date">2026-02-04</p>
+                    <p id="block-start-time">08:00</p>
+                    <p id="block-end-time">09:00</p>
+                    <p id="block-seat">Seat</p>
+                    <textarea id="block-reason" class="block-input block-textarea"></textarea>
+                </div>
+            </div>
+            <div class="block-actions">
+                <div class="block-primary" id="block-confirm">
+                    <h3>Block</h3>
+                </div>
+                <div class="block-cancel" id="block-cancel">
+                    <h3>Cancel</h3>
+                </div>
+            </div>
+        </div>
+   </div>
 
     <script src="js/techniciansearchtime.js"></script>
 </body>

@@ -184,3 +184,271 @@
 .resultdeets p{
     margin: 0;
 }
+
+/* popup styles copied from technician_rooms.css*/
+.block-modal{
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.block-card{
+    background-color: var(--ls-white);
+    border-radius: 24px;
+    padding: 32px 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 520px;
+    max-width: 640px;
+    color: var(--ls-green);
+}
+
+.block-title{
+    margin: 0 0 24px 0;
+    text-align: center;
+    font-weight: 700;
+}
+
+.block-details{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+}
+
+.block-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+.block-labels p{
+    margin: 6px 0;
+    font-weight: 600;
+}
+
+.block-values{
+    display: grid;
+    grid-template-rows: repeat(6, auto);
+    gap: 6px;
+}
+
+.block-values p{
+    margin: 6px 0;
+    text-align: right;
+}
+
+.block-input{
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--midgrey-green);
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.block-textarea{
+    resize: vertical;
+    min-height: 80px;
+}
+
+.block-actions{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.block-primary{
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ls-gold);
+    color: var(--ls-white);
+    border-radius: 8px;
+    height: 40px;
+    min-width: 140px;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+
+.block-primary:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.block-cancel{
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+    border-radius: 8px;
+    border: 1px solid var(--ls-green);
+    height: 40px;
+    min-width: 140px;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+}
+
+.block-cancel:hover{
+    cursor: pointer;
+    background-color: var(--lightgrey-green);
+}
+
+.reserve-modal{
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.reserve-card{
+    background-color: var(--ls-white);
+    border-radius: 24px;
+    padding: 32px 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 520px;
+    max-width: 640px;
+    color: var(--ls-green);
+}
+
+.reserve-title{
+    margin: 0 0 24px 0;
+    text-align: center;
+    font-weight: 700;
+}
+
+.reserve-details{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+}
+
+.reserve-labels p{
+    margin: 6px 0;
+    font-weight: 600;
+}
+
+.reserve-values p{
+    margin: 6px 0;
+    text-align: right;
+}
+
+.reserve-input-wrap{
+    width: 100%;
+}
+
+.reserve-input{
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--midgrey-green);
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+}
+
+.reserve-anon-row{
+    margin-bottom: 24px;
+}
+
+.reserve-anon{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--dark-green);
+}
+
+.reserve-anon input{
+    width: 16px;
+    height: 16px;
+}
+
+.reserve-actions{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.reserve-primary{
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ls-green);
+    color: var(--ls-white);
+    border-radius: 8px;
+    height: 40px;
+    min-width: 140px;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+
+.reserve-primary:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}
+
+.reserve-cancel{
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ls-white);
+    color: var(--ls-green);
+    border-radius: 8px;
+    border: 1px solid var(--ls-green);
+    height: 40px;
+    min-width: 140px;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+}
+
+.reserve-cancel:hover{
+    cursor: pointer;
+    background-color: var(--lightgrey-green);
+}
+
+.blockroom{
+    color: var(--ls-green);
+    padding: 20px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--ls-white);
+    border-radius: 20px;
+    border: 2px solid var(--lightgrey-green);
+}
+
+.blockroom p{
+    margin: 0%;
+    margin-bottom: 10px;
+    width: auto;
+    display: flex;
+    color: var(--ls-red);
+    align-items: center;
+}
+
+.blockroom h1, h3{
+    margin: 0;
+}
+
+.blockroom h1{
+   color: var(--ls-red);
+}
