@@ -401,6 +401,9 @@ router.put('/deactivate', verifyToken, async (req, res) => {
         student.isActive = false;
         await student.save();
 
+        const reservations = await model.reservationModel.deleteMany({startTime: { $gte: new Date() }, idNumber: student.idNumber});
+    
+
         res.json({ success: true, message: 'Profile deactivated' });
     } catch (error) {
         console.error(error);
