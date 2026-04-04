@@ -141,8 +141,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     // check 5PM
     const fivePM = new Date().setHours(17,0,0,0);
     const now = new Date();
+    if(now > fivePM){
+        currentDate.setDate(currentDate.getDate() + 1);        
+    }
+    
     // check Sunday
-    if(currentDate.getDay() === sundayIndex || now > fivePM) {
+    if(currentDate.getDay() === sundayIndex) {
         currentDate.setDate(currentDate.getDate() + 1);
     }
 
