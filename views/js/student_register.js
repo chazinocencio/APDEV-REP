@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function isValidEmail(value) {
             if (!value) return false;
             if (!value.endsWith("@dlsu.edu.ph")) return false;
+            if (value.includes(" ")) return false;
             return true;
         }
         function isValidId(value) {
@@ -102,12 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     idNumber.style.borderColor = "red";
                     formError.style.display = "block";
                 }
-                if (email.value !== "" && !isValidEmail(email.value)) {
+                if (email.value !== "" && !isValidEmail(email.value.toLowerCase())) {
                     valid = false;
                     email.style.borderColor = "red";
                     emailError.style.display = "block";
                     emailError.textContent = "Not a valid DLSU Email.";
-                } else if (email.value !== "" && isValidEmail(email.value) && await emailExists(email.value)) {
+                } else if (email.value !== "" && isValidEmail(email.value.toLowerCase()) && await emailExists(email.value)) {
                     valid = false;
                     email.style.borderColor = "red";
                     emailError.textContent = "This email is already registered.";
@@ -134,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         middleName: capitalizeFirstChar(trimValue(middleName)),
                         college: trimValue(college),
                         degreeProgram: trimValue(degreeProgram),
-                        email: trimValue(email),
+                        email: trimValue(email).toLowerCase(),
                         idNumber: trimValue(idNumber)
                     };
                     localStorage.setItem("registerData", JSON.stringify(studentData));
