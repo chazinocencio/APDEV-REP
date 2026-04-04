@@ -49,20 +49,23 @@ document.addEventListener("DOMContentLoaded", async function() {
     };
 
     function countSlots(startTime, endTime) {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    const diffMinutes = (end - start) / (1000 * 60); 
-    return Math.round(diffMinutes / 30);
-}
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        const diffMinutes = (end - start) / (1000 * 60); 
+        return Math.round(diffMinutes / 30);
+    }
 
     allReservations.forEach(reservation => {
-        const reservationDate = new Date(reservation.startTime).toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+        const now = new Date();
+        const todayStart = new Date(now.setHours(0, 0, 0, 0));
 
+        // only consider next 7 days
+        const next7Days = new Date(todayStart);
+        next7Days.setDate(next7Days.getDate() + 7);
 
-        if (reservationDate !== today) return;
+        const reservationStart = new Date(reservation.startTime);
 
+        if (reservationStart < todayStart || reservationStart >= next7Days) return;
     
         const room = reservation.seatID.split('-')[0].toLowerCase();
         if (roomCounts[room] !== undefined) {
@@ -74,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     for (var i = 1; i < 7; i++){
     
-        var percentage = (roomCounts["g30"+ i] / 432) * 100;
+        var percentage = (roomCounts["g30"+ i] / (432*7)) * 100;
         percentage = Math.round(percentage);
         
         document.getElementById("G30" + i).innerHTML = `
@@ -85,13 +88,21 @@ document.addEventListener("DOMContentLoaded", async function() {
                         </div>
                     </div>
                     <div class="vacancyinfo">
-                        <span>Slots filled today:</span>
+                        <span>Slots filled (next 7 days):</span>
                         <span>`+percentage+`%</span>
                     </div>
                     <div class="progressbar">
-                        <div class="progressfill" style="width: `+percentage+`%;"></div>
+                        <div class="progressfill" id="progbarG30${i}" style="width: `+percentage+`%;"></div>
                     </div>`
-
+        const progBar = document.getElementById("progbarG30" + i);
+        if (progBar){
+            progBar.style.backgroundColor = "var(--ls-green)";
+            if(percentage >= 33 && percentage < 67){
+                progBar.style.backgroundColor = "var(--ls-gold)";
+            } else if(percentage >= 67) {
+                progBar.style.backgroundColor = "var(--ls-red)";
+            }
+        }
     }
     
 
