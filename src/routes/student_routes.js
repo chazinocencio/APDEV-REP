@@ -245,7 +245,23 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
         if (conflict.length > 0) {
             return res.status(200).json({ 
                 reservation: conflict, 
-                message: 'Your request is conflicting with another reservation' 
+                message: 'Your request is conflicting with another reservation.' 
+            });
+        }
+
+        const selfConflict = await model.reservationModel.find({
+            idNumber: student.idNumber,
+            $or: [
+                { startTime: { $gte: startTime, $lt: endTime } },
+                { endTime: { $gt: startTime, $lte: endTime } },
+                { startTime: { $lte: startTime }, endTime: { $gte: endTime } }
+            ]
+        });
+
+        if (selfConflict.length > 0) {
+            return res.status(200).json({ 
+                reservation: selfConflict, 
+                message: 'You have another reservation conflicting with this time.' 
             });
         }
 
@@ -443,5 +459,34 @@ router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+router.get('/reservations/self_conflict/:idNumber', verifyToken, async (req, res) => {
+    try {
+        const { idNumber } = req.params;
+        const { startTime, endTime } = req.query;
+
+        const selfConflict = await model.reservationModel.find({
+            idNumber: idNumber,
+            $or: [
+                { startTime: { $gte: startTime, $lt: endTime } },
+                { endTime: { $gt: startTime, $lte: endTime } },
+                { startTime: { $lte: startTime }, endTime: { $gte: endTime } }
+            ]
+        });
+
+        if (selfConflict.length > 0) {
+            return res.status(200).json({ 
+                hasConflict: true,
+                reservation: selfConflict, 
+                message: 'You have another reservation conflicting with this time.' 
+            });
+        }
+
+        return res.status(200).json({ hasConflict: false });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+})
 
 export default router;

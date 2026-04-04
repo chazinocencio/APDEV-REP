@@ -24,7 +24,10 @@ function populateDropdowns() {
 
     const dateSelect = document.getElementById("date");
     dateSelect.innerHTML = '<option value="">Select Date</option>';
-    const today = new Date();
+    var today = new Date();
+    if (today.getHours() >= 17){
+        today.setDate(today.getDate() + 1);
+    }
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     for (let i = 0; i < 8; i++) {
@@ -51,14 +54,17 @@ let currentReservation = null;
 async function repaintDisplay(user, reservations, card) {
 
     card.querySelectorAll(".results").forEach(el => el.remove());
-
     for (const [index, reservation] of reservations.entries()) {
-        const today = new Date();
+        var today = new Date();
+        if (today.getHours() >= 17){
+            today.setDate(today.getDate() + 1);
+        }
         today.setHours(0,0,0,0);
 
+        // disregard reservations of past days
         if (new Date(reservation.startTime) < today) continue;
 
-        const seatResponse = await fetch(`/api/student/search_seat/${reservation.seatID}`, {
+        const seatResponse = await fetch(`/api/student/search_seat/${reservation.seatID.toUpperCase()}`, {
             credentials: 'include'
         });
         const seatData = await seatResponse.json();
@@ -290,7 +296,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
 
-        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}&idNumber=${encodeURIComponent(studentProfile.idNumber)}`, {
+        const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`, {
             credentials: 'include'
         });
         const conflictData = await conflictResponse.json();
@@ -301,6 +307,18 @@ document.addEventListener("DOMContentLoaded", async function() {
             errormess.classList.remove("hidden");
             return;
         }
+
+        const selfConflictResp = await fetch(`/api/student/reservations/self_conflict/${studentProfile.idNumber}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`, {
+            credentials: 'include'
+        })
+        const selfConflictData = await selfConflictResp.json();
+
+        if (selfConflictData.hasConflict) {
+            console.log("Conflict found:", selfConflictData.reservation);
+            errormess.textContent = "Invalid, you have another reservation at this time.";
+            errormess.classList.remove("hidden");
+            return;
+        } 
        
         const deleteResponse = await fetch(`/api/student/delete_reservation/${currentReservation.seatID}`, {
             method: "DELETE",
