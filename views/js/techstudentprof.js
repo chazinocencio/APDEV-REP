@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     // populate profile based on ?id=username
    const params = new URLSearchParams(window.location.search);
    const username = params.get('id');
+   document.title = `@${username}`;
 
     if (!username) return; // nothing to load
 

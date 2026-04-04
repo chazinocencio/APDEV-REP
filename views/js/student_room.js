@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const params = new URLSearchParams(window.location.search);
     room = params.get("room");
+    document.title = room;
 
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
 

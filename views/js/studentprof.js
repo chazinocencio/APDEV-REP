@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const params = new URLSearchParams(window.location.search);
     const studentUsername = params.get("id");
+    document.title = `@${studentUsername}`;
 
     if(!studentUsername){
         window.location.href = "studentsearchprof.html";
