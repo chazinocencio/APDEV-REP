@@ -53,7 +53,7 @@ router.get('/reservations/key/:seat_id', verifyToken, async (req, res) => {
         const endTime = new Date(end);
 
         const reservation = await model.reservationModel.findOne({ 
-            seatID: seat_id , 
+            seatID: seat_id.toUpperCase() , 
             startTime: { $lte: startTime },
             endTime: { $gte: endTime }
         });
@@ -203,7 +203,7 @@ router.put('/edit_profile/:idNumber', verifyToken, upload.single('profilePicture
 router.get('/search_seat/:seatID', async (req, res) => {
     try {
         const{seatID} = req.params;
-        const seats = await model.seatModel.findOne({seatID: seatID});
+        const seats = await model.seatModel.findOne({seatID: seatID.toUpperCase()});
         res.json(seats);
     } catch (error) {
         console.error(error);
@@ -228,13 +228,13 @@ router.post('/create_reservation/:username', verifyToken, async (req, res) => {
             return res.status(403).json({ message: "Student is not allowed to make reservations" });
         }
 
-        const seat = await model.seatModel.findOne({ seatID: { $regex: seatID, $options: 'i' } });
+        const seat = await model.seatModel.findOne({ seatID: { $regex: seatID.toUpperCase(), $options: 'i' } });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
 
         const conflict = await model.reservationModel.find({
-            seatID: { $regex: seatID, $options: 'i' },
+            seatID: { $regex: seatID.toUpperCase(), $options: 'i' },
             $or: [
                 { startTime: { $gte: startTime, $lt: endTime } },
                 { endTime: { $gt: startTime, $lte: endTime } },
@@ -320,7 +320,7 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
           }
 
           // find reservation
-          const query = { seatID: seatID, startTime: new Date(startTime), endTime: new Date(endTime) };
+          const query = { seatID: seatID.toUpperCase(), startTime: new Date(startTime), endTime: new Date(endTime) };
           const reservation = await model.reservationModel.findOne(query);
           if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
 
@@ -441,7 +441,7 @@ router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
 
         const conflict = await model.reservationModel.find({
             reservationID: {$ne: reservationID},
-            seatID: { $regex: seatID, $options: 'i' },
+            seatID: { $regex: seatID.toUpperCase(), $options: 'i' },
             $or: [
                 { startTime: { $gte: start, $lt: end } },
                 { endTime: { $gt: start, $lte: end } },

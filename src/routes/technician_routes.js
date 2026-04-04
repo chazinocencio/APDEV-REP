@@ -49,7 +49,7 @@ router.post('/reserve_for_student', verifyToken, async (req, res) => {
             return res.status(403).json({ message: "Student is not allowed to make reservations" });
         }
 
-        const seat = await model.seatModel.findOne({ seatID: seatID });
+        const seat = await model.seatModel.findOne({ seatID: seatID.toUpperCase() });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
@@ -98,7 +98,7 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
     try {
         const {reservationID, seatID, dateRequested, startTime, endTime, description} = req.body;
 
-        const seat = await model.seatModel.findOne({ seatID: seatID });
+        const seat = await model.seatModel.findOne({ seatID: seatID.toUpperCase() });
         if (!seat) {
             return res.status(404).json({ message: "Seat not found" });
         }
@@ -119,7 +119,7 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
         
         const newRecord = new model.reservationModel({
             reservationID: reservationID || newID,
-            seatID: seatID,
+            seatID: seatID.toUpperCase(),
             idNumber: null,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
@@ -132,10 +132,10 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
         const savedRecord = await newRecord.save();
         res.status(201).json({
             success: true,
-            message: `${seatID} blocked successfully`,
+            message: `${seatID.toUpperCase()} blocked successfully`,
             reservation: savedRecord
         });
-        console.log(`${seatID} blocked successfully`);
+        console.log(`${seatID.toUpperCase()} blocked successfully`);
 
     } catch (error) {
         console.error(error);
@@ -161,7 +161,7 @@ router.put('/update_reservation/:id', verifyToken, async (req, res) => {
         const newEnd = new Date(endTime);
 
         const conflict = await model.reservationModel.findOne({
-            seatID: seatID,
+            seatID: seatID.toUpperCase(),
             _id: { $ne: id },
             $and: [
                 { startTime: { $lt: newEnd } },
@@ -173,7 +173,7 @@ router.put('/update_reservation/:id', verifyToken, async (req, res) => {
             return res.status(409).json({ success: false, message: 'Time slot conflicts with existing reservation' });
         }
 
-        reservation.seatID = seatID;
+        reservation.seatID = seatID.toUpperCase();
         reservation.startTime = newStart;
         reservation.endTime = newEnd;
         if (description !== undefined) reservation.description = description;
@@ -197,7 +197,7 @@ router.delete('/delete_reservation/:seatID', verifyToken, async (req, res) => {
         }
 
         // find reservation
-        const query = { seatID: seatID, startTime: new Date(startTime), endTime: new Date(endTime) };
+        const query = { seatID: seatID.toUpperCase(), startTime: new Date(startTime), endTime: new Date(endTime) };
         const reservation = await model.reservationModel.findOne(query);
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
 

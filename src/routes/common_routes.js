@@ -19,7 +19,7 @@ router.get('/reservations_per_day/:roomID/:date', verifyToken, async(req, res) =
         endDate.setHours(24,0,0,0);
 
         const reservations = await model.reservationModel.find({
-            seatID: { $regex: `^${roomID}` }, // seat starts with roomID
+            seatID: { $regex: `^${roomID.toUpperCase()}` }, // seat starts with roomID
             startTime: {
                 $gte: startDate,
                 $lt: endDate
