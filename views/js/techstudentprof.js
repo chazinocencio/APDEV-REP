@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', async function(){
    const techprofile = document.getElementById('back')
    const viewrev = document.getElementById('viewrev')
     const blockbutt = document.getElementById('blockbutt')
-    const confirmblock = document.getElementById('confirmblock')
-    const cancelblock = document.getElementById('cancelblock')
    let studentIdNumber = null;
 
     if (techprofile) techprofile.addEventListener('click', function(){
@@ -41,47 +39,43 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (blockbutt) blockbutt.addEventListener('click', function(){
           // if student is currently blocked, send unblock request immediately
           if (typeof window.__studentBlocked !== 'undefined' && window.__studentBlocked) {
-               (async () => {
-                  if (!window.__studentIdNumber) return;
-                  try {
-                     const resp = await fetch(`/api/technician/unblock_student/${window.__studentIdNumber}`, { 
-                        method: 'PUT',
-                        credentials: 'include' 
-                     });
-                     if (!resp.ok) throw new Error('Failed to unblock student');
-                     window.__studentBlocked = false;
-                     blockbutt.querySelector('h3').textContent = 'Block Student';
-                  } catch (err) {
-                     console.error('Unblock failed', err);
-                  }
-               })();
+               if(confirm('Are you sure you would like to unblock this student?')){  
+                  (async () => {
+                     if (!window.__studentIdNumber) return;
+                     try {
+                        const resp = await fetch(`/api/technician/unblock_student/${window.__studentIdNumber}`, { 
+                           method: 'PUT',
+                           credentials: 'include' 
+                        });
+                        if (!resp.ok) throw new Error('Failed to unblock student');
+                        window.__studentBlocked = false;
+                        blockbutt.querySelector('h3').textContent = 'Block Student';
+                     } catch (err) {
+                        console.error('Unblock failed', err);
+                     }
+                  })();
+               }
                return;
           }
 
-          document.getElementById('blockroom1').classList.remove('hidden');
-    }) 
-
-    if (confirmblock) confirmblock.addEventListener('click', function(){
-          // perform block action
-          (async () => {
-             document.getElementById('blockroom1').classList.add('hidden');
-             if (!studentIdNumber) return;
-             try {
-                const resp = await fetch(`/api/technician/block_student/${studentIdNumber}`, { 
-                  method: 'PUT',
-                  credentials: 'include' 
-               });
-                if (!resp.ok) throw new Error('Failed to block student');
-                window.__studentBlocked = true;
-                window.__studentIdNumber = studentIdNumber;
-                if (blockbutt) blockbutt.querySelector('h3').textContent = 'Unblock Student';
-             } catch (err) {
-                console.error('Block failed', err);
-             }
-          })();
-    }) 
-    if (cancelblock) cancelblock.addEventListener('click', function(){
-       document.getElementById('blockroom1').classList.add('hidden');
+          if(confirm('Are you sure you would like to block this student?')){
+            (async () => {
+               document.getElementById('blockroom1').classList.add('hidden');
+               if (!studentIdNumber) return;
+               try {
+                  const resp = await fetch(`/api/technician/block_student/${studentIdNumber}`, { 
+                     method: 'PUT',
+                     credentials: 'include' 
+                  });
+                  if (!resp.ok) throw new Error('Failed to block student');
+                  window.__studentBlocked = true;
+                  window.__studentIdNumber = studentIdNumber;
+                  if (blockbutt) blockbutt.querySelector('h3').textContent = 'Unblock Student';
+               } catch (err) {
+                  console.error('Block failed', err);
+               }
+            })();
+          }
     })
 
     // populate profile based on ?id=username
