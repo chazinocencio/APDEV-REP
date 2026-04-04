@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", async function(){
     const technicianProfile = await response.json();
 
     const profilePicEl = document.getElementById('profilepic');
-    const profileUsernameEls = document.querySelectorAll('#profileusername');
+    const profileUsername = document.getElementById('profileusername');
+    const profileFullName = document.getElementById('profilefullname');
     const profIdEl = document.getElementById('prof-id');
     const campusEl = document.getElementById('campus');
     const progEl = document.getElementById('prof-program');
@@ -31,7 +32,8 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     // populate
     if (technicianProfile.profilePicture) profilePicEl.src = technicianProfile.profilePicture;
-    profileUsernameEls.forEach(el => el.innerText = technicianProfile.username ? `@${technicianProfile.username}` : technicianProfile.email);
+    profileUsername.innerText = technicianProfile.username ? `@${technicianProfile.username}` : technicianProfile.email;
+    profileFullName.innerText = `${technicianProfile.lastName}, ${technicianProfile.firstName} ${technicianProfile.middleName ? technicianProfile.middleName[0] + '.' : ''}`;
     if (profIdEl) profIdEl.innerText = technicianProfile.employeeID || '';
     if (campusEl) campusEl.innerText = technicianProfile.department || '';
     if (progEl) progEl.innerText = technicianProfile.role || '';
