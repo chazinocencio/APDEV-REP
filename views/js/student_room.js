@@ -128,6 +128,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "student.html";
+    });
+
     const params = new URLSearchParams(window.location.search);
     room = params.get("room");
     document.title = room;

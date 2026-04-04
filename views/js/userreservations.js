@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     
     let user = null;
 
-	const res = await fetch('api/auth/me', {
+	const res = await fetch('api/auth/me', { 
 		credentials: 'include'
 	})
 

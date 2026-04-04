@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async function(){
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "student.html";
+    });
+
     const studentprofile = document.getElementById('back');
     const searchBar = document.querySelector('#searchbar');
     const searchButton = document.querySelector('#searchbutt');

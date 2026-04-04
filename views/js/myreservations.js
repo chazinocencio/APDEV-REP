@@ -201,6 +201,10 @@ document.addEventListener("DOMContentLoaded", async function() {
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "student.html";
+    });
+
     const profileResponse = await fetch(`/api/student/view_profile/${user.username}`, {
         credentials: 'include'
     });

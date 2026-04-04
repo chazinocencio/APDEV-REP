@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', async function(){
 		window.location.href = "technician_login.html";
 		return;
 	}
+
+   document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "technician.html";
+    });
    
    const techprofile = document.getElementById('back')
    const viewrev = document.getElementById('viewrev')

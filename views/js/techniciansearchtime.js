@@ -48,6 +48,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "technician.html";
+    });
+
     loadDates();
     const dateInput = document.getElementById('date');
     const timeStart = document.getElementById('timestart');

@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async function(){
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "technician.html";
+    });
+
     const backButton = document.getElementById('back');
     const searchBar = document.querySelector('#searchbar');
     const searchButton = document.querySelector('#searchbutt');

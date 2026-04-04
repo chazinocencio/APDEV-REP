@@ -112,6 +112,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "technician.html";
+    });
+
     const params = new URLSearchParams(window.location.search);
     room = params.get("room") || "G301";
     document.title = room;

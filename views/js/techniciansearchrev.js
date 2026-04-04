@@ -506,4 +506,6 @@ function openEditModal(reservation) {
     }
 }
 
-
+document.getElementById('headerlogo').addEventListener('click', () => {
+    window.location.href = "technician.html";
+});

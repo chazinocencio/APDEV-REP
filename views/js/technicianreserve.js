@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "technician.html";
+    });
 
     const response = await fetch('/api/student/all_reservations', {
         credentials: 'include'

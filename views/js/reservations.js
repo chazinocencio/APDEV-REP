@@ -19,3 +19,7 @@ editsave.addEventListener('click', function(){
 editcancel.addEventListener('click', function(){
     editrev.classList.add('hidden');
 })
+
+document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "student.html";
+    });

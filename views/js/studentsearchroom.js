@@ -49,6 +49,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 		return;
 	}
 
+    document.getElementById('headerlogo').addEventListener('click', () => {
+        window.location.href = "student.html";
+    });
+
     loadDates();
     const dateInput = document.getElementById('date');
     const timeStart = document.getElementById('timestart');
