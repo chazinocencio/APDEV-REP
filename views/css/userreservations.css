@@ -251,11 +251,21 @@
     height: 20px;
 }
 
+.errormess {
+    color: red;
+}
+
 .options{
     display: flex;
     justify-content: right;
     width: 80%;
     gap: 50px;
+}
+
+.options select, .options input {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-color);
 }
 
 .inpt{

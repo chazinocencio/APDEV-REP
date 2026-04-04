@@ -418,7 +418,7 @@ router.put('/deactivate', verifyToken, async (req, res) => {
 router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
     try {
         const { seatID } = req.params;
-        const { reservationID, startTime, endTime, idNumber } = req.query;
+        const { reservationID, startTime, endTime } = req.query;
 
         const start = new Date(startTime);
         const end = new Date(endTime);

@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const minuteDiff = (startTimeTemp.getTime() - currentTimeTemp.getTime()) / 60000
 
         if(minuteDiff < 30) {
-            errormess.textContent = "Edit  can only be made at least 30 mins. before intended start time.";
+            errormess.textContent = "Edit can only be made at least 30 mins. before intended start time.";
             errormess.classList.remove("hidden");
             return;
         }
@@ -302,17 +302,17 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
        
-            const deleteResponse = await fetch(`/api/student/delete_reservation/${currentReservation.seatID}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    startTime: currentReservation.startTime,
-                    endTime: currentReservation.endTime
-                })
-            });
+        const deleteResponse = await fetch(`/api/student/delete_reservation/${currentReservation.seatID}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                startTime: currentReservation.startTime,
+                endTime: currentReservation.endTime
+            })
+        });
 
         const newReservation = {
             reservationID: reservationID,

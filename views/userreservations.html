@@ -49,7 +49,7 @@
 
                 <div class="editrev hidden" id="editrev">
                         <h1>Edit Reservations</h1>
-                        <h3>#67676767</h3>
+                        <h3 id="number_reservation">#67676767</h3>
 
                         <div class="inpt">
 
@@ -57,37 +57,32 @@
                                 <h3>Room</h3>
 
                                 <div class="options">
-                                    <div class="search">
-                                            <input type="text" placeholder="Search" name= "searchbar" id="room">
-                                        <div class="searchlogo">
-                                            <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                        </div>
-                                    </div>
+                                    <select id="room" class="search">
+                                        <option value="">Select Room</option>
+                                        <option value="G301">G301</option>
+                                        <option value="G302">G302</option>
+                                        <option value="G303">G303</option>
+                                        <option value="G304">G304</option>
+                                        <option value="G305">G305</option>
+                                        <option value="G306">G306</option>
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="searchdeets">
-                                <h3>seat</h3>
+                                <h3>Seat</h3>
 
                                 <div class="options">
-                                    <div class="search">
-                                            <input type="text" placeholder="Search" name= "searchbar" id="seat">
-                                        <div class="searchlogo">
-                                            <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                        </div>
-                                    </div>
+                                    <select id="seat" class="search">
+                                        
+                                    </select>
                                 </div>
                             </div>
                             <div class="searchdeets">
                                 <h3>Date</h3>
 
                                 <div class="options">
-                                    <div class="search">
-                                            <input type="text" placeholder="Search" name= "searchbar" id="date">
-                                        <div class="searchlogo">
-                                            <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                        </div>
-                                    </div>
+                                    <input id="date" type="date" class="search">
                                 </div>
                             </div>
 
@@ -96,24 +91,56 @@
                                 <h3>Time Start</h3>
 
                                 <div class="options">
-                                    <div class="search">
-                                            <input type="text" placeholder="Search" name= "searchbar" id="timestart">
-                                        <div class="searchlogo">
-                                            <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                        </div>
-                                    </div>
+                                    <select id="timestart" class="search">
+                                        <option value="">Select</option>
+                                        <option value="08:00">8:00 AM</option>
+                                        <option value="08:30">8:30 AM</option>
+                                        <option value="09:00">9:00 AM</option>
+                                        <option value="09:30">9:30 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="10:30">10:30 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="11:30">11:30 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="12:30">12:30 PM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="13:30">1:30 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="14:30">2:30 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="15:30">3:30 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                        <option value="16:30">4:30 PM</option>
+                                        <option value="17:00">5:00 PM</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="searchdeets">
                                 <h3>Time End</h3>
 
                                 <div class="options">
-                                    <div class="search">
-                                            <input type="text" placeholder="Search" name= "searchbar" id="timeend">
-                                        <div class="searchlogo">
-                                            <img src="assets/images/searchlogo.png" alt="searchlogo">
-                                        </div>
-                                    </div>
+                                    <select id="timeend" class="search">
+                                        <option value="">Select</option>
+                                        <option value="08:00">8:00 AM</option>
+                                        <option value="08:30">8:30 AM</option>
+                                        <option value="09:00">9:00 AM</option>
+                                        <option value="09:30">9:30 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="10:30">10:30 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="11:30">11:30 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="12:30">12:30 PM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="13:30">1:30 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="14:30">2:30 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="15:30">3:30 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                        <option value="16:30">4:30 PM</option>
+                                        <option value="17:00">5:00 PM</option>
+                                    </select>
                                 </div>
                             </div>
                 
