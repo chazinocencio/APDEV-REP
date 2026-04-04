@@ -135,13 +135,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (dateback) {
         dateback.classList.add("disabled");
         dateback.addEventListener("click", function () {
-            if (dayCounter === 6) {
+            // can view next days
+            if (dayCounter === 13) {
                 document.getElementById("datego").classList.remove("disabled");
             }
+            // go to previous day
             if (dayCounter > 0) {
                 currentDate.setDate(currentDate.getDate() - 1);
                 updateDateDisplay();
                 dayCounter--;
+                // cannot view past days
                 if (dayCounter === 0) {
                     dateback.classList.add("disabled");
                 }
@@ -152,14 +155,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     var datego = document.getElementById("datego");
     if (datego) {
         datego.addEventListener("click", function () {
+            // can view previous days
             if (dayCounter === 0) {
                 dateback.classList.remove("disabled");
             }
-            if (dayCounter < 6) {
+            // go to next day, can view 2 weeks
+            if (dayCounter < 13) {
                 currentDate.setDate(currentDate.getDate() + 1);
                 updateDateDisplay();
                 dayCounter++;
-                if (dayCounter === 6) {
+                // cannot view more than 2 weeks (14 days)
+                if (dayCounter === 13) {
                     datego.classList.add("disabled");
                 }
             } 

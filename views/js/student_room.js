@@ -138,8 +138,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     document.querySelector('#room-label').innerHTML = 'ROOM ' + room;
 
+    // check 5PM
+    const fivePM = new Date().setHours(17,0,0,0);
+    const now = new Date();
     // check Sunday
-    if(currentDate.getDay() === sundayIndex) {
+    if(currentDate.getDay() === sundayIndex || now > fivePM) {
         currentDate.setDate(currentDate.getDate() + 1);
     }
 
@@ -179,7 +182,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (dayCounter === 0) {
                 dateback.classList.remove("disabled");
             }
-            // go to next day
+            // go to next day, can view only one week
             if (dayCounter < 6) {
                 currentDate.setDate(currentDate.getDate() + 1);
                 // check if sunday

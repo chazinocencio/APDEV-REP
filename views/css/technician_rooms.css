@@ -179,6 +179,11 @@
     padding-right: 10px;
 }
 
+.datebutt.disabled{
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .datebutt:hover{
     cursor: pointer;
     background-color: var(--ls-green);
