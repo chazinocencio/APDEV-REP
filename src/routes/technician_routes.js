@@ -121,6 +121,7 @@ router.post('/block_seat', verifyToken, async(req, res) =>{
             reservationID: reservationID || newID,
             seatID: seatID.toUpperCase(),
             idNumber: null,
+            dateRequested: newDateReq,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
             isAnonymous: null,
