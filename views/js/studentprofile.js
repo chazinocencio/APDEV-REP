@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const pictureedit = document.getElementById('pictureedit')
     const card = document.getElementById('card')
     const editinfo = document.getElementById('info')
+    const myReservationsButt = document.getElementById('reservations');
 
     const editphotocard = document.getElementById('editphotocard')
     const photosave = document.getElementById('photosave')
@@ -219,6 +220,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     })
     edit.addEventListener('click', () => { 
         profilepic.style.filter = "brightness(0.75)";
+        myReservationsButt.classList.add('hidden');
         edit.classList.add('hidden');
         card.classList.add('hidden');
         changepass.classList.add('hidden');
