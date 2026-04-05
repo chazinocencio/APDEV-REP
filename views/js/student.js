@@ -41,9 +41,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 	const search = document.getElementById('studentsearch')
 	const searchprof = document.getElementById('searchstudent')
 	const searchroom = document.getElementById('searchroom')
+	const about = document.getElementById('about')
 
 	studentprofile.addEventListener('click', function(){
 		window.location.href = "../studentprofile.html"
+	})
+
+	about.addEventListener('click', function(){
+		window.location.href = "../about.html"
 	})
 
 	studentreserve.addEventListener('click', function(){
