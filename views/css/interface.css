@@ -54,8 +54,10 @@ body{
 
 .user img{
     height: 150px;
-    width: auto;
+    width: 150px;
     border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .username{
@@ -237,3 +239,26 @@ body{
     width: 100%;
 }
 
+
+.aboutbutt{
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--ls-green);
+    width: auto;
+    height: 40px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: var(--ls-white);
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.aboutbutt:hover{
+    cursor: pointer;
+    background-color: var(--darkgrey-green);
+}

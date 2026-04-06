@@ -207,10 +207,6 @@
    gap: 60px;
 }
 
-/* Alignment and styling for lab and leb structure (matching userreservations) */
-.label{
-    width: 90%;
-}
 
 #resultsContainer{
     width: 100%;
@@ -219,30 +215,49 @@
     align-items: center;
     gap: 10px;
 }
+.label{
+    width: 90%;
+    font-size: 10px;
+}
+
 
 .lab{
-    margin-right: 0;
+    margin-left: 2%;
+    width: 37%;
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+}
+
+.time{
+    display: flex;
+    width: 60%;
+    gap: 3%;
+}
+
+.time span{
+    display: flex;
+    width: 220px;
+    justify-content: space-between;
+    gap: 3%;
 }
 
 .lab span{
-    margin-left: 35px;
+    display: flex;
+    gap: 15px;
 }
 
 .leb{
     display: flex;
     justify-content: space-between;
-    width: 80%;
-    gap: 10px;
+    width: 100%;
+    padding-right: 12%;
 }
+
 
 .leb h3{
     margin: 0;
 }
 
-/* Styles for filter select and date inputs */
 .search select,
 .search input[type="date"] {
     width: 100%;
@@ -272,7 +287,6 @@
     margin-left: 50px;
 }
 
-/* Button container for results */
 .butts{
     display: flex;
     gap: 10px;

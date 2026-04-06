@@ -223,23 +223,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     const card = document.getElementById("card");
 
-    card.innerHTML = `
-        <div class="label">
-            <div class="leb">
-                <div class="lab">
-                    <h3>Reservation #</h3>
-                    <h3>Room #</h3>
-                    <span><h3>Seat #</h3></span>
-                </div>
-                <h3>Request Date</h3>
-                <h3>Request Time</h3>
-                <h3>Date</h3>
-                <div class="st"><h3>Start Time</h3></div>
-                <h3>End Time</h3>
-            </div>
-        </div>
-    `;
-
     await repaintDisplay(user, reservations, card);
 
     studentprofile.addEventListener('click', function() {
