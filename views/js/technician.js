@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 	const usernameFull = document.getElementById('username-fullname');
 	const userImg = document.querySelector('.user img');
 
+	const about = document.getElementById('about')
+
 	const fullName = `${technicianProf.lastName || ''}, ${technicianProf.firstName || ''}${technicianProf.middleName ? ' ' + (usertechnicianProf.middleName[0] + '.') : ''}`;
 	const displayName = technicianProf.username ? `@${technicianProf.username}` : fullName;
 
@@ -42,6 +44,10 @@ document.addEventListener('DOMContentLoaded', async function(){
 	if (usernameFull) usernameFull.innerHTML = displayName;
 	if (userImg && technicianProf.profilePicture) userImg.src = technicianProf.profilePicture;
 
+	about.addEventListener('click', function(){
+		window.location.href = "../about.html"
+	})
+	
 	searchprof.addEventListener('click', function(){
 		window.location.href = "../techniciansearchprof.html"
 	})
