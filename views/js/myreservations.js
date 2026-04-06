@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return;
         }
 
-        const selfConflictResp = await fetch(`/api/student/reservations/self_conflict/${studentProfile.idNumber}?startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`, {
+        const selfConflictResp = await fetch(`/api/student/reservations/self_conflict/${studentProfile.idNumber}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`, {
             credentials: 'include'
         })
         const selfConflictData = await selfConflictResp.json();

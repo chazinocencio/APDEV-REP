@@ -18,7 +18,7 @@ function loadDates(){
         <option value="${currentDate.toLocaleDateString('en-CA')}">${formatDate(currentDate)}</option>
     `
     
-    for(let i = 1; i < 7; i++){
+    for(let i = 1; i < 14; i++){
         let newDate = new Date(currentDate)
         newDate.setDate(newDate.getDate() + i)
         dateInput.innerHTML += `
@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        const startTimeISO = `${dateInput.value}T${timeStart.value}:00`;
-        const endTimeISO = `${dateInput.value}T${timeEnd.value}:00`;
+        const startTimeISO = `${dateInput.value}T${timeStart.value}:00+08:00`;
+        const endTimeISO = `${dateInput.value}T${timeEnd.value}:00+08:00`;
 
         const startDateTime = new Date(startTimeISO);
         const endDateTime = new Date(endTimeISO);

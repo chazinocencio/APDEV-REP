@@ -455,8 +455,8 @@ function openEditModal(reservation) {
 
             if (!seat || !startDate || !startTime || !endTime) { alert('Please fill all fields'); return; }
             // single-day reservations: use startDate for both start and end day
-            const fullStart = `${startDate}T${startTime}`;
-            const fullEnd = `${startDate}T${endTime}`;
+            const fullStart = `${startDate}T${startTime}+08:00`;
+            const fullEnd = `${startDate}T${endTime}+08:00`;
             if (new Date(fullStart) >= new Date(fullEnd)) { alert('End time must be after start time'); return; }
 
             try {

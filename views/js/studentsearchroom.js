@@ -10,6 +10,9 @@ function formatDate(date){
 
 function loadDates(){
     var currentDate = new Date();
+    if (currentDate.getHours() >= 17){
+        currentDate.setDate(currentDate.getDate() + 1)
+    }
     const dateInput = document.querySelector('#dateinput select');
     dateInput.innerHTML = `
         <option value="">Select</option>
@@ -73,8 +76,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        const startTime = `${dateInput.value}T${timeStart.value}:00`;
-        const endTime = `${dateInput.value}T${timeEnd.value}:00`;
+        const startTime = `${dateInput.value}T${timeStart.value}:00+08:00`;
+        const endTime = `${dateInput.value}T${timeEnd.value}:00+08:00`;
 
         const startDateTime = new Date(startTime);
         const endDateTime = new Date(endTime);
@@ -165,9 +168,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
 
                     const reservationResult = await response.json();
-                    console.log(reservationResult);
-
-                    this.closest('.results').remove();
+                    if(reservationResult.success){
+                        alert("Reserved!")    
+                        console.log(reservationResult);
+                        this.closest('.results').remove();
+                    } else {
+                        alert(reservationResult.message);
+                    }
                 });
             });
         }

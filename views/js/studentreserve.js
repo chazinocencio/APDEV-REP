@@ -56,7 +56,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     allReservations.forEach(reservation => {
-        const now = new Date();
+        var now = new Date();
+        if (now.getHours() >= 17){
+            now.setDate(now.getDate() + 1);
+        }
         const todayStart = new Date(now.setHours(0, 0, 0, 0));
 
         // only consider next 7 days

@@ -276,8 +276,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 
         errormess.classList.add("hidden");
 
-        const startFullDate = date + "T" + startTime;
-        const endFullDate = date + "T" + endTime;
+        const startFullDate = date + "T" + startTime + "+08:00";
+        const endFullDate = date + "T" + endTime + "+08:00";
 
         const conflictResponse = await fetch(`/api/student/reservations/conflict/${seatID}?reservationID=${encodeURIComponent(reservationID)}&startTime=${encodeURIComponent(startFullDate)}&endTime=${encodeURIComponent(endFullDate)}`, {
             credentials: 'include'

@@ -205,8 +205,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             selectedAction = {
                 type: 'reserve_student',
                 seatID: room + '-' + seatNumber,
-                startTime: reserveDateISO + "T" + startTime,
-                endTime: reserveDateISO + "T" + endTime
+                startTime: reserveDateISO + "T" + startTime + "+08:00",
+                endTime: reserveDateISO + "T" + endTime + "+08:00"
             };
 
             // populate modal fields
@@ -316,8 +316,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             selectedAction = {
                 type: 'block_time',
                 seatID: room + '-' + seatNumber,
-                startTime: reserveDate + "T" + startTime,
-                endTime: reserveDate + "T" + endTime
+                startTime: reserveDate + "T" + startTime + "+08:00",
+                endTime: reserveDate + "T" + endTime + "+08:00"
             };
 
               // populate block modal fields (match IDs in HTML)
@@ -428,8 +428,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             const reserveDate = currentDate.toLocaleDateString('en-CA');
-            const fullStartTime = reserveDate + "T" + startTime;
-            const fullEndTime = reserveDate + "T" + endTime;
+            const fullStartTime = reserveDate + "T" + startTime + "+08:00";
+            const fullEndTime = reserveDate + "T" + endTime + "+08:00";
 
             // Check for conflicts with existing reservations
             try {
@@ -566,8 +566,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 var cellsInRow = row.querySelectorAll('.date-grid-cell');
                 var cellIndex = Array.from(cellsInRow).indexOf(cell);
 
-                const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start;
-                const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end;
+                const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start + "+08:00";
+                const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end + "+08:00";
 
                 try {
                     const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
@@ -802,8 +802,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             // build ISO strings
-            const fullStart = `${startDate}T${startTime}`;
-            const fullEnd = `${endDate}T${endTime}`;
+            const fullStart = `${startDate}T${startTime}+08:00`;
+            const fullEnd = `${endDate}T${endTime}+08:00`;
 
             if (new Date(fullStart) >= new Date(fullEnd)) {
                 alert('End time must be after start time');

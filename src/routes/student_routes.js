@@ -463,9 +463,10 @@ router.get('/reservations/conflict/:seatID', verifyToken, async (req, res) => {
 router.get('/reservations/self_conflict/:idNumber', verifyToken, async (req, res) => {
     try {
         const { idNumber } = req.params;
-        const { startTime, endTime } = req.query;
+        const { reservationID, startTime, endTime } = req.query;
 
         const selfConflict = await model.reservationModel.find({
+            reservationID: { $ne: reservationID },
             idNumber: idNumber,
             $or: [
                 { startTime: { $gte: startTime, $lt: endTime } },
