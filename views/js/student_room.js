@@ -236,8 +236,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             var isAnonymous = anonCheckbox ? anonCheckbox.checked : false;
 
             const reserveDate = currentDate.toLocaleDateString('en-CA');
-            const startTime = reserveDate + "T" + getTimeRangeStringFromIndex(startCellIndex).start;
-            const endTime = reserveDate + "T" + getTimeRangeStringFromIndex(endCellIndex).end;
+            const startTime = reserveDate + "T" + getTimeRangeStringFromIndex(startCellIndex).start + "+08:00";
+            const endTime = reserveDate + "T" + getTimeRangeStringFromIndex(endCellIndex).end + "+08:00";
 
             // check if reservation was made at least 30 mins before start time
             const currentTimeTemp = new Date()
@@ -352,8 +352,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 var cellsInRow = row.querySelectorAll('.date-grid-cell');
                 var cellIndex = Array.from(cellsInRow).indexOf(cell);
 
-                const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start;
-                const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end;
+                const startTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).start + "+08:00";
+                const endTime = reservationDate + "T" + getTimeRangeStringFromIndex(cellIndex).end + "+08:00";
 
                 const getResponse = await fetch(`/api/student/reservations/key/${roomSeat}?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}`, {
                     method: "GET",

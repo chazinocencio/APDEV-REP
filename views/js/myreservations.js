@@ -266,8 +266,8 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         errormess.classList.add("hidden");
 
-        const startFullDate = date + "T" + startTime;
-        const endFullDate = date + "T" + endTime;
+        const startFullDate = date + "T" + startTime + "+08:00";
+        const endFullDate = date + "T" + endTime + "+08:00";
 
         const currentTimeTemp = new Date()
         const startTimeTemp = new Date(startFullDate)
