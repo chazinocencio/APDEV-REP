@@ -304,7 +304,7 @@ router.put('/edit_profile/:employeeID', verifyToken, upload.single('profilePictu
         };
         
         const duration = req.user.rememberMe ? '21d' : '1h';
-        const newToken = jwt.sign(payload, getJWTSecret, { expiresIn: duration });
+        const newToken = jwt.sign(payload, getJWTSecret(), { expiresIn: duration });
 
         res.cookie("token", newToken, {
             httpOnly: true,
