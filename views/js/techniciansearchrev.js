@@ -94,7 +94,7 @@ function applyFilters() {
     reservations.forEach((reservation, index) => {
         let matches = true;
         const displayIndex = index + 1; // Display index is 1-based
-        console.log(date, reservation.date)
+        
         // Apply AND logic - all filters must match
         // if (resID && !displayIndex.toString().includes(resID)) {
         //     matches = false;
