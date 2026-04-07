@@ -88,13 +88,13 @@ function applyFilters() {
     const seat = filterSeat.value.toUpperCase();
     const date = formatDateForComparison(filterDate.value);
     const timeSlot = filterTime.value;
-
+    
     let visibleCount = 0;
 
     reservations.forEach((reservation, index) => {
         let matches = true;
         const displayIndex = index + 1; // Display index is 1-based
-
+        console.log(date, reservation.date)
         // Apply AND logic - all filters must match
         // if (resID && !displayIndex.toString().includes(resID)) {
         //     matches = false;
@@ -263,7 +263,11 @@ async function fetchReservations() {
                 const dateReq = new Date(res.dateRequested)
 
                 // formatted date & time requested
-                const dateRequested = dateReq.toLocaleDateString()
+                const dateRequested = dateReq.toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                })
                 const timeRequested = dateReq.toLocaleTimeString('en-US', {
                     hour: 'numeric',
                     minute: '2-digit',
@@ -274,7 +278,11 @@ async function fetchReservations() {
                 const startDate = new Date(res.startTime);
                 const endDate = new Date(res.endTime);
                 
-                const dateStr = startDate.toLocaleDateString();
+                const dateStr = startDate.toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                });
                 
                 const startTimeStr = startDate.toLocaleTimeString('en-US', {
                     hour: 'numeric',

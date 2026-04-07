@@ -1,5 +1,10 @@
 # CCAPDEV-MCO
 
+### Where to access
+```
+https://archerlabs-ooc8.onrender.com
+```
+
 ### How to initialize
 ```
 npm init -y
@@ -20,5 +25,5 @@ npm run dev
 
 ### How to populate database
 ```
-npm src\scripts\seed_db.js
+node src\scripts\seed_db.js
 ```
