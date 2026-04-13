@@ -18,7 +18,7 @@ async function seed() {
     const technicians = [
         {
             username: 'marty.mcfly',
-            email: 'marty.mcfly@example.com',
+            email: 'marty.mcfly@dlsu.edu.ph',
             passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'McFly',
             firstName: 'Marty',
@@ -32,7 +32,7 @@ async function seed() {
         },
         {
             username: 'emmet.brown',
-            email: 'emmet.brown@example.com',
+            email: 'emmet.brown@dlsu.edu.ph',
             passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Brown',
             firstName: 'Emmet',
@@ -41,6 +41,48 @@ async function seed() {
             bio: 'Head of Chrono Support.',
             isActive: true,
             employeeID: 'TECH-1002',
+            department: 'IT',
+            role: 'technician'
+        }, 
+        {
+            username: 'peterparker',
+            email: 'peter.parker@dlsu.edu.ph',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
+            lastName: 'Parker',
+            firstName: 'Peter',
+            middleName: 'P',
+            profilePicture: '/uploads/profilepics/peter.png',
+            bio: 'Head of Spidey Sense.',
+            isActive: true,
+            employeeID: 'TECH-1003',
+            department: 'IT',
+            role: 'technician'
+        },
+        {
+            username: 'naomwick',
+            email: 'chazwick.reyes@dlsu.edu.ph',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
+            lastName: 'Chazwick',
+            firstName: 'Reyes',
+            middleName: 'I',
+            profilePicture: '/uploads/profilepics/chaz.png',
+            bio: 'Head of Front End.',
+            isActive: true,
+            employeeID: 'TECH-1004',
+            department: 'IT',
+            role: 'technician'
+        },
+        {
+            username: 'jardrian',
+            email: 'adrian.santiago@dlsu.edu.ph',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
+            lastName: 'Bacolod',
+            firstName: 'JR',
+            middleName: 'A',
+            profilePicture: '/uploads/profilepics/bacolod.png',
+            bio: 'Head of Labs.',
+            isActive: true,
+            employeeID: 'TECH-1005',
             department: 'IT',
             role: 'technician'
         }
@@ -53,7 +95,7 @@ async function seed() {
         {
             username: 'naomireyes',
             idNumber: 1240001,
-            email: 'naomi.reyes@example.com',
+            email: 'naomi.reyes@dlsu.edu.ph',
             passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Reyes',
             firstName: 'Naomi',
@@ -83,7 +125,7 @@ async function seed() {
         {
             username: 'adrianbacolod',
             idNumber: 1240003,
-            email: 'adrian.bacolod@example.com',
+            email: 'adrian.bacolod@dlsu.edu.ph',
             passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Bacolod',
             firstName: 'Adrian',
@@ -98,7 +140,7 @@ async function seed() {
         {
             username: 'chazinocencio',
             idNumber: 1240004,
-            email: 'chaz.inocencio@example.com',
+            email: 'chaz.inocencio@dlsu.edu.ph',
             passwordHash: await bcrypt.hash('password123', saltRounds),
             lastName: 'Inocencio',
             firstName: 'Chaz',
@@ -107,6 +149,21 @@ async function seed() {
             bio: 'Quiet student.',
             degreeProgram: 'BS Computer Science',
             college: 'College of Computer Studies',
+            isActive: true,
+            canReserve: true
+        },
+        {
+            username: 'joseriz',
+            idNumber: 1240005,
+            email: 'jose.rizal@dlsu.edu.ph',
+            passwordHash: await bcrypt.hash('password123', saltRounds),
+            lastName: 'Rizal',
+            firstName: 'Jose',
+            middleName: 'P',
+            profilePicture: '/uploads/profilepics/rizal.jpg',
+            bio: 'El fili author.',
+            degreeProgram: 'BS Computer Science',
+            college: 'College Liberal Arts',
             isActive: true,
             canReserve: true
         }
